@@ -94,8 +94,6 @@
             //保存按钮
             var svaeButton = new Ext.Button({
                 text: '<i class="fa fa-floppy-o"></i> 保存',
-                //columnWidth: .2,
-                // width:50,
                 margin: 10,
                 handler: function () {
                     var goodSnum = GOODSNUM.getValue();
@@ -279,49 +277,16 @@
                                 case "ID":
                                     columnarray.push({ header: '页码', dataIndex: key, width: 48, renderer: RowRender });
                                     columnarray.push({
-                                        xtype: 'actioncolumn', width: 48, text: '操作', items: [{
+                                        xtype: 'actioncolumn', width: 48, text: '操作'
+                                        , items: [{
                                             icon: '/images/shared/arrow_up.gif',
                                             width: 30,
-                                            handler: function (grid, rowIndex, colIndex) {
-                                                // var rec = grid.getStore().getAt(rowIndex);
-                                                // if (rec.get("ID") == 1 || Ext.getCmp("btn_confirmsplit").disabled == true) {
-                                                //      return;
-                                                //  }
-                                                //  Ext.Ajax.request({
-                                                //      url: "PdfView.aspx?action=adjustpage&ordercode=" + ordercode + "&fileid=" + fileid + "&currentpage=" + rec.get("ID") + "&direction=up",
-                                                //     success: function (response) {
-                                                //        var json = Ext.decode(response.responseText);
-                                                //       box.innerHTML = '<embed id="pdf" width="100%" height="100%" src="' + json.src + '"></embed>';
-                                                //       var task = new Ext.util.DelayedTask();
-                                                //        task.delay(1000, function () {
-                                                //             var PDF = Ext.get("pdf").dom;
-                                                //             PDF.setCurrentPage(rec.get("ID"));
-                                                //         })
-                                                //      }
-                                                //  });
-                                            }
+                                            handler: function (grid, rowIndex, colIndex) { }
                                         }, {
                                             icon: '/images/shared/arrow_down.gif',
-                                            handler: function (grid, rowIndex, colIndex) {
-                                                //var rec = grid.getStore().getAt(rowIndex);
-                                                //if (rec.get("ID") == grid.getStore().count() || Ext.getCmp("btn_confirmsplit").disabled == true) {
-                                                //    return;
-                                                //}
-                                                //Ext.Ajax.request({
-                                                //    url: "PdfView.aspx?action=adjustpage&ordercode=" + ordercode + "&fileid=" + fileid + "&currentpage=" + rec.get("ID") + "&direction=down",
-                                                //    success: function (response) {
-                                                //        var json = Ext.decode(response.responseText);
-                                                //        box.innerHTML = '<embed id="pdf" width="100%" height="100%" src="' + json.src + '"></embed>';
-                                                //        var task = new Ext.util.DelayedTask();
-                                                //        task.delay(1000, function () {
-                                                //            var PDF = Ext.get("pdf").dom;
-                                                //            PDF.setCurrentPage(rec.get("ID"));
-                                                //        })
-                                                //    }
-                                                //});
-                                            }
+                                            handler: function (grid, rowIndex, colIndex) { }
                                         }
-                                        ]
+                                       ]
                                     });
                                     break;
                                 default:

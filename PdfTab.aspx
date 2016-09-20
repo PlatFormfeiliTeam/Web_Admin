@@ -8,30 +8,10 @@
     <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="js/pan.js"></script>
-    <link href="bootstrap32/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap32/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <script type="text/javascript">
         var ordercode = getQueryString("ordercode");
-        //$(document).ready(function () {
-        //    $.ajax({
-        //        url: "PdfTab.aspx?action=load&ordercode=" + ordercode,
-        //        type: 'POST',
-        //        success: function (res) {
-        //            $("body").html('<embed id="pdf" width="100%" src="' + res + '"></embed>');
-        //            $("embed").height(window.innerHeight - 20);
-        //        },
-        //        error: function () {
-
-        //        }
-        //    });
-        //    //var response = $.ajax({
-        //    //    // url: "/jquery/test1.txt",
-        //    //    url: "PdfTab.aspx?action=load&ordercode=" + ordercode,
-        //    //    async: false
-        //    //});
-        //    //$("#pdfContainer").html('<embed id="pdf" width="100%" height="100%" src="' + response.responseText + '"></embed>');
-        //    // });
-        //});
         Ext.onReady(function () {
             var html = '<div id="pdfdiv" style="width:100%;height:100%"></div>';
             var toolbar = Ext.create("Ext.toolbar.Toolbar", {
