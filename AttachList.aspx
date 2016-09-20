@@ -19,8 +19,29 @@
                         totalProperty: 'total'
                     }
                 },
-                autoLoad: true
+                autoLoad: true,
+                listeners: {
+                    beforeload: function (store, options) {
+                        var new_params = {
+                            ORDERCODE: Ext.getCmp("ORDERCODE").getValue()
+                        }
+                        Ext.apply(store.proxy.extraParams, new_params);
+                    }
+                }
             })
+            var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+                items: [
+                            {
+                                xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE'
+                            },
+                              {
+                                  xtype: 'button', text: '查 询', icon: '../../images/shared/search_show.gif', handler: function () {
+                                      gridpanel.store.load();
+                                  }
+                              }
+                ]
+            })
+
             var pgbar = Ext.create('Ext.toolbar.Paging', {
                 displayMsg: '显示 {0} - {1} 条,共计 {2} 条',
                 store: store_attach,
@@ -34,10 +55,11 @@
                 store: store_attach,
                 selModel: { selType: 'checkboxmodel' },
                 bbar: pgbar,
+                tbar: toolbar,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },                    
                     { header: '订单编号', dataIndex: 'ORDERCODE', width: 80, locked: true },
-                    { header: 'ID', dataIndex: 'ID', width: 40, locked: true },
+                    { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
                     { header: '文件名', dataIndex: 'FILENAME', width: 300, locked: true },
                     { header: '原文件名', dataIndex: 'ORIGINALNAME', width: 180, locked: true },
                     { header: '是否拆分', dataIndex: 'SPLITSTATUS', width: 60, renderer: render, locked: true },
@@ -62,6 +84,7 @@
                     }
                 }
             })
+
         });
 
         function render(value, cellmeta, record, rowIndex, columnIndex, store) {

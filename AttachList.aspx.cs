@@ -26,14 +26,10 @@ namespace Web_Admin
                     iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
                     string where = "";
-                    //if (!string.IsNullOrEmpty(Request["NAME"]))
-                    //{
-                    //    where += " and NAME like '%" + Request["NAME"] + "%'";
-                    //}
-                    //if (!string.IsNullOrEmpty(Request["REALNAME"]))
-                    //{
-                    //    where += " and REALNAME like '%" + Request["REALNAME"] + "%'";
-                    //}
+                    if (!string.IsNullOrEmpty(Request["ORDERCODE"]))
+                    {
+                        where += " and ORDERCODE like '%" + Request["ORDERCODE"] + "%'";
+                    }
 
                     sql = @"SELECT * FROM List_Attachment where ISUPLOAD='1' and ORDERCODE is not null " + where;
 
