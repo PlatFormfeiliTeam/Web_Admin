@@ -51,7 +51,7 @@
                     { header: '当前页', dataIndex: 'PGINDEX', width: 130 },
                     { header: '关联订单数', dataIndex: 'ORDERCOUNT', width: 80 },
                     { header: '上传人', dataIndex: 'UPLOADUSERID', width: 60},
-                    { header: '上传人姓名', dataIndex: 'UPLOADUSERNAME', width: 130 },
+                    { header: '上传人姓名', dataIndex: 'UPLOADUSERNAME', width: 130 }
                 ],
                 //添加双击事件
                 listeners:
