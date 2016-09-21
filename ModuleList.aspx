@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SysModule.aspx.cs" Inherits="Web_Admin.SysModule" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ModuleList.aspx.cs" Inherits="Web_Admin.ModuleList" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
@@ -47,7 +47,7 @@
                             return;
                         }
                         Ext.Ajax.request({
-                            url: 'SysModule.aspx?action=delete',
+                            url: 'ModuleList.aspx?action=delete',
                             params: { json: Ext.encode(recs[0].data) },
                             callback: function (option, success, response) {
                                 var result = Ext.decode(response.responseText);
@@ -69,7 +69,7 @@
                 model: 'SysModule',
                 proxy: {
                     type: 'ajax',
-                    url: 'SysModule.aspx?action=select',
+                    url: 'ModuleList.aspx?action=select',
                     reader: 'json',
                     extraParams: {
                         MODULEID: ''

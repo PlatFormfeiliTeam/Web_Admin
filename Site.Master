@@ -24,9 +24,9 @@
             <tr>
                 <td style="vertical-align:top">
                     <div style="padding-right: 5px; width: 200px; font-size: 14px">
-                        <a href="SysModule.aspx" class="list-group-item">模块管理</a>
+                        <a href="ModuleList.aspx" class="list-group-item">模块管理</a>
                         <a href="UserList.aspx" class="list-group-item">账户管理</a>
-                        <a class="list-group-item">权限管理</a>
+                        <a href="WebAuthList.aspx" class="list-group-item">权限管理</a>
                         <a href="AttachList.aspx" class="list-group-item">文件列表</a>
                         <%-- <a class="list-group-item">Porta ac consectetur ac</a>
             <a class="list-group-item">Vestibulum at eros</a>--%>

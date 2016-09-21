@@ -10,6 +10,6 @@
 namespace Web_Admin {
     
     
-    public partial class SysModule {
+    public partial class WebAuthList {
     }
 }

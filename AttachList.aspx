@@ -3,6 +3,8 @@
     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
+    <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
     <script type="text/javascript">
         Ext.onReady(function () {
             var store_attach = Ext.create('Ext.data.JsonStore', {
@@ -35,7 +37,7 @@
                                 xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE'
                             },
                               {
-                                  xtype: 'button', text: '查 询', icon: '../../images/shared/search_show.gif', handler: function () {
+                                  xtype: 'button', text: '<i class="fa fa-search fa-fw"></i>&nbsp;查询', handler: function () {//, icon: '../../images/shared/search_show.gif'
                                       gridpanel.store.load();
                                   }
                               }

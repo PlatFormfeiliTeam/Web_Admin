@@ -11,7 +11,7 @@ using Web_Admin.Common;
 
 namespace Web_Admin
 {
-    public partial class SysModule : System.Web.UI.Page
+    public partial class ModuleList : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

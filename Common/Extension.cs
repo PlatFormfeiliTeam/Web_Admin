@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,7 +41,21 @@ namespace Web_Admin.Common
             return pageSql;
         }
 
-
+        /// <summary>
+        /// 将DataTable指定列转换为list
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="columnName">需要转换的列名</param>
+        /// <returns></returns>
+        public static List<string> getColumnFromDatatable(DataTable dt, string columnName)
+        {
+            List<string> columnList = new List<string>();
+            foreach (DataRow dr in dt.Rows)
+            {
+                columnList.Add(dr[columnName].ToString());
+            }
+            return columnList;
+        }
 
 
     }
