@@ -19,7 +19,10 @@ function render(value, cellmeta, record, rowIndex, columnIndex, store) {
             break;
         case "ENABLED":
             rtn = value ? '启用' : '停用';
-            break;      
+            break;
+        case "ID":
+            rtn = "<span onclick='inipsd(\"" + record.get("ID") + "\",\"" + record.get("NAME") + "\")'><i class=\"fa fa-key fa-fw\"></i>&nbsp;初始化密码</span>";
+            break;
     }
     return rtn;
 }
