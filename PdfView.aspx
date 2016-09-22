@@ -162,7 +162,7 @@
                             Ext.getCmp("btn_confirmsplit").setDisabled(true);
                             var pages = Ext.encode(Ext.pluck(gridpanel.store.data.items, 'data'));
                             Ext.Ajax.request({
-                                url: "PdfView.aspx?action=split&fileid=" + fileid + "&filetype=" + filetype + "&ordercode=" + ordercode,
+                                url: "PdfView.aspx?action=split&fileid=" + fileid + "&filetype=" + filetype + "&ordercode=" + ordercode+ "&userid=" + userid,
                                 params: { pages: pages },
                                 success: function (response) {
                                     panel.hide();
@@ -201,7 +201,7 @@
                                 if (btn == 'yes') {
                                     Ext.getCmp('btn_cancelsplit').setDisabled(true);
                                     Ext.Ajax.request({
-                                        url: 'PdfView.aspx?action=cancelsplit&ordercode=' + ordercode + "&fileid=" + fileid,
+                                        url: 'PdfView.aspx?action=cancelsplit&ordercode=' + ordercode + "&fileid=" + fileid+ "&userid=" + userid,
                                         success: function (response, opts) {
                                             panel.hide();
                                             Ext.MessageBox.alert('提示', '撤销拆分成功！', function () {

@@ -276,6 +276,11 @@ namespace Web_Admin
                         //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
                         sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
                         DBMgr.ExecuteNonQuery(sql);
+
+                        //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间
+                        sql = "update LIST_ORDER set FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                        DBMgr.ExecuteNonQuery(sql);
+
                         sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
                         dt = DBMgr.GetDataTable(sql);
                         json = JsonConvert.SerializeObject(dt);
@@ -302,6 +307,11 @@ namespace Web_Admin
                     }
                     sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id=" + fileid;
                     DBMgr.ExecuteNonQuery(sql);
+
+                    //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间
+                    sql = "update LIST_ORDER set FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
+                    DBMgr.ExecuteNonQuery(sql);
+
                     db.KeyDelete(ordercode + ":" + fileid + ":splitdetail");
                     Response.Write("{success:true}");
                     Response.End();

@@ -81,7 +81,7 @@
                 {
                     'itemdblclick': function (view, record, item, index, e) {
                         // /Pdfview.aspx?ordercode=16055238810&fileids=5696&filetype=44&userid=12                         
-                        opencenterwin("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=webadmin", 1600, 900);
+                        opencenterwin("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=-1", 1600, 900);
                     }
                 }
             })
