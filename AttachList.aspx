@@ -3,7 +3,6 @@
     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
-    <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
     <script type="text/javascript">
         Ext.onReady(function () {
@@ -36,8 +35,8 @@
                             {
                                 xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE'
                             },
-                              {
-                                  xtype: 'button', text: '<i class="fa fa-search fa-fw"></i>&nbsp;查询', handler: function () {//, icon: '../../images/shared/search_show.gif'
+                              {//<i class="fa fa-search fa-fw"></i>&nbsp;
+                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>查询', handler: function () {//<span class="icon iconfont">&#xe632;</span>&nbsp;
                                       gridpanel.store.load();
                                   }
                               }
