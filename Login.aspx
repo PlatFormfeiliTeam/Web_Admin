@@ -48,7 +48,7 @@
                     <label for="password">登录密码</label>
                     <div class="input-group">
                         <span class="input-group-addon icon iconfont">&#xe608;</span>
-                        <asp:TextBox ID="password" runat="server" CssClass="form-control"> </asp:TextBox>
+                        <asp:TextBox ID="password" runat="server" CssClass="form-control" TextMode="Password"> </asp:TextBox>
                         <%--  <input type="password" class="form-control" id="password" placeholder='请输入登录密码' />--%>
                     </div>
                     <div style="height: 35px">
