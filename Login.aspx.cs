@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -25,6 +26,7 @@ namespace Web_Admin
 
         protected void btn_login_Click(object sender, EventArgs e)
         {
+            string returnUrl = Request["ReturnUrl"] + "";
             string username = this.user_name.Text;
             string password = this.password.Text;
             string sql = "select * from sys_user where name = '" + username + "' and password = '" + Extension.ToSHA1(password) + "'";
@@ -40,22 +42,35 @@ namespace Web_Admin
                 {
                     msg = "账号已停用!";
                 }
-                if (string.IsNullOrEmpty(msg))
-                {
-                    FormsAuthentication.SetAuthCookie(username, false);
-                    Response.Redirect("Home.aspx");
-                    // FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(username, true, 300);
-                    //  FormsAuthentication.RedirectFromLoginPage(username, false);
-                    //Session["user"] = username;
-                    // msg = "success";
-                }
             }
             else
             {
                 msg = "账号/密码错误!";
             }
-            //Response.Write(msg);
-            //Response.End();
+
+            if (string.IsNullOrEmpty(msg))
+            {
+                FormsAuthentication.SetAuthCookie(username, false);
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    Response.Redirect(returnUrl);
+                }
+                else
+                {
+                    Response.Redirect("Home.aspx");
+                }
+
+                // FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(username, true, 300);
+                //  FormsAuthentication.RedirectFromLoginPage(username, false);
+                //Session["user"] = username;
+                // msg = "success";
+            }
+            else
+            {
+                //Response.Write(msg);
+                //Response.End();
+            }
+
         }
     }
 }
