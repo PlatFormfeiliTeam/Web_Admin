@@ -17,12 +17,12 @@
         <div style="margin: 5px 0px">
             <img src="Images/banner.jpg" />
         </div>
-        <div style="width: 100%; text-align: right;">
+        <div style="width: 100%; text-align: right; font-size:12px;">
             <%--<a style="cursor: pointer; font-size: 12px" href="Login.aspx"><i class="icon iconfont">&#xe609;</i><span>退出</span></a>   --%>
             <form runat="server">  
                 <i class="icon iconfont">&#xe605;</i>
                 <span>当前用户：内部网站管理员</span>&nbsp;&nbsp;
-                <asp:LinkButton ID="lb_SignOut" runat="server" Font-Size="12px" OnClick="lb_SignOut_Click"><i class="icon iconfont">&#xe609;</i><span>退出</span></asp:LinkButton>
+                <asp:LinkButton ID="lb_SignOut" runat="server" OnClick="lb_SignOut_Click"><i class="icon iconfont">&#xe609;</i><span>退出</span></asp:LinkButton>
             </form>         
         </div>
         <table style="width:100%">
