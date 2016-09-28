@@ -21,7 +21,7 @@ function render(value, cellmeta, record, rowIndex, columnIndex, store) {
             rtn = value ? '启用' : '停用';
             break;
         case "ID":
-            rtn = "<span onclick='inipsd(\"" + record.get("ID") + "\",\"" + record.get("NAME") + "\")'><i class=\"fa fa-key fa-fw\"></i>&nbsp;初始化密码</span>";
+            rtn = "<span onclick='inipsd(\"" + record.get("ID") + "\",\"" + record.get("NAME") + "\")'><i class=\"fa fa-key fa-fw\"></i></span>";
             break;
     }
     return rtn;
@@ -45,7 +45,7 @@ function module_edit_win(parentNode, action) {
                 var baseForm = formpanel_module.getForm();
                 if (baseForm.isValid()) {
                     Ext.Ajax.request({
-                        url: "SysModule.aspx",
+                        url: "ModuleList.aspx",
                         params: { action: action, json: Ext.encode(baseForm.getValues()) },
                         callback: function (option, success, response) {
                             var result = Ext.decode(response.responseText);
