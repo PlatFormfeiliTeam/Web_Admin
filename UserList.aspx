@@ -45,8 +45,8 @@
                     { header: '账户类型', dataIndex: 'TYPE', width: 80, renderer: render },
                     { header: '创建时间', dataIndex: 'CREATETIME', width: 130 },
                     { header: '邮箱', dataIndex: 'EMAIL', width: 160 },
-                    { header: '电话', dataIndex: 'TELEPHONE', width: 130 },
-                    { header: '操作', dataIndex: 'ID', width: 130, renderer: render }
+                    { header: '电话', dataIndex: 'TELEPHONE', width: 110 },
+                    { header: '初始化密码', dataIndex: 'ID', width: 70, renderer: render }
                 ],
                 plugins: [{
                     ptype: 'rowexpander',
