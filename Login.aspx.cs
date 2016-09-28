@@ -51,7 +51,7 @@ namespace Web_Admin
             if (string.IsNullOrEmpty(msg))
             {
                 FormsAuthentication.SetAuthCookie(username, false);
-                if (!string.IsNullOrEmpty(returnUrl))
+                if (!string.IsNullOrEmpty(returnUrl) && returnUrl!="/")
                 {
                     Response.Redirect(returnUrl);
                 }
