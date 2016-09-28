@@ -43,53 +43,20 @@
                     <div class="input-group" style="margin-bottom: 20px">
                         <span class="input-group-addon ico iconfont">&#xe605;</span>
                         <asp:TextBox ID="user_name" runat="server" CssClass="form-control"> </asp:TextBox>
-                        <%-- <input type="text" class="form-control" id="user_name" placeholder="请输入登录账号" />--%>
                     </div>
                     <label for="password">登录密码</label>
                     <div class="input-group">
                         <span class="input-group-addon icon iconfont">&#xe608;</span>
                         <asp:TextBox ID="password" runat="server" CssClass="form-control" TextMode="Password"> </asp:TextBox>
-                        <%--  <input type="password" class="form-control" id="password" placeholder='请输入登录密码' />--%>
                     </div>
                     <div style="height: 35px">
-                        <label style="color: red" id="validate"></label>
+                        <asp:Label ID="lbl_msg" runat="server" Text="" Style=" color:red;"></asp:Label>                    
                     </div>
                     <asp:Button runat="server" ID='btn_login' OnClick="btn_login_Click" Text="登录" Height="40px"  Width="100%"/>
+                    
                 </form>
             </div>
         </div>
-        <script type="text/javascript">
-            //$(document).ready(function () {
-            //    $('#btn_login').bind('click', function () {
-            //        var user_name = $("#user_name").val();
-            //        var password = $("#password").val();
-            //        if (!user_name) {
-            //            $("#validate").text("账号不能为空!");
-            //            return;
-            //        }
-            //        if (!password) {
-            //            $("#validate").text("密码不能为空!");
-            //            return;
-            //        }
-            //        //$.ajax({
-            //        //    url: "Login.aspx?action=Login",
-            //        //    data: { username: user_name, password: password },
-            //        //    success: function (result) {
-            //        //        alert(result);
-            //        //        if (result == "success") {
-            //        //            window.location.href = 'Home.aspx';
-            //        //        }
-            //        //        else {
-            //        //            $("#validate").text(result);
-            //        //        }
-            //        //    }
-            //        //});
-            //    });
-            //    $("input").bind('focus', function () {
-            //        $("#validate").text("");
-            //    });
-            //});
-        </script>
 
     </div>
 </body>

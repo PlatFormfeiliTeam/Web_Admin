@@ -59,16 +59,10 @@ namespace Web_Admin
                 {
                     Response.Redirect("Home.aspx");
                 }
-
-                // FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(username, true, 300);
-                //  FormsAuthentication.RedirectFromLoginPage(username, false);
-                //Session["user"] = username;
-                // msg = "success";
             }
             else
             {
-                //Response.Write(msg);
-                //Response.End();
+                lbl_msg.Text = msg;
             }
 
         }

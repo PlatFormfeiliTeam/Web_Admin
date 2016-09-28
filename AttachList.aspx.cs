@@ -33,7 +33,7 @@ namespace Web_Admin
 
                     sql = @"SELECT * FROM List_Attachment where ISUPLOAD='1' and ORDERCODE is not null " + where;
 
-                    sql = Extension.GetPageSql(sql, "ORDERCODE", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
+                    sql = Extension.GetPageSql(sql, "UPLOADTIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
                     dt = DBMgr.GetDataTable(sql);
                     json = JsonConvert.SerializeObject(dt, iso);
                     Response.Write("{rows:" + json + ",total:" + totalProperty + "}");
