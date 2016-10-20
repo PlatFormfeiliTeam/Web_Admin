@@ -16,7 +16,7 @@
         .tab_box .hide{display:none;}
     </style>
 
-    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/jquery-1.4.2.min.js"></script>
     <script src="js/jquery.tabs.js"></script>
 	<script src="js/jquery.lazyload.js"></script>
     <script src="js/pan.js"></script>
@@ -46,8 +46,7 @@
                                 strdiv += '<div class="hide"';
                             }
                             strul += item.FILETYPENAME + '_' + (idx + 1) + '</li>';
-                            
-                            strdiv += ' style="height:' + (window.innerHeight - 60) + 'px">'
+                            strdiv += ' style="height:' + ($(window).height() - 60) + 'px">'
                                 + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
                         });
 
