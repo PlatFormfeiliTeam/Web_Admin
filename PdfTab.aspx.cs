@@ -36,24 +36,13 @@ namespace Web_Admin
                     if (dt.Rows.Count > 0)
                     {
                         json = JsonConvert.SerializeObject(dt);
-                        //默认加载第一个文件   
-                        Response.Write("{success:true,src:'/file/" + dt.Rows[0]["FILENAME"] + "',rows:" + json + "}"); 
+                        Response.Write("{\"success\":\"" + "true" + "\",\"rows\":" + json + "}");
                     }
                     else
                     {
-                        Response.Write("{success:false}");
+                        Response.Write("{\"success\":\"" + "false" +"\"}");
                     }
                     Response.End();
-                    break;
-                case "loadfile":
-                    string fileid = Request["fileid"];
-                    sql = "select * from list_attachment where id='" + fileid + "' and instr(ordercode,'" + ordercode + "')>0";
-                    dt = DBMgr.GetDataTable(sql);
-                    if (dt.Rows.Count > 0)
-                    {
-                        Response.Write(@"{success:true,src:'/file/" + dt.Rows[0]["FILENAME"] + "'}");
-                        Response.End();
-                    }
                     break;
             }
         }

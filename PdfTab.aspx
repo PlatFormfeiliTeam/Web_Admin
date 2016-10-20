@@ -5,75 +5,94 @@
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
-    <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
-    <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
+    <style type="text/css">
+        *{margin:0;padding:0;list-style-type:none;}
+        /* box */
+        .box{background:#fff;border:1px solid #d3d3d3;}
+        .tab_menu{overflow:hidden;}
+        .tab_menu li{width:150px;float:left;height:30px;line-height:30px;color:#fff;background:#428BCA;text-align:center;cursor:pointer;}/*color:#333;background:#fff;*/
+        .tab_menu li.current{color:#333;background:#fff;}/*color:#fff;background:#428BCA;*/
+        .tab_box{padding:5px;}
+        .tab_box .hide{display:none;}
+    </style>
+
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/jquery.tabs.js"></script>
+	<script src="js/jquery.lazyload.js"></script>
     <script src="js/pan.js"></script>
-    <link href="css/bootstrap32/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
     <script type="text/javascript">
         var ordercode = getQueryString("ordercode");
-        Ext.onReady(function () {
-            var html = '<div id="pdfdiv" style="width:100%;height:100%"></div>';
-            var toolbar = Ext.create("Ext.toolbar.Toolbar", {
-                items: []
-            });
-            var panel = Ext.create('Ext.panel.Panel', {
-                tbar: toolbar,
-                region: 'center',
-                html: html
-            });
-            var viewport = Ext.create('Ext.container.Viewport', {
-                layout: 'border',
-                items: [panel]
-            })
-            Ext.Ajax.request({
-                url: "PdfTab.aspx?action=load&ordercode=" + ordercode,
-                timeout: 40000,
-                success: function (response) {
-                    var box = document.getElementById('pdfdiv');
-                    var json = Ext.decode(response.responseText);
-                    if (json.success == true) {
-                        var str = '<embed id="pdf" width="100%" height="100%" src="' + json.src + '"></embed>';
-                        box.innerHTML = str;
-                        //动态生成按钮组     
-                        var oritypeid = "";
-                        var type_index = 1;
-                        var html1 = '<div class="btn-group" role="group">';
-                        for (var i = 0; i < json.rows.length; i++) {
-                            var id = json.rows[i].ID;
-                            var typeid = json.rows[i].FILETYPE;
-                            if (typeid != oritypeid) {
-                                oritypeid = typeid;
-                                type_index = 1;
+        $(function () {
+            $.ajax({
+                type: 'Post',
+                url: "PdfTab.aspx",
+                dataType: 'text',
+                data: { action: "load", ordercode: ordercode },
+                async: false,
+                success: function (data) {
+                    //alert(data);
+                    var obj = eval("(" + data + ")");//将字符串转为json
+                    if (obj.success) {
+                        var json = eval(obj.rows);
+                        var strul = "", strdiv = "";
+                        $.each(json, function (idx, item) {
+                           
+                            if (idx == 0) {
+                                strul += '<li class="current">';
+                                strdiv += '<div';
+                            } else {
+                                strul += '<li>';
+                                strdiv += '<div class="hide"';
                             }
-                            else {
-                                type_index += 1;
-                            }
-                            var newid = typeid + "_" + id;
-                            html1 += '<button type="button" class="btn  btn-primary btn-sm" onclick="loadfile(\'' + newid + '\')"><i class="fa fa-file-pdf-o"></i>&nbsp;' + json.rows[i].FILETYPENAME + "_" + type_index + '</button>';
-                        }
-                        html1 += '</div>';
-                        toolbar.add(html1);
+                            strul += item.FILETYPENAME + '_' + (idx + 1) + '</li>';
+                            
+                            strdiv += ' style="height:' + (window.innerHeight - 60) + 'px">'
+                                + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
+                        });
+
+                        document.getElementById('pdfdiv').innerHTML = '<ul class="tab_menu">' + strul + '</ul>' + '<div class="tab_box">' + strdiv + '</div>';
+
+                    } else {
+                        alert("没有订单文件！");
                     }
-                }
-            })
-        });
-        function loadfile(id) {
-            var array1 = id.split('_');
-            Ext.Ajax.request({
-                url: "PdfTab.aspx?action=loadfile&ordercode=" + ordercode + "&fileid=" + array1[1],
-                success: function (response) {
-                    var box = document.getElementById('pdfdiv');
-                    if (response.responseText) {
-                        var json = Ext.decode(response.responseText);
-                        var str = '<embed id="pdf" width="100%" height="100%" src="' + json.src + '"></embed>';
-                        box.innerHTML = str;
-                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
+                    alert(XMLHttpRequest.status);
+                    alert(XMLHttpRequest.readyState);
+                    alert(textStatus);
                 }
             });
-        }
+        });   
     </script>
+		
+	<script type="text/javascript">
+		$(function () {
+		    $('#pdfdiv').Tabs({
+		        event: 'click'
+		    });
+		});
+	</script>
 </head>
 <body>
+    <div id="pdfdiv" class="box">
+       <%--<ul class="tab_menu">
+			<li class="current">jquery特效</li>
+			<li>javascript 特效</li>
+			<li>div+css 教程</li>
+		</ul>
+
+        <div class="tab_box" style="">
+            <div style="background-color:red;height:909px;">
+                1
+			</div>
+            <div class="hide">
+                2
+            </div>
+             <div class="hide">
+                3
+            </div>
+        </div>--%>
+    </div>
 </body>
 </html>
