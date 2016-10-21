@@ -59,10 +59,10 @@
                 tbar: toolbar,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },                    
-                    { header: '订单编号', dataIndex: 'ORDERCODE', width: 80, locked: true },
+                    { header: '订单编号', dataIndex: 'ORDERCODE', width: 100, locked: true },
                     { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
-                    { header: '文件名', dataIndex: 'FILENAME', width: 300, locked: true },
-                    { header: '原文件名', dataIndex: 'ORIGINALNAME', width: 180, locked: true },
+                    { header: '文件名', dataIndex: 'FILENAME', width: 350, locked: true },
+                    { header: '原文件名', dataIndex: 'ORIGINALNAME', width: 210, locked: true },
                     { header: '是否拆分', dataIndex: 'SPLITSTATUS', width: 60, renderer: render, locked: true },
                     { header: '文件类型', dataIndex: 'FILETYPE', width: 60},                    
                     { header: '文件类型名称', dataIndex: 'FILETYPENAME', width: 80 },
