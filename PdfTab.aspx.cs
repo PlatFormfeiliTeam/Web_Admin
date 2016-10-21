@@ -36,11 +36,11 @@ namespace Web_Admin
                     if (dt.Rows.Count > 0)
                     {
                         json = JsonConvert.SerializeObject(dt);
-                        Response.Write("{\"success\":\"" + "true" + "\",\"rows\":" + json + "}");
+                        Response.Write("{\"success\":true,\"rows\":" + json + "}");
                     }
                     else
                     {
-                        Response.Write("{\"success\":\"" + "false" +"\"}");
+                        Response.Write("{\"success\":false}");
                     }
                     Response.End();
                     break;
