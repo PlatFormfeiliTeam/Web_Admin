@@ -19,34 +19,41 @@ namespace Web_Admin
         {
             IDatabase db = SeRedis.redis.GetDatabase();
             string action = Request["action"];
-            int totalProperty = 0;
+            long totalProperty = 0;
             string json = string.Empty; string sql = ""; DataTable dt;
 
             switch (action)
             {
-                case "loadredisceclare":
+                case "loadredisclare":
                     IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
                     iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
-                    string where = "";
-                    if (!string.IsNullOrEmpty(Request["CODE"]))
+                    if (db.KeyExists("redis_declare"))
                     {
-                        where += " and CODE like '%" + Request["CODE"] + "%'";
-                    }
-                    json = db.StringGet("redis_declare");
-                    //sql = @"SELECT * FROM list_declaration " + where;
+                        RedisValue[] jsonlist = db.ListRange("redis_declare"); //db.StringGet("redis_declare");
+                        totalProperty = jsonlist.LongLength;
+                        long startweizhi = Convert.ToInt64(Request["start"]);
+                        long endweizhi = Convert.ToInt64(Request["start"]) + Convert.ToInt64(Request["limit"]);
+                        endweizhi = totalProperty >= endweizhi ? endweizhi : totalProperty;
 
-                    //sql = Extension.GetPageSql(sql, "UPLOADTIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
-                    //dt = DBMgr.GetDataTable(sql);
-                    dt = new DataTable();
-                    json = JsonConvert.SerializeObject(dt, iso);
+                        for (long i = startweizhi; i < endweizhi; i++)
+                        {
+                            json += jsonlist[i];
+                            if (i < endweizhi - 1) { json += ","; }
+                        }
+                        json = "[" + json + "]";
+                    }
+                    else
+                    {
+                        json = "[]";
+                    }
                     Response.Write("{rows:" + json + ",total:" + totalProperty + "}");
                     Response.End();
                     break;
                 case "WriteRedisDecl":
                     try
                     {
-                        sql = @"select ld.*,lo.cusno as locusno from list_declaration ld left join list_order lo on ld.ordercode=lo.code";
+                        sql = @"select ld.*,lo.cusno as locusno from list_declaration ld left join list_order lo on ld.ordercode=lo.code order by ld.id";
                         dt = DBMgr.GetDataTable(sql);
                         if (dt.Rows.Count > 0)
                         {
@@ -61,7 +68,7 @@ namespace Web_Admin
                             }
                         }
 
-                        sql = @"select ld.* from list_decllist ld ";
+                        sql = @"select ld.* from list_decllist ld  order by ld.id";
                         dt = DBMgr.GetDataTable(sql);
                         if (dt.Rows.Count > 0)
                         {
@@ -83,58 +90,18 @@ namespace Web_Admin
                     }
                     Response.End();
                     break;
+                case "ClearRedisDecl":
+                    if (db.KeyExists("redis_declare")) { db.KeyDelete("redis_declare"); }
+                    if (db.KeyExists("redis_declarelist")) { db.KeyDelete("redis_declarelist"); }
 
-            }            
+                    Response.Write("{success:true}");
+                    Response.End();
+                    break;
+
+            }         
             
         }
-        /*
-        /// <summary>
-        /// Json 字符串 转换为 DataTable数据集合
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        public static DataTable ToDataTable(this string json)
-        {
-            DataTable dataTable = new DataTable();  //实例化
-            DataTable result;
-            try
-            {
-                JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-                javaScriptSerializer.MaxJsonLength = Int32.MaxValue; //取得最大数值
-                ArrayList arrayList = javaScriptSerializer.Deserialize<ArrayList>(json);
-                if (arrayList.Count > 0)
-                {
-                    foreach (Dictionary<string, object> dictionary in arrayList)
-                    {
-                        if (dictionary.Keys.Count<string>() == 0)
-                        {
-                            result = dataTable;
-                            return result;
-                        }
-                        if (dataTable.Columns.Count == 0)
-                        {
-                            foreach (string current in dictionary.Keys)
-                            {
-                                dataTable.Columns.Add(current, dictionary[current].GetType());
-                            }
-                        }
-                        DataRow dataRow = dataTable.NewRow();
-                        foreach (string current in dictionary.Keys)
-                        {
-                            dataRow[current] = dictionary[current];
-                        }
 
-                        dataTable.Rows.Add(dataRow); //循环添加行到DataTable中
-                    }
-                }
-            }
-            catch
-            {
-            }
-            result = dataTable;
-            return result;
-        }
-*/
 
 
     }
