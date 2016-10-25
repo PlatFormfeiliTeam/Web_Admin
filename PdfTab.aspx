@@ -6,13 +6,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
     <style type="text/css">
+        html,body {height: 100%; }
         *{margin:0;padding:0;list-style-type:none; font-size:12px;font-family: 'Microsoft YaHei' !important;}
         /* box */
-        .box{background:#fff;border:1px solid #d3d3d3;}
+        .box{background:#fff;border:1px solid #d3d3d3;height:100%}
         .tab_menu{overflow:hidden;}
         .tab_menu li{width:150px;float:left;height:30px;line-height:30px;color:#fff;background:#428BCA;text-align:center;cursor:pointer;}
         .tab_menu li.current{color:#333;background:#fff;}
-        .tab_box{padding:5px;}
+        .tab_box{padding:5px;height:100%}
         .tab_box .hide{display:none;}
     </style>
 
@@ -46,8 +47,9 @@
                                 strdiv += '<div class="hide"';
                             }
                             strul += item.FILETYPENAME + '_' + (idx + 1) + '</li>';
-                            strdiv += ' style="height:' + ($(window).height() - 60) + 'px">'
-                                + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
+                           // strdiv += ' style="height:' + ($(window).height() - 60) + 'px">'
+                           strdiv += ' style="height:100%">'
+                            + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
                         });
 
                         infor = '<ul class="tab_menu">' + strul + '</ul>' + '<div class="tab_box">' + strdiv + '</div>';
@@ -71,6 +73,7 @@
 		        event: 'click'
 		    });
 		});
+
 	</script>
 </head>
 <body>
