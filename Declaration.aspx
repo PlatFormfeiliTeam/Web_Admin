@@ -77,7 +77,7 @@
                     { header: '申报关区', dataIndex: 'CUSTOMAREACODE', width: 130 },
                     { header: '报关状态', dataIndex: 'STATUS', width: 150 },
                     { header: '海关状态', dataIndex: 'CUSTOMSSTATUS', width: 150 },
-                    { header: '客户编号', dataIndex: 'ORDERCODE', width: 150 },
+                    { header: '客户编号', dataIndex: 'ORDERCODE', width: 150 }
                 ]
             })
 
