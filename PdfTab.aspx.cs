@@ -29,9 +29,10 @@ namespace Web_Admin
             {
                 case "load":
                     //取出该订单下所有上传的pdf文件 先按类型排序 再按文件上传时间排序
+                    //20161027 去掉条件：t.confirmstatus=1 and 
                     sql = @"select t.ID,t.FILENAME,t.FILETYPE,f.sortindex,f.filetypename from list_attachment t  
                           left join sys_filetype f on t.filetype=f.filetypeid
-                          where t.confirmstatus=1 and lower(t.FILESUFFIX)='pdf' and instr(ordercode,'" + ordercode + "')>0 order by f.sortindex asc ,t.uploadtime asc";
+                          where lower(t.FILESUFFIX)='pdf' and instr(ordercode,'" + ordercode + "')>0 order by f.sortindex asc ,t.uploadtime asc";
                     dt = DBMgr.GetDataTable(sql);
                     if (dt.Rows.Count > 0)
                     {
