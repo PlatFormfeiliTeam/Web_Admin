@@ -7,7 +7,7 @@
     <script type="text/javascript">
         Ext.onReady(function () {
             var store_Redis_Declare = Ext.create('Ext.data.JsonStore', {
-                fields: ['ORDECODE', 'STATUSCODE', 'STATUSNAME', 'STATUSTIME','TYPE'],
+                fields: ['ORDERCODE', 'STATUSCODE', 'STATUSNAME', 'STATUSTIME','TYPE'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',

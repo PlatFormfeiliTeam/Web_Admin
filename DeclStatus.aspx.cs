@@ -92,7 +92,7 @@ namespace Web_Admin
 
 
 
-                                json = "{\"TYPE\":\"declare\",\"ORDECODE\":\"" + cusno + "\",\"STATUSCODE\":" + statuscode + ",\"STATUSNAME\":\"" + statusname + "\",\"STATUSTIME\":\"" + statustime + "\"}";
+                                json = "{\"TYPE\":\"declare\",\"ORDERCODE\":\"" + cusno + "\",\"STATUSCODE\":" + statuscode + ",\"STATUSNAME\":\"" + statusname + "\",\"STATUSTIME\":\"" + statustime + "\"}";
                                 db.ListRightPush("statuslog", json);
                             }
                         }
