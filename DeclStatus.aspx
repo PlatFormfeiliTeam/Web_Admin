@@ -72,6 +72,15 @@
                                           }
                                       })
                                   }
+                              },
+                              {
+                                  xtype: 'textfield', fieldLabel: '关键字', labelWidth: 80, labelAlign: 'right', id: 'cusno'
+                              },
+                              {
+                                  xtype: 'button', text: '<i class="iconfont">&#xe60c;</i>查询', handler: function () {
+                                      store_Redis_Declare.getProxy().setExtraParam("cusno", Ext.getCmp("cusno").getValue());
+                                      store_Redis_Declare.load();
+                                  }
                               }
 
 
@@ -97,7 +106,7 @@
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: '状态', dataIndex: 'TYPE', width: 150 },
-                    { header: '客户编号', dataIndex: 'ORDECODE', width: 150 },
+                    { header: '客户编号', dataIndex: 'ORDERCODE', width: 150 },
                     { header: '状态码', dataIndex: 'STATUSCODE', width: 150 },
                     { header: '状态名', dataIndex: 'STATUSNAME', width: 130 },
                     { header: '状态更新时间', dataIndex: 'STATUSTIME', width: 150 }

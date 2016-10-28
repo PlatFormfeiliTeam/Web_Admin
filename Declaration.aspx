@@ -51,6 +51,17 @@
                                           }
                                       })
                                   }
+                              },
+
+
+                                {
+                                    xtype: 'textfield', fieldLabel: '关键字', labelWidth: 80, labelAlign: 'right', id: 'CODE'
+                                },
+                              {
+                                  xtype: 'button', text: '<i class="iconfont">&#xe60c;</i>查询', handler: function () {
+                                      store_Redis_Declare.getProxy().setExtraParam("CODE",Ext.getCmp("CODE").getValue());
+                                      store_Redis_Declare.load();
+                                  }
                               }
                 ]
             })

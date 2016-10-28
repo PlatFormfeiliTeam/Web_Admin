@@ -18,6 +18,7 @@ namespace Web_Admin
         {
             IDatabase db = SeRedis.redis.GetDatabase();
             string action = Request["action"];
+            string cuno = Request["cusno"] == null ? "" : Request["cusno"].ToString();
             long totalProperty = 0;
             string json = string.Empty; string sql = ""; DataTable dt;
 
@@ -30,13 +31,18 @@ namespace Web_Admin
                     if (db.KeyExists("statuslog"))
                     {
                         RedisValue[] jsonlist = db.ListRange("statuslog");
+                        if (cuno != "")
+                        {
+                            IEnumerable<RedisValue> IE_redis = jsonlist.Where<RedisValue>(RV => RV.ToString().Contains(cuno));
+                            jsonlist = IE_redis.ToArray<RedisValue>();
+                        }
                         totalProperty = jsonlist.LongLength;
                         long start = Convert.ToInt64(Request["start"]);
                         long end = Convert.ToInt64(Request["start"]) + Convert.ToInt64(Request["limit"]);
                         end = totalProperty >= end ? end : totalProperty;
 
                         for (long i = start; i < end; i++)
-                        {
+                        {  
                             json += jsonlist[i];
                             if (i < end - 1) { json += ","; }
                         }

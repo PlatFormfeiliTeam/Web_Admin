@@ -19,6 +19,7 @@ namespace Web_Admin
         {
             IDatabase db = SeRedis.redis.GetDatabase();
             string action = Request["action"];
+            string code = Request["CODE"] == null ? "" : Request["CODE"].ToString();
             long totalProperty = 0;
             string json = string.Empty; string sql = ""; DataTable dt;
 
@@ -31,6 +32,11 @@ namespace Web_Admin
                     if (db.KeyExists("redis_declare"))
                     {
                         RedisValue[] jsonlist = db.ListRange("redis_declare"); //db.StringGet("redis_declare");
+                        if(code!=""){
+                        IEnumerable<RedisValue> IE_redis=jsonlist.Where<RedisValue>(RV => RV.ToString().Contains(code));
+                        jsonlist = IE_redis.ToArray<RedisValue>();
+                        }
+                        
                         totalProperty = jsonlist.LongLength;
                         long startweizhi = Convert.ToInt64(Request["start"]);
                         long endweizhi = Convert.ToInt64(Request["start"]) + Convert.ToInt64(Request["limit"]);
@@ -101,6 +107,8 @@ namespace Web_Admin
             }         
             
         }
+
+       
 
 
 
