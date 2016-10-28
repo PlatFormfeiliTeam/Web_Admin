@@ -57,11 +57,15 @@ namespace Web_Admin
                     break;
                 case "WriteRedisDeclStatus":
                     string ordercode = string.Empty;
+                    string statuscode_tmp = string.Empty;
                     if (Request["ordercode"]!=null)
                     {
                     ordercode = Request["ordercode"].Trim();
                     }
-                   
+                    if (Request["statuscode"] != null)
+                    {
+                        statuscode_tmp = Request["statuscode"].Trim();
+                    }
                     string where = string.Empty;
                     if (ordercode!=string.Empty)
                     {
@@ -70,7 +74,8 @@ namespace Web_Admin
                     }
                     try
                     {
-                        sql = @"select sysdate,cusno,declstatus from list_order where 1=1" + where;
+                        //sql = @"select sysdate,cusno,declstatus from list_order where 1=1" + where;
+                        sql = @"select * from list_order where 1=1" + where;
                         dt = DBMgr.GetDataTable(sql);
                         if (dt.Rows.Count > 0)
                         {
@@ -78,17 +83,26 @@ namespace Web_Admin
                             foreach (DataRow dr in dt.Rows)
                             {
                                 string statustime = "", cusno = "", statusname = "",statuscode = "";
-                                statustime = dr[0].ToString(); 
-                                cusno = dr[1].ToString();
-                                statuscode = dr[2].ToString() == "" ? "0" : dr[2].ToString();
-                                    
-                              
-                                if (statuscode == "15") { statusname = "关务接单"; }
-                                if (statuscode =="80" ) { statusname = "单证输机"; }
-                                if (statuscode =="110" ) { statusname = "提前报关单发送"; }
-                                if (statuscode =="20" ) { statusname = "单证制单"; }
-                                if (statuscode =="40" ) { statusname = "单证审单"; }
-                                if (statuscode =="100" ) { statusname = "报关单发送"; }
+                                if (statuscode_tmp != string.Empty)
+                                {
+                                    statuscode = statuscode_tmp;
+                                }
+                                else
+                                {
+                                    statuscode = dr["DECLSTATUS"].ToString() == "" ? "0" : dr[2].ToString();
+                                }
+                               // statustime = dr[0].ToString(); 
+                                cusno = dr["CUSNO"].ToString();
+
+
+
+
+                                if (statuscode == "15") { statusname = "关务接单"; statustime = dr["ACCEPTTIME"].ToString(); }
+                                if (statuscode == "80") { statusname = "单证输机"; statustime = dr["REPSTARTTIME"].ToString(); }
+                                if (statuscode == "110") { statusname = "提前报关单发送"; statustime = dr["RELATEDTIME"].ToString(); }
+                                if (statuscode =="20" ) { statusname = "单证制单"; statustime=dr["MOSTARTTIME"].ToString();}
+                                if (statuscode == "40") { statusname = "单证审单"; statustime = dr["COSTARTTIME"].ToString(); }
+                                if (statuscode == "100") { statusname = "报关单发送"; statustime = dr["PREENDTIME"].ToString(); }
 
 
 

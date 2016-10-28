@@ -55,12 +55,16 @@
                                 {
                                 xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE'
                                 },
+                                {
+                                     xtype: 'textfield', fieldLabel: '状态码', labelWidth: 80, labelAlign: 'right', id: 'STATUSCODE'
+                                 },
                               {
-                                  xtype: 'button', text: '<i class="iconfont">&#xe60c;</i>指定单号写入', handler: function () {
+                                  xtype: 'button', text: '<i class="iconfont">&#xe60c;</i>写入', handler: function () {
                                       Ext.Ajax.request({
                                           url: 'DeclStatus.aspx?action=WriteRedisDeclStatus',
                                           params: {
                                               ordercode: Ext.getCmp("ORDERCODE").getValue(),
+                                              statuscode: Ext.getCmp("STATUSCODE").getValue()
                                           },
                                           callback: function (option, success, response) {
                                               var result = Ext.decode(response.responseText);
