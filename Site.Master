@@ -43,7 +43,6 @@
                     <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                     </asp:ContentPlaceHolder>
                 </td>
-
             </tr>
         </table>
     </div>
