@@ -21,7 +21,6 @@ namespace Web_Admin
             string cuno = Request["cusno"] == null ? "" : Request["cusno"].ToString();
             long totalProperty = 0;
             string json = string.Empty; string sql = ""; DataTable dt;
-
             switch (action)
             {
                 case "loadredisclareStatus":
