@@ -31,10 +31,6 @@ namespace Web_Admin
             string ordercode = Request["ordercode"];
             string fileid = Request["fileid"];
             string userid = Request["userid"];
-            string goodSnum = Request["goodSnum"];
-            string packKind = Request["packKind"];
-            string goodSgw = Request["goodSgw"];
-            string goodSnw = Request["goodSnw"];
             string json = "";
             string sql = "";
             DataTable dt;
@@ -46,8 +42,8 @@ namespace Web_Admin
                 case "merge":
                     string splitfilename = "";
                     string filestatus = "";
-                    string fileids = Request["fileids"];
-                    string[] fileidarray = fileids.Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
+                    string fileids = Request["fileids"].Replace("[", "").Replace("]", "");
+                    string[] fileidarray = fileids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                     IList<string> pathlist = new List<string>();
                     //如果传输到这个页面的比如订单文件大于等于两个，需要将这文件合并后再输出 
                     if (fileidarray.Length > 1)
@@ -65,17 +61,13 @@ namespace Web_Admin
                             }
                         }
                         string orifilename = Guid.NewGuid().ToString();
-                        splitfilename = "/" + filetype + @"/" + ordercode + @"/" + orifilename + ".pdf";
+                        splitfilename = "/" + DateTime.Now.ToString("yyyy-MM-dd") + "/" + orifilename + ".pdf";
                         MergePDFFiles(pathlist, @"d:\ftpserver\" + splitfilename);
-                        sql = @"insert into list_attachment (id,FILENAME,ORIGINALNAME,UPLOADTIME,FILETYPE,ORDERCODE,FILESUFFIX,uploaduserid,fileguid,ISUPLOAD)
-                        values (list_attachment_id.nextval,'{0}','{1}',sysdate,'{2}','{3}','{4}','{5}','{6}','1')";
-                        sql = string.Format(sql, splitfilename, orifilename + ".pdf", filetype, ordercode, "pdf", userid, orifilename);
-
+                        sql = @"insert into list_attachment (id,FILENAME,ORIGINALNAME,UPLOADTIME,FILETYPE,ORDERCODE,FILESUFFIX,uploaduserid,ISUPLOAD)
+                        values (list_attachment_id.nextval,'{0}','{1}',sysdate,'{2}','{3}','{4}','{5}','1')";
+                        sql = string.Format(sql, splitfilename, orifilename + ".pdf", 44, ordercode, "pdf", userid);
                         DBMgr.ExecuteNonQuery(sql);
-                        sql = "select ID from list_attachment where filename='" + splitfilename + "'";
-                        dt = DBMgr.GetDataTable(sql);
-                        fileid = dt.Rows[0]["ID"] + "";
-                        //合并完成后数据库删除原有文件，插入新的文件记录
+                        //合并完成后数据库删除原有文件，插入新的文件记录"/" + ordercode
                         try
                         {
                             for (int k = 0; k < fileidarray.Length; k++)
@@ -92,105 +84,7 @@ namespace Web_Admin
                         {
                         }
                     }
-                    if (fileidarray.Length == 1)
-                    {
-                        sql = "select * from list_attachment where id='" + fileidarray[0] + "' ";
-                        dt = DBMgr.GetDataTable(sql);
-                        splitfilename = dt.Rows[0]["FILENAME"] + "";
-                        fileid = fileidarray[0];
-                        filestatus = dt.Rows[0]["SPLITSTATUS"] + "";//0 未拆分  1 已拆分 
-                    }
-
-                    if (filestatus == "" || filestatus == "0")//如果未拆分,初始化拆分明细界面内容并写入缓存
-                    {
-                        //插入待压缩文件的记录【新的压缩方式】 
-                        sql = "select t.* from pdfshrinklog t where t.attachmentid='" + fileid + "'";
-                        dt = DBMgr.GetDataTable(sql);
-                        if (dt.Rows.Count == 0)
-                        {
-                            sql = "insert into pdfshrinklog (id,attachmentid) values (pdfshrinklog_id.nextval,'" + fileid + "')";
-                            DBMgr.ExecuteNonQuery(sql);
-                        }
-                        pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
-                        int totalPages = pdfReader.NumberOfPages;
-                        sql = "select * from sys_filetype where parentfiletypeid=" + filetype + " order by sortindex asc";//取该文件类型下面所有的子类型
-                        dt = DBMgr.GetDataTable(sql);
-                        //构建页码表格数据
-                        DataTable dt2 = new DataTable();
-                        DataColumn dc = new DataColumn("ID");
-                        dt2.Columns.Add(dc);
-                        for (int k = 0; k < dt.Rows.Count; k++)
-                        {
-                            dc = new DataColumn("c-" + dt.Rows[k]["FILETYPEID"] + "@" + dt.Rows[k]["FILETYPENAME"]);
-                            dt2.Columns.Add(dc);
-                        }
-                        for (int i = 1; i <= totalPages; i++)
-                        {
-                            DataRow dr = dt2.NewRow();
-                            dr["ID"] = i;
-                            dt2.Rows.Add(dr);
-                        }
-                        json = JsonConvert.SerializeObject(dt2);
-                        //订单文件拆分明细保存至缓存数据库 并设置过期时间是24小时
-                        db.StringSet(ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
-                    }
-                    else//如果已拆分 直接读取缓存数据库
-                    {
-                        if (db.KeyExists(ordercode + ":" + fileid + ":splitdetail"))
-                        {
-                            json = db.StringGet(ordercode + ":" + fileid + ":splitdetail");
-                        }
-                        else
-                        {
-                            pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
-                            int totalPages = pdfReader.NumberOfPages;
-                            sql = "select * from sys_filetype where parentfiletypeid=" + filetype + " order by sortindex asc";//取该文件类型下面所有的子类型
-                            dt = DBMgr.GetDataTable(sql);
-                            //构建页码表格数据
-                            DataTable dt2 = new DataTable();
-                            DataColumn dc = new DataColumn("ID");
-                            dt2.Columns.Add(dc);
-                            for (int k = 0; k < dt.Rows.Count; k++)
-                            {
-                                dc = new DataColumn("c-" + dt.Rows[k]["FILETYPEID"] + "@" + dt.Rows[k]["FILETYPENAME"]);
-                                dt2.Columns.Add(dc);
-                            }
-                            for (int i = 1; i <= totalPages; i++)
-                            {
-                                DataRow dr = dt2.NewRow();
-                                dr["ID"] = i;
-                                foreach (DataRow tmp in dt.Rows)//一个子类型是一列  取每一列的值
-                                {
-                                    sql = "select pages from list_attachmentdetail where ordercode='" + ordercode + "' and attachmentid=" + fileid + " and filetypeid=" + tmp["FILETYPEID"];
-                                    DataTable sub_dt = DBMgr.GetDataTable(sql);
-                                    if (sub_dt.Rows.Count > 0)
-                                    {
-                                        string[] tmparray = sub_dt.Rows[0]["PAGES"].ToString().Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                                        if (tmparray.Contains<string>(i + ""))
-                                        {
-                                            dr["c-" + tmp["FILETYPEID"] + "@" + tmp["FILETYPENAME"]] = "√";
-                                        }
-                                        else
-                                        {
-                                            dr["c-" + tmp["FILETYPEID"] + "@" + tmp["FILETYPENAME"]] = "";
-                                        }
-                                    }
-                                }
-                                dt2.Rows.Add(dr);
-                            }
-                            json = JsonConvert.SerializeObject(dt2);
-                            db.StringSet(ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
-                        }
-                    }
-                    sql = "select * from sys_filetype where filetypeid=" + filetype;
-                    dt = DBMgr.GetDataTable(sql);
-                    string filetypename = dt.Rows[0]["FILETYPENAME"] + "";
-                    //如果是已经拆分好的 需要调出所有拆分好的文件类型 
-                    sql = @"select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype
-                          b on a.filetypeid=b.filetypeid where a.attachmentid='" + fileid + "' order by b.sortindex asc";
-                    dt = DBMgr.GetDataTable(sql);
-                    string json_type = JsonConvert.SerializeObject(dt);
-                    Response.Write(@"{success:true,src:'\/file\/" + splitfilename + "',rows:" + json + ",filetype:'" + filetypename + "',fileid:" + fileid + ",filestatus:'" + filestatus + "',result:" + json_type + "}");
+                    Response.Write("{success:true}");
                     Response.End();
                     break;
                 case "loadpdf":
@@ -242,7 +136,7 @@ namespace Web_Admin
                         {
                             pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
                             int totalPages = pdfReader.NumberOfPages;
-                            sql = "select * from sys_filetype where parentfiletypeid=" + filetype + " order by sortindex asc";//取该文件类型下面所有的子类型
+                            sql = "select * from sys_filetype where parentfiletypeid=44 order by sortindex asc";//取该文件类型下面所有的子类型
                             dt = DBMgr.GetDataTable(sql);
                             //构建页码表格数据
                             DataTable dt2 = new DataTable();
@@ -287,7 +181,7 @@ namespace Web_Admin
                     sql = @"select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype
                           b on a.filetypeid=b.filetypeid where a.attachmentid='" + fileid + "' order by b.sortindex asc";
                     dt = DBMgr.GetDataTable(sql);
-                    json_type = JsonConvert.SerializeObject(dt);
+                    string json_type = JsonConvert.SerializeObject(dt);
                     Response.Write(@"{success:true,src:'\/file\/" + splitfilename + "',rows:" + json + ",fileid:" + fileid + ",filestatus:'" + filestatus + "',result:" + json_type + "}");
                     Response.End();
                     break;
@@ -405,11 +299,9 @@ namespace Web_Admin
                     }
                     sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id=" + fileid;
                     DBMgr.ExecuteNonQuery(sql);
-
-                    //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间
-                    sql = "update LIST_ORDER set FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
+                    //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
+                    sql = "update LIST_ORDER set FILESTATUS=0, FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
                     DBMgr.ExecuteNonQuery(sql);
-
                     db.KeyDelete(ordercode + ":" + fileid + ":splitdetail");
                     Response.Write("{success:true}");
                     Response.End();
@@ -453,24 +345,17 @@ namespace Web_Admin
                 case "loadform":
                     sql = "SELECT * FROM list_order WHERE CODE = '" + ordercode + "'";
                     dt = DBMgr.GetDataTable(sql);
+                    if (!string.IsNullOrEmpty(dt.Rows[0]["ASSOCIATENO"].ToString()))
+                    {
+                        sql = "SELECT * FROM list_order WHERE CODE != '" + ordercode + "' and ASSOCIATENO='" + dt.Rows[0]["ASSOCIATENO"] + "'";
+                        DataTable dt_gl = DBMgr.GetDataTable(sql);
+                        dt.Rows[0]["ASSOCIATENO"] = dt_gl.Rows[0]["CODE"];
+                    } 
                     string result = JsonConvert.SerializeObject(dt).Replace("[", "").Replace("]", "");
                     sql = "select * from list_attachment where ordercode='" + ordercode + "' and filetype=44 order by uploadtime asc";
                     DataTable dt_file = DBMgr.GetDataTable(sql);
                     string result_file = JsonConvert.SerializeObject(dt_file);
                     Response.Write("{formdata:" + result + ",filedata:" + result_file + "}");
-                    Response.End();
-                    break;
-                case "saveGoodParam":
-                    sql = "UPDATE list_order SET GOODSNUM = " + goodSnum + ",PACKKIND = '" + packKind + "',GOODSGW = " + goodSgw + ",GOODSNW = " + goodSnw + " WHERE CODE = " + ordercode;
-                    int isSu = DBMgr.ExecuteNonQuery(sql);
-                    if (isSu > 0)
-                    {
-                        Response.Write("{success:true}");
-                    }
-                    else
-                    {
-                        Response.Write("{success:false}");
-                    }
                     Response.End();
                     break;
             }
