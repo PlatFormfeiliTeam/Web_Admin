@@ -13,7 +13,7 @@ using StackExchange.Redis;
 
 namespace Web_Admin
 {
-    public partial class Declaration : System.Web.UI.Page
+    public partial class DeclarationStatus : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -30,9 +30,9 @@ namespace Web_Admin
                     IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
                     iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
-                    if (db.KeyExists("redis_declare"))
+                    if (db.KeyExists("redis_declarelist"))
                     {
-                        RedisValue[] jsonlist = db.ListRange("redis_declare"); //db.StringGet("redis_declare");
+                        RedisValue[] jsonlist = db.ListRange("redis_declarelist"); //db.StringGet("redis_declare");
                         if(code!=""){
                         IEnumerable<RedisValue> IE_redis=jsonlist.Where<RedisValue>(RV => RV.ToString().Contains(code));
                         jsonlist = IE_redis.ToArray<RedisValue>();
@@ -113,7 +113,7 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "ClearRedisDecl":
-                    if (db.KeyExists("redis_declare")) { db.KeyDelete("redis_declare"); }
+                  //  if (db.KeyExists("redis_declare")) { db.KeyDelete("redis_declare"); }
                     if (db.KeyExists("redis_declarelist")) { db.KeyDelete("redis_declarelist"); }
 
                     Response.Write("{success:true}");
