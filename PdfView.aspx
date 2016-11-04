@@ -8,15 +8,13 @@
     <title></title>
     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
-    <script src="js/pan.js"></script>
-    <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <script src="js/pan.js"></script>     
     <link href="/css/iconfont/iconfont.css" rel="stylesheet" />
     <style type="text/css">
         .x-grid-cell {
             border-bottom-color: black;
             border-right-color: black;
         }
-
         .cbg-font-color {
             color: blue;
         }
@@ -127,7 +125,6 @@
                                         panel.hide();
                                         Ext.MessageBox.alert('提示', '文件合并成功！', function () {
                                             panel.show();
-                                            //window.location.href = "PdfView.aspx?ordercode=" + ordercode + "&userid=" + userid + "&username=";
                                             iniform();
                                         })
                                     }
@@ -136,7 +133,7 @@
                         }
                     },
                     {
-                        text: "<i class='fa fa-share-alt'></i>&nbsp;确定拆分", id: 'btn_confirmsplit', disabled: true, handler: function () {
+                        text: '<i class="iconfont">&#xe841;</i>&nbsp;确定拆分', id: 'btn_confirmsplit', disabled: true, handler: function () {
                             var allowsplit = false;
                             var store_tmp = gridpanel.getStore();
                             for (var i = 0; i < store_tmp.getCount() ; i++) {
@@ -191,7 +188,7 @@
                             });
                         }
                     }, {
-                        text: "<i class='fa fa-undo'></i>&nbsp;撤销拆分", disabled: true, id: 'btn_cancelsplit', handler: function () {
+                        text:  '<i class="iconfont">&#xe620;</i>&nbsp;撤销拆分', disabled: true, id: 'btn_cancelsplit', handler: function () {
                             panel.hide();
                             Ext.MessageBox.confirm('提示', '确定要撤销拆分吗？', function (btn) {
                                 if (btn == 'yes') {
@@ -379,7 +376,7 @@
                             var typeid = json.result[i].FILETYPEID;
                             var btn = Ext.create('Ext.Button', {
                                 id: json.result[i].FILETYPEID + "_" + json.result[i].ID,
-                                text: '<i class="fa fa-file-pdf-o"></i>&nbsp;' + json.result[i].FILETYPENAME,
+                                text: '<i class="iconfont">&#xe61d;</i>&nbsp;' + json.result[i].FILETYPENAME,
                                 handler: function () {
                                     gridpanel.getStore().removeAll();
                                     loadfile(this.id);

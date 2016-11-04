@@ -1,10 +1,10 @@
 
 @font-face {font-family: "iconfont";
-  src: url('iconfont.eot?t=1478048425600'); /* IE9*/
-  src: url('iconfont.eot?t=1478048425600#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1478048425600') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1478048425600') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1478048425600#iconfont') format('svg'); /* iOS 4.1- */
+  src: url('iconfont.eot?t=1478242696749'); /* IE9*/
+  src: url('iconfont.eot?t=1478242696749#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1478242696749') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1478242696749') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1478242696749#iconfont') format('svg'); /* iOS 4.1- */
 }
 
 .iconfont {
@@ -27,6 +27,8 @@
 .icon-right:before { content: "\e601"; }
 
 .icon-fold:before { content: "\e602"; }
+
+.icon-cancel:before { content: "\e620"; }
 
 .icon-airplane:before { content: "\e616"; }
 
@@ -71,4 +73,8 @@
 .icon-40:before { content: "\e610"; }
 
 .icon-41:before { content: "\e611"; }
+
+.icon-splith:before { content: "\e841"; }
+
+.icon-pdf:before { content: "\e61d"; }
 
