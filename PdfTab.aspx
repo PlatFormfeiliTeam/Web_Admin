@@ -6,20 +6,57 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
     <style type="text/css">
-        html,body {height: 100%; }
-        *{margin:0;padding:0;list-style-type:none; font-size:12px;font-family: 'Microsoft YaHei' !important;}
+        html, body {
+            height: 100%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            font-size: 12px;
+            font-family: 'Microsoft YaHei' !important;
+        }
         /* box */
-        .box{background:#fff;border:1px solid #d3d3d3;height:100%}
-        .tab_menu{overflow:hidden;}
-        .tab_menu li{width:150px;float:left;height:30px;line-height:30px;color:#fff;background:#428BCA;text-align:center;cursor:pointer;}
-        .tab_menu li.current{color:#333;background:#fff;}
-        .tab_box{padding:5px;height:100%}
-        .tab_box .hide{display:none;}
+        .box {
+            background: #fff;
+            border: 1px solid #d3d3d3;
+            height: 100%;
+        }
+
+        .tab_menu {
+            overflow: hidden;
+        }
+
+            .tab_menu li {
+                width: 150px;
+                float: left;
+                height: 30px;
+                line-height: 30px;
+                color: #fff;
+                background: #428BCA;
+                text-align: center;
+                cursor: pointer;
+            }
+
+                .tab_menu li.current {
+                    color: #333;
+                    background: #fff;
+                }
+
+        .tab_box {
+            padding: 5px;
+            height: 100%;
+        }
+
+            .tab_box .hide {
+                display: none;
+            }
     </style>
 
     <script src="js/jquery-1.4.2.min.js"></script>
     <script src="js/jquery.tabs.js"></script>
-	<script src="js/jquery.lazyload.js"></script>
+    <script src="js/jquery.lazyload.js"></script>
     <script src="js/pan.js"></script>
 
     <script type="text/javascript">
@@ -38,18 +75,18 @@
                         var json = eval(obj.rows);
                         var strul = "", strdiv = "";
                         $.each(json, function (idx, item) {
-                           
+
                             if (idx == 0) {
                                 strul += '<li class="current">';
                                 strdiv += '<div';
-                            } else {
+                            }
+                            else {
                                 strul += '<li>';
                                 strdiv += '<div class="hide"';
                             }
-                            strul += item.FILETYPENAME + '_' + (idx + 1) + '</li>';
-                           // strdiv += ' style="height:' + ($(window).height() - 60) + 'px">'
-                           strdiv += ' style="height:100%">'
-                            + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
+                            strul += item.FILETYPENAME + '</li>'; 
+                            strdiv += ' style="height:100%">'
+                             + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
                         });
 
                         infor = '<ul class="tab_menu">' + strul + '</ul>' + '<div class="tab_box">' + strdiv + '</div>';
@@ -64,17 +101,17 @@
                 }
 
             });
-        });   
+        });
     </script>
-		
-	<script type="text/javascript">
-		$(function () {
-		    $('#pdfdiv').Tabs({
-		        event: 'click'
-		    });
-		});
 
-	</script>
+    <script type="text/javascript">
+        $(function () {
+            $('#pdfdiv').Tabs({
+                event: 'click'
+            });
+        });
+
+    </script>
 </head>
 <body>
     <div id="pdfdiv" class="box"></div>
