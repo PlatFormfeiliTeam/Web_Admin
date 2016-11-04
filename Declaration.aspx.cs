@@ -22,6 +22,7 @@ namespace Web_Admin
             string code = Request["CODE"] == null ? "" : Request["CODE"].ToString();
             long totalProperty = 0;
             string json = string.Empty; string sql = ""; DataTable dt;
+            string CUSNO = Request["CUSNO"] == null ? "" : Request["CUSNO"].ToString();
 
             switch (action)
             {
@@ -57,39 +58,54 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "WriteRedisDecl":
+                   
                     try
                     {
-                        sql = @"select ld.*,lo.cusno as locusno from list_declaration ld left join list_order lo on ld.ordercode=lo.code order by ld.id";
-                        dt = DBMgr.GetDataTable(sql);
-                        if (dt.Rows.Count > 0)
+                        if (CUSNO == "")
                         {
-                            DataTable tmp = dt.Rows[0].Table.Clone(); // 复制DataRow的表结构
-                            foreach (DataRow dr in dt.Rows)
+                            sql = @"select ld.*,lo.cusno as locusno from list_declaration ld left join list_order lo on ld.ordercode=lo.code order by ld.id";
+                            dt = DBMgr.GetDataTable(sql);
+                            if (dt.Rows.Count > 0)
                             {
-                                dr["ordercode"] = dr["locusno"];
-                                tmp.ImportRow(dr);
-                                json = JsonConvert.SerializeObject(tmp); json = json.TrimStart('[').TrimEnd(']');
-                                tmp.Clear();
-                                db.ListRightPush("redis_declare", json);
+                                DataTable tmp = dt.Rows[0].Table.Clone(); // 复制DataRow的表结构
+                                foreach (DataRow dr in dt.Rows)
+                                {
+                                    dr["ordercode"] = dr["locusno"];
+                                    tmp.ImportRow(dr);
+                                    json = JsonConvert.SerializeObject(tmp); json = json.TrimStart('[').TrimEnd(']');
+                                    tmp.Clear();
+                                    db.ListRightPush("redis_declare", json);
+                                }
+                            }
+
+                            sql = @"select ld.* from list_decllist ld  order by ld.id";
+                            dt = DBMgr.GetDataTable(sql);
+                            if (dt.Rows.Count > 0)
+                            {
+                                DataTable tmp = dt.Rows[0].Table.Clone(); // 复制DataRow的表结构
+                                foreach (DataRow dr in dt.Rows)
+                                {
+                                    tmp.ImportRow(dr);
+                                    json = JsonConvert.SerializeObject(tmp); json = json.TrimStart('[').TrimEnd(']');
+                                    tmp.Clear();
+                                    db.ListRightPush("redis_declarelist", json);
+                                }
                             }
                         }
-
-                        sql = @"select ld.* from list_decllist ld  order by ld.id";
-                        dt = DBMgr.GetDataTable(sql);
-                        if (dt.Rows.Count > 0)
+                        else
                         {
-                            DataTable tmp = dt.Rows[0].Table.Clone(); // 复制DataRow的表结构
-                            foreach (DataRow dr in dt.Rows)
+                            string[] cusno = CUSNO.Split(',');
+                            for (int i = 0; i < cusno.Length; i++)
+                                
                             {
-                                tmp.ImportRow(dr);
-                                json = JsonConvert.SerializeObject(tmp); json = json.TrimStart('[').TrimEnd(']');
-                                tmp.Clear();
+                                json = "{\"CODE\":\"1609180047\",\"DECLARATIONCODE\":\"12369847\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"SHEETNUM\":\""+ cusno[i].ToString()+"\"}";
                                 db.ListRightPush("redis_declarelist", json);
                             }
+                        
                         }
-
                         Response.Write("{success:true}");
                     }
+                       
                     catch
                     {
                         Response.Write("{success:false}");

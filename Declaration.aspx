@@ -22,10 +22,13 @@
             })
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: [
+                     {
+                         xtype: 'textfield', fieldLabel: '客户编号', labelWidth: 80, labelAlign: 'right', id: 'CUSNO'
+                     },
                               {
                                   xtype: 'button', text: '<i class="iconfont">&#xe60c;</i>写入报关单及明细缓存', handler: function () {
                                       Ext.Ajax.request({
-                                          url: 'Declaration.aspx?action=WriteRedisDecl',
+                                          url: 'Declaration.aspx?action=WriteRedisDecl&CUSNO=' + Ext.getCmp("CUSNO").getValue(),
                                           callback: function (option, success, response) {
                                               var result = Ext.decode(response.responseText);
                                               if (result.success) {
@@ -35,6 +38,8 @@
                                               }
                                           }
                                       })
+
+
                                   }
                               },
                               {
