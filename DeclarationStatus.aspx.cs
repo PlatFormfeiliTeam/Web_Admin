@@ -31,9 +31,9 @@ namespace Web_Admin
                     IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
                     iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
-                    if (db.KeyExists("redis_declarelist"))
+                    if (db.KeyExists("redis_declare"))
                     {
-                        RedisValue[] jsonlist = db.ListRange("redis_declarelist"); //db.StringGet("redis_declare");
+                        RedisValue[] jsonlist = db.ListRange("redis_declare"); //db.StringGet("redis_declare");
                         if(code!=""){
                         IEnumerable<RedisValue> IE_redis=jsonlist.Where<RedisValue>(RV => RV.ToString().Contains(code));
                         jsonlist = IE_redis.ToArray<RedisValue>();
@@ -102,7 +102,7 @@ namespace Web_Admin
                                 string codetemp = RandCode(15);
                                 string DECLARATIONCODEtemp = RandCode(18);
                                 json = "{\"CODE\":\"" + codetemp + "\",\"DECLARATIONCODE\":\"" + DECLARATIONCODEtemp + "\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"CUSNO\":\"" + cusno[i].ToString() + "\"}";
-                                db.ListRightPush("redis_declarelist", json);
+                                db.ListRightPush("redis_declare", json);
                             }
                         
                         }
@@ -116,8 +116,9 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "ClearRedisDecl":
-                  //  if (db.KeyExists("redis_declare")) { db.KeyDelete("redis_declare"); }
-                    if (db.KeyExists("redis_declarelist")) { db.KeyDelete("redis_declarelist"); }
+                  
+                    if (db.KeyExists("redis_declare")) { db.KeyDelete("redis_declare"); }
+                
 
                     Response.Write("{success:true}");
                     Response.End();
