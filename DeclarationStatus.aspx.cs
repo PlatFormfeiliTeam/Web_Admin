@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Web_Admin.Common;
 using StackExchange.Redis;
+using System.Text;
 
 namespace Web_Admin
 {
@@ -98,8 +99,9 @@ namespace Web_Admin
                             for (int i = 0; i < cusno.Length; i++)
                                 
                             {
-                                string codetemp = getRandom();
-                                json = "{\"CODE\":\"" + codetemp + "\",\"DECLARATIONCODE\":\"12369847\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"CUSNO\":\"" + cusno[i].ToString() + "\"}";
+                                string codetemp = RandCode(15);
+                                string DECLARATIONCODEtemp = RandCode(18);
+                                json = "{\"CODE\":\"" + codetemp + "\",\"DECLARATIONCODE\":\"" + DECLARATIONCODEtemp + "\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"CUSNO\":\"" + cusno[i].ToString() + "\"}";
                                 db.ListRightPush("redis_declarelist", json);
                             }
                         
@@ -140,6 +142,17 @@ namespace Web_Admin
 
         }
        
+        private  string RandCode(int N)
+        {
+            char[] arrChar = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            StringBuilder num = new StringBuilder();
+            Random rnd = new Random(Guid.NewGuid().GetHashCode());
+            for (int i = 0; i < N; i++)
+            {
+                num.Append(arrChar[rnd.Next(0, arrChar.Length)].ToString());
+            }
+            return num.ToString();
+        }
 
 
 
