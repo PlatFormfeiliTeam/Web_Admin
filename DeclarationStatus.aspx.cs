@@ -98,7 +98,8 @@ namespace Web_Admin
                             for (int i = 0; i < cusno.Length; i++)
                                 
                             {
-                                json = "{\"CODE\":\"1609180047\",\"DECLARATIONCODE\":\"12369847\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"CUSNO\":\""+ cusno[i].ToString()+"\"}";
+                                string codetemp = getRandom();
+                                json = "{\"CODE\":\"" + codetemp + "\",\"DECLARATIONCODE\":\"12369847\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"CUSNO\":\"" + cusno[i].ToString() + "\"}";
                                 db.ListRightPush("redis_declarelist", json);
                             }
                         
@@ -124,6 +125,20 @@ namespace Web_Admin
             
         }
 
+        private string getRandom() {
+
+            string str = null;
+            for (int i = 0; i < 18;i++ )
+            {
+                Random random = new Random();
+                int n=random.Next(0, 10);
+                str += n.ToString();
+
+            }
+            return str;
+
+
+        }
        
 
 
