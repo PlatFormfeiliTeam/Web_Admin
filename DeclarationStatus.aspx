@@ -7,7 +7,7 @@
     <script type="text/javascript">
         Ext.onReady(function () {
             var store_Redis_Declare = Ext.create('Ext.data.JsonStore', {
-                fields: ['ID', 'CODE', 'DECLARATIONCODE', 'CUSTOMSSTATUS', 'COMMODITYNUM', 'SHEETNUM', 'CUSNO'],
+                fields: ['ID', 'CODE', 'DECLARATIONCODE', 'CUSTOMSSTATUS', 'COMMODITYNUM', 'SHEETNUM', 'ORDERCODE'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -93,7 +93,7 @@
                     { header: '海关状态', dataIndex: 'CUSTOMSSTATUS', width: 130 },
                     { header: '商品项数', dataIndex: 'COMMODITYNUM', width: 150 },
                     { header: '报关单张数', dataIndex: 'SHEETNUM', width: 150 },
-                    { header: '客户编号', dataIndex: 'CUSNO', width: 150 }
+                    { header: '客户编号', dataIndex: 'ORDERCODE', width: 150 }
                 ]
             })
 

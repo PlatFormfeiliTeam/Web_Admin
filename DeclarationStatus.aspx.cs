@@ -96,14 +96,34 @@ namespace Web_Admin
                         else
                         {
                             string[] cusno = CUSNO.Split(',');
-                            for (int i = 0; i < cusno.Length; i++)
-                                
+
+                            sql = @"select ld.* from list_declaration ld where rownum<=" + cusno.Length + " order by ld.id desc";
+                            dt = DBMgr.GetDataTable(sql);
+                            if (dt.Rows.Count > 0)
                             {
-                                string codetemp = RandCode(15);
-                                string DECLARATIONCODEtemp = RandCode(18);
-                                json = "{\"CODE\":\"" + codetemp + "\",\"DECLARATIONCODE\":\"" + DECLARATIONCODEtemp + "\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"CUSNO\":\"" + cusno[i].ToString() + "\"}";
-                                db.ListRightPush("redis_declare", json);
+                                DataTable tmp = dt.Rows[0].Table.Clone(); // 复制DataRow的表结构
+                                for (int i = 0; i < dt.Rows.Count; i++)
+                                {
+                                    string codetemp = RandCode(15);
+                                    string DECLARATIONCODEtemp = RandCode(18);
+
+                                    dt.Rows[i]["code"] = codetemp; dt.Rows[i]["DECLARATIONCODE"] = DECLARATIONCODEtemp; dt.Rows[i]["CUSTOMSSTATUS"] = "已放行";
+                                    dt.Rows[i]["COMMODITYNUM"] = 20; dt.Rows[i]["SHEETNUM"] = 20; dt.Rows[i]["ORDERCODE"] = cusno[i].ToString();
+                                    tmp.ImportRow(dt.Rows[i]);
+                                    json = JsonConvert.SerializeObject(tmp); json = json.TrimStart('[').TrimEnd(']');
+                                    tmp.Clear();
+                                    db.ListRightPush("redis_declare", json);
+                                }
                             }
+                            
+                            //for (int i = 0; i < cusno.Length; i++)
+                                
+                            //{
+                            //    string codetemp = RandCode(15);
+                            //    string DECLARATIONCODEtemp = RandCode(18);
+                            //    json = "{\"CODE\":\"" + codetemp + "\",\"DECLARATIONCODE\":\"" + DECLARATIONCODEtemp + "\",\"CUSTOMSSTATUS\":\"15\",\"COMMODITYNUM\":\"20 \",\"SHEETNUM\":\"20\",\"CUSNO\":\"" + cusno[i].ToString() + "\"}";
+                            //    db.ListRightPush("redis_declare", json);
+                            //}
                         
                         }
                         Response.Write("{success:true}");
