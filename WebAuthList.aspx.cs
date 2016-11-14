@@ -49,7 +49,7 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "loaduser":
-                    sql = "SELECT su.*, sc.name AS CUSTOMERNAME FROM sys_user su LEFT JOIN sys_customer sc ON su.customerid = sc.id WHERE su.customerid > 0 AND PARENTID IS NULL";
+                    sql = "SELECT su.*, sc.name AS CUSTOMERNAME FROM sys_user su LEFT JOIN cusdoc.sys_customer sc ON su.customerid = sc.id WHERE su.customerid > 0 AND PARENTID IS NULL";
                     ents = DBMgr.GetDataTable(sql);
                     result = "{rows:" + JsonConvert.SerializeObject(ents) + "}";
                     Response.Write(result);

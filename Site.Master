@@ -29,15 +29,16 @@
             <tr>
                 <td style="vertical-align:top">
                     <div style="padding-right: 5px; width: 200px; font-size: 14px">
-                        <a href="ModuleList.aspx" class="list-group-item">模块管理</a>
+                       <a href="ModuleList.aspx" class="list-group-item">模块管理</a>
                         <a href="UserList.aspx" class="list-group-item">账户管理</a>
                         <a href="WebAuthList.aspx" class="list-group-item">权限管理</a>
                         <a href="AttachList.aspx" class="list-group-item">文件列表</a>
-                        <%--<a href="Declaration.aspx" class="list-group-item">报关单</a>--%>
+                        <%--<a href="Declaration.aspx" class="list-group-item">报关单</a>
                         <a href="DeclStatus.aspx" class="list-group-item">报关状态</a>
-                        <a href="DeclarationStatus.aspx" class="list-group-item">报关明细缓存</a>
-                        <%-- <a class="list-group-item">Porta ac consectetur ac</a>
-                        <a class="list-group-item">Vestibulum at eros</a>--%>
+                        <a href="DeclarationStatus.aspx" class="list-group-item">报关明细缓存</a>--%>
+                        <a href="Statuslogall.aspx" class="list-group-item">报关报检业务</a>
+                        <a href="Declareall.aspx" class="list-group-item">报关单</a>
+                        <a href="Inspectionall.aspx" class="list-group-item">报检单</a>
                     </div>
                 </td>
                 <td style="width:1000px">
