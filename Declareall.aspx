@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteCommon.Master" AutoEventWireup="true" CodeBehind="Declareall.aspx.cs" Inherits="Web_Admin.Declareall" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div id="renderto" style="height:500px;">
+    <div id="renderto" style="height:500px;">  
     <asp:Label ID="LabCusno" runat="server" Text="客户编号："></asp:Label>
     <asp:TextBox ID="TxtCusno" runat="server"></asp:TextBox>
     <asp:Label ID="LabKey" runat="server" Text="分KEY："></asp:Label>
