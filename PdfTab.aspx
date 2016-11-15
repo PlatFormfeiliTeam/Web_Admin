@@ -56,7 +56,6 @@
 
     <script src="js/jquery-1.4.2.min.js"></script>
     <script src="js/jquery.tabs.js"></script>
-    <script src="js/jquery.lazyload.js"></script>
     <script src="js/pan.js"></script>
 
     <script type="text/javascript">
