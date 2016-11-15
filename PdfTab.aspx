@@ -77,16 +77,13 @@
                         $.each(json, function (idx, item) {
 
                             if (idx == 0) {
-                                strul += '<li class="current">';
-                                strdiv += '<div';
+                                strul += '<li class="current"';
+                                strdiv += '<div id="divshow" style="height:100%"><embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
                             }
                             else {
-                                strul += '<li>';
-                                strdiv += '<div class="hide"';
+                                strul += '<li';
                             }
-                            strul += item.FILETYPENAME + '</li>'; 
-                            strdiv += ' style="height:100%">'
-                             + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
+                            strul +=' onclick=showdiv("/file/' + item.FILENAME + '")>'+ item.FILETYPENAME + '</a></li>';
                         });
 
                         infor = '<ul class="tab_menu">' + strul + '</ul>' + '<div class="tab_box">' + strdiv + '</div>';
@@ -102,6 +99,10 @@
 
             });
         });
+
+        function showdiv(filepath) {
+            $("#divshow").html('<embed id="pdf"  width="100%" height="100%" src="' + filepath + '"></embed>');
+        }
     </script>
 
     <script type="text/javascript">
