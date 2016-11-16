@@ -25,22 +25,17 @@
                         var strul = "";
                         $.each(json, function (idx, item) {
                             if (idx == 0) {
-                                //strul += '<li class="active"><a href="#" id="' + item.FILENAME + '">' + item.FILETYPENAME + '</a></li>';
                                 var content = '<embed width="100%" height="100%" src="/file/' + item.FILENAME + '" />';
                                 $('#pdfdiv').html(content);
                                 $('embed').height($(document).height() - $(".nav").height() - 60);
-                            }
-                            // else {
+                            } 
                             strul += '<button class="btn btn-primary" id="' + item.FILENAME + '">' + item.FILETYPENAME + '</button>';
-                            // }
                         });
                         $('.btn-group').html(strul)
                         $("button").bind('click', function () {
                             $('#pdfdiv').html('');
                             var content = '<embed width="100%" height="100%" src="/file/' + this.id + '" />';
                             $('#pdfdiv').html(content);
-                            // $('embed').height($(document).height() - $(".nav").height() - 60);
-                            // alert($('#pdfdiv').html());
                         });
                     }
                 }
@@ -49,8 +44,6 @@
     </script>
 </head>
 <body>
-    <%-- <ul class="nav navbar-nav ">
-        </ul>--%>
     <div class="btn-group">
     </div>
     <div id="pdfdiv">
