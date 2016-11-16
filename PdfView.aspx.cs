@@ -31,6 +31,7 @@ namespace Web_Admin
             string ordercode = Request["ordercode"];
             string fileid = Request["fileid"];
             string userid = Request["userid"];
+            string username = Request["username"];
             string json = "";
             string sql = "";
             DataTable dt;
@@ -267,10 +268,8 @@ namespace Web_Admin
                         }
                         //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
                         sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
-                        DBMgr.ExecuteNonQuery(sql);
-
-                        //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间
-                        sql = "update LIST_ORDER set FILESTATUS=1, FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                        DBMgr.ExecuteNonQuery(sql); 
+                        sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + username + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
                         DBMgr.ExecuteNonQuery(sql);
 
                         sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
@@ -300,7 +299,7 @@ namespace Web_Admin
                     sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id=" + fileid;
                     DBMgr.ExecuteNonQuery(sql);
                     //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
-                    sql = "update LIST_ORDER set FILESTATUS=0, FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
+                    sql = "update LIST_ORDER set FILESTATUS=0,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
                     DBMgr.ExecuteNonQuery(sql);
                     db.KeyDelete(ordercode + ":" + fileid + ":splitdetail");
                     Response.Write("{success:true}");
@@ -350,7 +349,7 @@ namespace Web_Admin
                         sql = "SELECT * FROM list_order WHERE CODE != '" + ordercode + "' and ASSOCIATENO='" + dt.Rows[0]["ASSOCIATENO"] + "'";
                         DataTable dt_gl = DBMgr.GetDataTable(sql);
                         dt.Rows[0]["ASSOCIATENO"] = dt_gl.Rows[0]["CODE"];
-                    } 
+                    }
                     string result = JsonConvert.SerializeObject(dt).Replace("[", "").Replace("]", "");
                     sql = "select * from list_attachment where ordercode='" + ordercode + "' and filetype=44 order by uploadtime asc";
                     DataTable dt_file = DBMgr.GetDataTable(sql);

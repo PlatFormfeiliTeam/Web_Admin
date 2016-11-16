@@ -8,19 +8,22 @@
     <title></title>
     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
-    <script src="js/pan.js"></script>     
+    <script src="js/pan.js"></script>
     <link href="/css/iconfont/iconfont.css" rel="stylesheet" />
     <style type="text/css">
         .x-grid-cell {
             border-bottom-color: black;
             border-right-color: black;
         }
+
         .cbg-font-color {
             color: blue;
         }
     </style>
     <script type="text/javascript">
         var ordercode = getQueryString("ordercode");
+        var userid = getQueryString("userid");
+        var username = getQueryString("username");
         var filetype = 44;
         var userid = getQueryString("userid");
         var fileid = "";
@@ -66,7 +69,6 @@
                 columnWidth: .25,
                 labelAlign: "right",
                 fieldLabel: '业务类型',
-                //value: json.formdata.BUSITYPE,
                 readOnly: true
             })
 
@@ -77,7 +79,6 @@
                 labelAlign: "right",
                 fieldLabel: '经营单位',
                 readOnly: true
-                // value: json.formdata.BUSIUNITNAME
             });
             var field_filestatus = Ext.create('Ext.form.field.Text', {
                 id: 'field_filestatus',
@@ -87,7 +88,6 @@
                 fieldLabel: '拆分状态',
                 name: 'FILESTATUS',
                 readOnly: true
-                // value: json.formdata.FILESTATUS == 1 ? "已拆分" : "未拆分"
             });
 
             var cbg_file = Ext.create('Ext.form.CheckboxGroup', {
@@ -154,8 +154,8 @@
                             Ext.getCmp("btn_confirmsplit").setDisabled(true);
                             var pages = Ext.encode(Ext.pluck(gridpanel.store.data.items, 'data'));
                             Ext.Ajax.request({
-                                url: "PdfView.aspx?action=split&fileid=" + fileid + "&filetype=" + filetype + "&ordercode=" + ordercode + "&userid=" + userid,
-                                params: { pages: pages },
+                                url: "PdfView.aspx?action=split&fileid=" + fileid + "&filetype=" + filetype + "&ordercode=" + ordercode,
+                                params: { pages: pages, userid: userid, username: username },
                                 success: function (response) {
                                     panel.hide();
                                     var json = Ext.decode(response.responseText);
@@ -188,7 +188,7 @@
                             });
                         }
                     }, {
-                        text:  '<i class="iconfont">&#xe620;</i>&nbsp;撤销拆分', disabled: true, id: 'btn_cancelsplit', handler: function () {
+                        text: '<i class="iconfont">&#xe620;</i>&nbsp;撤销拆分', disabled: true, id: 'btn_cancelsplit', handler: function () {
                             panel.hide();
                             Ext.MessageBox.confirm('提示', '确定要撤销拆分吗？', function (btn) {
                                 if (btn == 'yes') {
@@ -276,10 +276,9 @@
                             boxLabel: '订单文件' + (i + 1), name: 'cbg', inputValue: json.filedata[i].ID, listeners: {
                                 change: function (cb, newValue, oldValue, eOpts) {
                                     fileid = cb.inputValue;
-                                    for (var j = 0; j < Ext.getCmp('cbg_file').items.length; j++)
-                                    {
+                                    for (var j = 0; j < Ext.getCmp('cbg_file').items.length; j++) {
                                         Ext.getCmp('cbg_file').getComponent(j).removeCls('cbg-font-color');
-                                    }                                    
+                                    }
                                     cb.addCls('cbg-font-color');
                                     pdfview();
                                 }
