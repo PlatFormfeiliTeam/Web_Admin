@@ -93,7 +93,7 @@ namespace Web_Admin
                     splitfilename = dt.Rows[0]["FILENAME"] + "";
                     fileid = Request["fileid"];
                     filestatus = dt.Rows[0]["SPLITSTATUS"] + "";//0 未拆分  1 已拆分 
-                    if (filestatus == "" || filestatus == "0")//如果未拆分,初始化拆分明细界面内容并写入缓存
+                    if (filestatus == "" || filestatus == "0")  //如果未拆分,初始化拆分明细界面内容并写入缓存
                     {
                         //插入待压缩文件的记录【新的压缩方式】 因为工具端上传的文件是没有压缩日志的
                         sql = "select t.* from pdfshrinklog t where t.attachmentid='" + fileid + "'";
