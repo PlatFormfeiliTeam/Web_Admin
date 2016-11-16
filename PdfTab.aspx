@@ -5,60 +5,10 @@
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
-    <style type="text/css">
-        html, body {
-            height: 100%;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            list-style-type: none;
-            font-size: 12px;
-            font-family: 'Microsoft YaHei' !important;
-        }
-        /* box */
-        .box {
-            background: #fff;
-            border: 1px solid #d3d3d3;
-            height: 100%;
-        }
-
-        .tab_menu {
-            overflow: hidden;
-        }
-
-            .tab_menu li {
-                width: 150px;
-                float: left;
-                height: 30px;
-                line-height: 30px;
-                color: #fff;
-                background: #428BCA;
-                text-align: center;
-                cursor: pointer;
-            }
-
-                .tab_menu li.current {
-                    color: #333;
-                    background: #fff;
-                }
-
-        .tab_box {
-            padding: 5px;
-            height: 100%;
-        }
-
-            .tab_box .hide {
-                display: none;
-            }
-    </style>
-
-    <script src="js/jquery-1.4.2.min.js"></script>
-    <script src="js/jquery.tabs.js"></script>
-    <script src="js/jquery.lazyload.js"></script>
+    <link href="css/bootstrap32/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="js/jquery-1.8.2.min.js"></script>
+    <script src="css/bootstrap32/js/bootstrap.min.js"></script>
     <script src="js/pan.js"></script>
-
     <script type="text/javascript">
         var ordercode = getQueryString("ordercode");
         $(function () {
@@ -69,51 +19,34 @@
                 data: { action: "load", ordercode: ordercode },
                 async: false,
                 success: function (data) {
-                    var infor = "";
                     var obj = eval("(" + data + ")");//将字符串转为json
                     if (obj.success) {
                         var json = eval(obj.rows);
-                        var strul = "", strdiv = "";
+                        var strul = "";
                         $.each(json, function (idx, item) {
-
                             if (idx == 0) {
-                                strul += '<li class="current">';
-                                strdiv += '<div';
-                            }
-                            else {
-                                strul += '<li>';
-                                strdiv += '<div class="hide"';
-                            }
-                            strul += item.FILETYPENAME + '</li>'; 
-                            strdiv += ' style="height:100%">'
-                             + '<embed id="pdf"  width="100%" height="100%" src="/file/' + item.FILENAME + '"></embed>' + '</div>';
+                                var content = '<embed width="100%" height="100%" src="/file/' + item.FILENAME + '" />';
+                                $('#pdfdiv').html(content);
+                                $('embed').height($(document).height() - $(".nav").height() - 60);
+                            } 
+                            strul += '<button class="btn btn-primary" id="' + item.FILENAME + '">' + item.FILETYPENAME + '</button>';
                         });
-
-                        infor = '<ul class="tab_menu">' + strul + '</ul>' + '<div class="tab_box">' + strdiv + '</div>';
-
-                    } else {
-                        infor = "没有文件!";
+                        $('.btn-group').html(strul)
+                        $("button").bind('click', function () {
+                            $('#pdfdiv').html('');
+                            var content = '<embed width="100%" height="100%" src="/file/' + this.id + '" />';
+                            $('#pdfdiv').html(content); 
+                        });
                     }
-                    $('#pdfdiv').html(infor);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    $('#pdfdiv').html(XMLHttpRequest.status + ":" + XMLHttpRequest.responseText);
                 }
-
             });
         });
-    </script>
-
-    <script type="text/javascript">
-        $(function () {
-            $('#pdfdiv').Tabs({
-                event: 'click'
-            });
-        });
-
     </script>
 </head>
-<body>
-    <div id="pdfdiv" class="box"></div>
+<body> 
+    <div class="btn-group">
+    </div>
+    <div id="pdfdiv">
+    </div>
 </body>
 </html>
