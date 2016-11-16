@@ -15,17 +15,14 @@
             border-bottom-color: black;
             border-right-color: black;
         }
-
         .cbg-font-color {
             color: blue;
         }
     </style>
-    <script type="text/javascript">
+    <script type="text/javascript">        
         var ordercode = getQueryString("ordercode");
-        var userid = getQueryString("userid");
-        var username = getQueryString("username");
-        var filetype = 44;
-        var userid = getQueryString("userid");
+        var userid = getQueryString("userid"); 
+        var filetype = 44; 
         var fileid = "";
         var path = "";
         var allow_sel;
@@ -154,8 +151,9 @@
                             Ext.getCmp("btn_confirmsplit").setDisabled(true);
                             var pages = Ext.encode(Ext.pluck(gridpanel.store.data.items, 'data'));
                             Ext.Ajax.request({
-                                url: "PdfView.aspx?action=split&fileid=" + fileid + "&filetype=" + filetype + "&ordercode=" + ordercode,
-                                params: { pages: pages, userid: userid, username: username },
+                                url: "PdfView.aspx",
+                                //?action=split&fileid=" + fileid + "&filetype=" + filetype + "&ordercode=" + ordercode
+                                params: { action: 'split', fileid: fileid, filetype: filetype, ordercode: ordercode, pages: pages, userid: userid },
                                 success: function (response) {
                                     panel.hide();
                                     var json = Ext.decode(response.responseText);

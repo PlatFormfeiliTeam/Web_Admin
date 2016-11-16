@@ -30,8 +30,7 @@ namespace Web_Admin
             string filetype = Request["filetype"];
             string ordercode = Request["ordercode"];
             string fileid = Request["fileid"];
-            string userid = Request["userid"];
-            string username = Request["username"];
+            string userid = Request["userid"]; 
             string json = "";
             string sql = "";
             DataTable dt;
@@ -40,7 +39,7 @@ namespace Web_Admin
             FileInfo fi;
             switch (action)
             {
-                case "merge":
+                case "merge": 
                     string splitfilename = "";
                     string filestatus = "";
                     string fileids = Request["fileids"].Replace("[", "").Replace("]", "");
@@ -268,8 +267,9 @@ namespace Web_Admin
                         }
                         //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
                         sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
-                        DBMgr.ExecuteNonQuery(sql); 
-                        sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + username + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                        DBMgr.ExecuteNonQuery(sql);
+                        DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
+                        sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
                         DBMgr.ExecuteNonQuery(sql);
 
                         sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
