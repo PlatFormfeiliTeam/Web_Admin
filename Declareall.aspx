@@ -21,7 +21,6 @@
                 </asp:BoundField>
                 <asp:BoundField DataField="GOODSGW" HeaderText="毛重" >
                 </asp:BoundField>
-
               <asp:BoundField DataField="SHEETNUM" HeaderText="报关单张数" >
                 </asp:BoundField>
               <asp:BoundField DataField="COMMODITYNUM" HeaderText="商品项数" >
