@@ -15,6 +15,7 @@ namespace Web_Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            this.Label1.Text = "";
             this.GridView1.AllowPaging = true;
             this.GridView1.PageSize = 15;
             this.GridView2.AllowPaging = true;
@@ -37,7 +38,11 @@ namespace Web_Admin
             }
             else
             {
-                this.Label1.Text = "";
+                if(TxtKey.Text.Trim()!="")
+                {
+                    this.Label1.Text = "分KEY:" + TxtKey.Text.ToString()+"______NO DATA!";
+                }
+                
             }
         }
 
@@ -70,9 +75,9 @@ namespace Web_Admin
             IDatabase db = SeRedis.redis.GetDatabase();
             List<Inspection> InspectionList = new List<Inspection>();
 
-            if (db.KeyExists("Inspectionall"))
+            if (db.KeyExists("inspectionall"))
             {
-                RedisValue[] StatusList = db.ListRange("Inspectionall");
+                RedisValue[] StatusList = db.ListRange("inspectionall");
                 //IEnumerable<RedisValue> ie = StatusList.Where<RedisValue>(st =>
                 StatusList.Where<RedisValue>(st =>
                 {

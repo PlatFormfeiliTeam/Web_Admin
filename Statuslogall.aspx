@@ -1,5 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteCommon.Master" AutoEventWireup="true" CodeBehind="Statuslogall.aspx.cs" Inherits="Web_Admin.Statuslogall" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <h4 style="text-align:center">******报关报检业务查询*****</h4>
     <div id="renderto" style="height:500px;">
     <asp:Label ID="LabCusno" runat="server" Text="客户编号："></asp:Label>
         <asp:TextBox ID="TxtCusno" runat="server"></asp:TextBox>
@@ -40,8 +41,8 @@
         <br />
         <br />
         <br />
-        <h2>
-            <asp:Label ID="Label1" runat="server" Text=""></asp:Label></h2>
+        <h5>
+            <asp:Label ID="Label1" runat="server" Text=""></asp:Label></h5>
         <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False"  Width="800px" OnPageIndexChanging="GridView2_PageIndexChanging" BackColor="White" BorderColor="#CC9966" BorderStyle="None" BorderWidth="1px" CellPadding="4">
             <Columns>
                 <asp:BoundField DataField="TYPE" HeaderText="类别" />

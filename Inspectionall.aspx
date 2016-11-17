@@ -1,5 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteCommon.Master" AutoEventWireup="true" CodeBehind="Inspectionall.aspx.cs" Inherits="Web_Admin.Inspectionall" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <h4 style="text-align:center">******报检单查询*****</h4>
         <div id="renderto" style="height:500px;">
     <asp:Label ID="LabCusno" runat="server" Text="客户编号："></asp:Label>
     <asp:TextBox ID="TxtCusno" runat="server"></asp:TextBox>
@@ -9,32 +10,34 @@
     <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" OnPageIndexChanging="GridView1_PageIndexChanging">
 
           <Columns>
-                <asp:BoundField DataField="DECLARATIONCODE" HeaderText="报关单号" >
+                <asp:BoundField DataField="APPROVALCODE" HeaderText="流水单号" >
                 </asp:BoundField>
-                <asp:BoundField DataField="TRADECODE" HeaderText="贸易方式" >
+                <asp:BoundField DataField="INSPECTIONCODE" HeaderText="报检单号" >
                 </asp:BoundField>
-                <asp:BoundField DataField="TRANSNAME" HeaderText="运输工具" >
+                <asp:BoundField DataField="TRADEWAY" HeaderText="监管方式" >
                 </asp:BoundField>
-                <asp:BoundField DataField="GOODSNUM" HeaderText="件数">
-                </asp:BoundField>
-                <asp:BoundField DataField="GOODSGW" HeaderText="毛重" >
+                <asp:BoundField DataField="CLEARANCECODE" HeaderText="通关单号">
                 </asp:BoundField>
 
               <asp:BoundField DataField="SHEETNUM" HeaderText="报关单张数" >
                 </asp:BoundField>
               <asp:BoundField DataField="COMMODITYNUM" HeaderText="商品项数" >
                 </asp:BoundField>
-                  <asp:BoundField DataField="CUSTOMSSTATUS" HeaderText="海关状态" >
+                  <asp:BoundField DataField="INSPSTATUS" HeaderText="国检状态" >
                 </asp:BoundField>
                   <asp:BoundField DataField="MODIFYFLAG" HeaderText="删改单标志" >
                 </asp:BoundField>
-                  <asp:BoundField DataField="PREDECLCODE" HeaderText="预制单编号" >
+                  <asp:BoundField DataField="PREINSPCODE" HeaderText="预制单编号" >
                 </asp:BoundField>
                   <asp:BoundField DataField="CUSNO" HeaderText="企业编号" >
                 </asp:BoundField>
-                 <asp:BoundField DataField="OLDDECLARATIONCODE" HeaderText="旧报关单号" >
+                 <asp:BoundField DataField="OLDINSPECTIONCODE" HeaderText="旧报检单号" >
                 </asp:BoundField>
                <asp:BoundField DataField="ISDEL" HeaderText="是否删除" >
+                </asp:BoundField>
+              <asp:BoundField DataField="ISNEEDCLEARANCE" HeaderText="通关标志" >
+                </asp:BoundField>
+               <asp:BoundField DataField="LAWFLAG" HeaderText="法检标志" >
                 </asp:BoundField>
               <asp:BoundField DataField="DIVIDEREDISKEY" HeaderText="分KEY" >
                 </asp:BoundField>
@@ -51,35 +54,37 @@
             <SortedDescendingHeaderStyle BackColor="#15524A" />
     </asp:GridView>
     <br /><br /><br />
-    <h2><asp:Label ID="Label1" runat="server"></asp:Label></h2>
+    <h5><asp:Label ID="Label1" runat="server"></asp:Label></h5>
     <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False" OnPageIndexChanging="GridView2_PageIndexChanging">
                 <Columns>
-                <asp:BoundField DataField="DECLARATIONCODE" HeaderText="报关单号" >
+                 <asp:BoundField DataField="APPROVALCODE" HeaderText="流水单号" >
                 </asp:BoundField>
-                <asp:BoundField DataField="TRADECODE" HeaderText="贸易方式" >
+                <asp:BoundField DataField="INSPECTIONCODE" HeaderText="报检单号" >
                 </asp:BoundField>
-                <asp:BoundField DataField="TRANSNAME" HeaderText="运输工具" >
+                <asp:BoundField DataField="TRADEWAY" HeaderText="监管方式" >
                 </asp:BoundField>
-                <asp:BoundField DataField="GOODSNUM" HeaderText="件数">
-                </asp:BoundField>
-                <asp:BoundField DataField="GOODSGW" HeaderText="毛重" >
+                <asp:BoundField DataField="CLEARANCECODE" HeaderText="通关单号">
                 </asp:BoundField>
 
               <asp:BoundField DataField="SHEETNUM" HeaderText="报关单张数" >
                 </asp:BoundField>
               <asp:BoundField DataField="COMMODITYNUM" HeaderText="商品项数" >
                 </asp:BoundField>
-                  <asp:BoundField DataField="CUSTOMSSTATUS" HeaderText="海关状态" >
+                  <asp:BoundField DataField="INSPSTATUS" HeaderText="国检状态" >
                 </asp:BoundField>
                   <asp:BoundField DataField="MODIFYFLAG" HeaderText="删改单标志" >
                 </asp:BoundField>
-                  <asp:BoundField DataField="PREDECLCODE" HeaderText="预制单编号" >
+                  <asp:BoundField DataField="PREINSPCODE" HeaderText="预制单编号" >
                 </asp:BoundField>
                   <asp:BoundField DataField="CUSNO" HeaderText="企业编号" >
                 </asp:BoundField>
-                 <asp:BoundField DataField="OLDDECLARATIONCODE" HeaderText="旧报关单号" >
+                 <asp:BoundField DataField="OLDINSPECTIONCODE" HeaderText="旧报检单号" >
                 </asp:BoundField>
                <asp:BoundField DataField="ISDEL" HeaderText="是否删除" >
+                </asp:BoundField>
+              <asp:BoundField DataField="ISNEEDCLEARANCE" HeaderText="通关标志" >
+                </asp:BoundField>
+               <asp:BoundField DataField="LAWFLAG" HeaderText="法检标志" >
                 </asp:BoundField>
             </Columns>
         <FooterStyle BackColor="#FFFFCC" ForeColor="#330099" />

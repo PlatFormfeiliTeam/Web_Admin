@@ -1,5 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteCommon.Master" AutoEventWireup="true" CodeBehind="Declareall.aspx.cs" Inherits="Web_Admin.Declareall" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <h4 style="text-align:center">******报关单查询*****</h4>
     <div id="renderto" style="height:500px;">  
     <asp:Label ID="LabCusno" runat="server" Text="客户编号："></asp:Label>
     <asp:TextBox ID="TxtCusno" runat="server"></asp:TextBox>
@@ -51,7 +53,7 @@
             <SortedDescendingHeaderStyle BackColor="#15524A" />
     </asp:GridView>
     <br /><br /><br />
-    <h2><asp:Label ID="Label1" runat="server"></asp:Label></h2>
+    <h5><asp:Label ID="Label1" runat="server"></asp:Label></h5>
     <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False" OnPageIndexChanging="GridView2_PageIndexChanging">
                 <Columns>
                 <asp:BoundField DataField="DECLARATIONCODE" HeaderText="报关单号" >

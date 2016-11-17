@@ -17,6 +17,7 @@ namespace Web_Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+           this.Label1.Text = "";
            this.GridView1.AllowPaging=true;
            this.GridView1.PageSize = 15;
            this.GridView2.AllowPaging = true;
@@ -46,7 +47,10 @@ namespace Web_Admin
                 }
                 else
                 {
-                    this.Label1.Text = "";
+                    if (TxtKey.Text.Trim() != "")
+                    {
+                        this.Label1.Text = "分KEY:" + TxtKey.Text.ToString() + "______NO DATA!";
+                    }
                 }
           
         }
