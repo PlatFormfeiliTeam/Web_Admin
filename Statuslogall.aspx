@@ -1,64 +1,62 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteCommon.Master" AutoEventWireup="true" CodeBehind="Statuslogall.aspx.cs" Inherits="Web_Admin.Statuslogall" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <h4 style="text-align:center">******报关报检业务查询*****</h4>
-    <div id="renderto" style="height:500px;">
-    <asp:Label ID="LabCusno" runat="server" Text="客户编号："></asp:Label>
-        <asp:TextBox ID="TxtCusno" runat="server"></asp:TextBox>
-        <asp:Label ID="LabKey" runat="server" Text="分KEY："></asp:Label>
-        <asp:TextBox ID="TxtKey" runat="server"></asp:TextBox>
-        <asp:Button ID="BtnQuery" runat="server" Text="查询" OnClick="BtnQuery_Click" />
-    
+    <div id="renderto" style=" height:500px;">
+        <div style="background-color:#5a86b5;font-size:15pt;text-align:center;width:100%; border-radius:15px; color:#ffffff;">报关报检业务查询</div>
 
-    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"  Width="800px"
-          OnPageIndexChanging="GridView1_PageIndexChanging"
-          CellPadding="4" ForeColor="#333333" GridLines="None" >
-            <AlternatingRowStyle BackColor="White" />
-            <Columns>
-                <asp:BoundField DataField="TYPE" HeaderText="类别" >
-                </asp:BoundField>
-                <asp:BoundField DataField="CUSNO" HeaderText="企业编号" >
-                </asp:BoundField>
-                <asp:BoundField DataField="STATUSCODE" HeaderText="code" >
-                </asp:BoundField>
-                <asp:BoundField DataField="STATUSVALUE" HeaderText="value">
-                </asp:BoundField>
-                <asp:BoundField DataField="DIVIDEREDISKEY" HeaderText="分KEY" >
-                </asp:BoundField>
-            </Columns>
+        <div style="margin:5px 0px;">
+            <asp:Label ID="LabCusno" runat="server" Text="客户编号：" ></asp:Label>
+            <asp:TextBox ID="TxtCusno" runat="server" CssClass="input_text"></asp:TextBox>
+            <asp:Label ID="LabKey" runat="server" Text="分KEY："></asp:Label>
+            <asp:TextBox ID="TxtKey" runat="server" CssClass="input_text"></asp:TextBox>
+            <asp:Button ID="BtnQuery" runat="server" Text="查&nbsp;&nbsp;&nbsp;&nbsp;询" OnClick="BtnQuery_Click" CssClass="eisobutton" />
+        </div>
 
-            <EditRowStyle BackColor="#7C6F57" />
-            <FooterStyle BackColor="#1C5E55" Font-Bold="True" ForeColor="White" />
-            <HeaderStyle BackColor="#1C5E55" Font-Bold="True" ForeColor="White" />
-            <PagerStyle BackColor="#666666" ForeColor="White" HorizontalAlign="Center" />
-            <RowStyle BackColor="#E3EAEB" />
-            <SelectedRowStyle BackColor="#C5BBAF" Font-Bold="True" ForeColor="#333333" />
-            <SortedAscendingCellStyle BackColor="#F8FAFA" />
-            <SortedAscendingHeaderStyle BackColor="#246B61" />
-            <SortedDescendingCellStyle BackColor="#D4DFE1" />
-            <SortedDescendingHeaderStyle BackColor="#15524A" />
+        <asp:Label ID="lbl_msg1" runat="server" Text=""></asp:Label>
+        <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"  Width="100%" OnPageIndexChanging="GridView1_PageIndexChanging"
+              CellPadding="3" ForeColor="Black" BackColor="White" BorderColor="#999999" BorderStyle="Solid" BorderWidth="1px" AllowPaging="True" PageSize="15" GridLines="Both">
+                <AlternatingRowStyle BackColor="#CCCCCC" />
+                <Columns>
+                    <asp:BoundField DataField="TYPE" HeaderText="类别" >
+                    </asp:BoundField>
+                    <asp:BoundField DataField="CUSNO" HeaderText="企业编号" >
+                    </asp:BoundField>
+                    <asp:BoundField DataField="STATUSCODE" HeaderText="code" >
+                    </asp:BoundField>
+                    <asp:BoundField DataField="STATUSVALUE" HeaderText="value">
+                    </asp:BoundField>
+                    <asp:BoundField DataField="DIVIDEREDISKEY" HeaderText="分KEY" >
+                    </asp:BoundField>
+                </Columns>
 
-        </asp:GridView>
-        <br />
-        <br />
-        <br />
-        <h5>
-            <asp:Label ID="Label1" runat="server" Text=""></asp:Label></h5>
-        <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False"  Width="800px" OnPageIndexChanging="GridView2_PageIndexChanging" BackColor="White" BorderColor="#CC9966" BorderStyle="None" BorderWidth="1px" CellPadding="4">
+                <FooterStyle BackColor="#CCCCCC" />
+                <HeaderStyle BackColor="Black" Font-Bold="True" ForeColor="White" />
+                <PagerStyle BackColor="#999999" ForeColor="Black" HorizontalAlign="Left" />
+                <SelectedRowStyle BackColor="#000099" Font-Bold="True" ForeColor="White" />
+                <SortedAscendingCellStyle BackColor="#F1F1F1" />
+                <SortedAscendingHeaderStyle BackColor="#808080" />
+                <SortedDescendingCellStyle BackColor="#CAC9C9" />
+                <SortedDescendingHeaderStyle BackColor="#383838" />
+            </asp:GridView>
+
+        <asp:Label ID="lbl_msg2" runat="server" Text=""></asp:Label>
+        <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False"  Width="100%" OnPageIndexChanging="GridView2_PageIndexChanging" 
+            CellPadding="3" ForeColor="Black" BackColor="White" BorderColor="#999999" BorderStyle="Solid" BorderWidth="1px" AllowPaging="True" PageSize="15" GridLines="Both" >
+            <AlternatingRowStyle BackColor="#CCCCCC" />
             <Columns>
                 <asp:BoundField DataField="TYPE" HeaderText="类别" />
                 <asp:BoundField DataField="CUSNO" HeaderText="企业编号" />
                 <asp:BoundField DataField="STATUSCODE" HeaderText="code" />
                 <asp:BoundField DataField="STATUSVALUE" HeaderText="value" />
             </Columns>
-            <FooterStyle BackColor="#FFFFCC" ForeColor="#330099" />
-            <HeaderStyle BackColor="#990000" Font-Bold="True" ForeColor="#FFFFCC" />
-            <PagerStyle BackColor="#FFFFCC" ForeColor="#330099" HorizontalAlign="Center" />
-            <RowStyle BackColor="White" ForeColor="#330099" />
-            <SelectedRowStyle BackColor="#FFCC66" Font-Bold="True" ForeColor="#663399" />
-            <SortedAscendingCellStyle BackColor="#FEFCEB" />
-            <SortedAscendingHeaderStyle BackColor="#AF0101" />
-            <SortedDescendingCellStyle BackColor="#F6F0C0" />
-            <SortedDescendingHeaderStyle BackColor="#7E0000" />
+            
+            <FooterStyle BackColor="#CCCCCC" />
+            <HeaderStyle BackColor="Black" Font-Bold="True" ForeColor="White" />
+            <PagerStyle BackColor="#999999" ForeColor="Black" HorizontalAlign="Left" />
+            <SelectedRowStyle BackColor="#000099" Font-Bold="True" ForeColor="White" />
+            <SortedAscendingCellStyle BackColor="#F1F1F1" />
+            <SortedAscendingHeaderStyle BackColor="#808080" />
+            <SortedDescendingCellStyle BackColor="#CAC9C9" />
+            <SortedDescendingHeaderStyle BackColor="#383838" />
         </asp:GridView>
     </div>
 </asp:Content>

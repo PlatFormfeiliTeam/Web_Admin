@@ -21,3 +21,25 @@ a:hover {
 }
 /*权限管理模块*/
 .fl {float:left;}
+
+.input_text {
+    width: 150px;
+    text-align: left;
+    background-color: #e5f1f4;
+    border-top-style: none;
+    border-right-style: none;
+    border-left-style: none;
+    border-bottom: green 1px solid;
+}
+.eisobutton {
+    border-right: #7b9ebd 1px solid;
+    border-top: #7b9ebd 1px solid;
+    border-left: #7b9ebd 1px solid;
+    border-bottom: #7b9ebd 1px solid;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    cursor: hand;
+    color: #000000;
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#cecfde);
+}

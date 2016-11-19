@@ -17,42 +17,38 @@ namespace Web_Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-           this.Label1.Text = "";
-           this.GridView1.AllowPaging=true;
-           this.GridView1.PageSize = 15;
-           this.GridView2.AllowPaging = true;
-           this.GridView2.PageSize = 15;
-           //this.GridView1.PagerSettings.Mode = PagerButtons.NumericFirstLast;
-           //this.GridView1.PagerSettings.Position = PagerPosition.Bottom;
-           
-
-
+            this.lbl_msg1.Text = "";
+            this.lbl_msg2.Text = "";
         }
 
         protected void BtnQuery_Click(object sender, EventArgs e)
         {
-
-            
-            GridView1.DataSource = pageLoad();
+            List<Statuslog> statuslogList = pageLoad();
+            GridView1.DataSource = statuslogList;
             GridView1.PageIndex = 0;
             GridView1.DataBind();
-            List<Statuslog> fenKeyStatuslogList = pageLoadFenKey();
-            
+            if (statuslogList.Count <= 0)
+            {
+                this.lbl_msg1.Text = "<p><font color='red'>No Data!</font></p>";
+            }
+            else
+            {
+                List<Statuslog> fenKeyStatuslogList = pageLoadFenKey();
                 GridView2.DataSource = fenKeyStatuslogList;
                 GridView2.PageIndex = 0;
                 GridView2.DataBind();
                 if (fenKeyStatuslogList != null)
                 {
-                    this.Label1.Text = "分KEY:" + TxtKey.Text.ToString();
+                    this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4>";
                 }
                 else
                 {
                     if (TxtKey.Text.Trim() != "")
                     {
-                        this.Label1.Text = "分KEY:" + TxtKey.Text.ToString() + "______NO DATA!";
+                        this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4><p><font color='red'>No Data!</font></p>";
                     }
                 }
-          
+            }
         }
 
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
