@@ -17,17 +17,26 @@
             });
         });
     </script>--%>
+    <style>
+
+        html, body {
+         height:99%
+        
+        }
+    </style>
 </head>
 <body>
-   <%--<form id="form1" runat="server">  --%>
-       <div class="easyui-layout">
-            <div region="north" style="height:120px">dede</div>
+   <form id="form1" runat="server" style="height:100%">  
+       <div class="easyui-layout" style="height:100%">
+            <div region="north" style="height:120px">
+                <asp:TextBox ID="TextBox1" runat="server"></asp:TextBox><asp:Button ID="Button1" runat="server" Text="Button" OnClick="Button1_Click" /><asp:Label ID="Label1" runat="server" Text="显示区"></asp:Label></div>
+           
             <div region="west" style="width:100px" title="导航菜单" split="true">左侧</div>
             <div region="center">主工作区</div>
             <div region="east" style="width:500px">dede
             </div>
             <div region="south">底部</div>
         </div>
-   <%--</form>--%>
+   </form>
 </body>
 </html>
