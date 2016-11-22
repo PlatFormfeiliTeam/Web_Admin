@@ -30,20 +30,22 @@
         var userid = getQueryString("userid");
         var filetype = 44;
         var fileid = "";
+
         $(function () {
 
-            iniform();
+            //pdfview();
         
         });
-        function iniform() {
+        function pdfview() {
             $.ajax({
                 type: 'Post',
-                url: "PdfEdit.aspx/SayHello",
-                dataType: "text",
-                data: { action: "loadform", ordercode: ordercode },
+                url: "PdfEdit.aspx/loadpdf",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "{ordercode:'" + ordercode + "',fileid:'" + fileid + "'}",
                 async: false,
                 success: function (data) {
-                    alert(data);
+                    //alert(data);
 
                     //var obj = eval("(" + data + ")");//将字符串转为json
                     //var formdata = obj.formdata;
@@ -69,15 +71,43 @@
                         //html1 += '</div>';
                         //toolbar.add(html1);
                     //}
-                },  
-                error: function (err) {
-                    alert(1);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
+                    alert(XMLHttpRequest.status);
+                    alert(XMLHttpRequest.readyState);
+                    alert(textStatus);
                 }
 
             })
 
         }
         
+        function loadfile(id) {
+            //var array1 = id.split('_');
+            //Ext.Ajax.request({
+            //    url: "PdfEdit.aspx?action=loadfile&fileid=" + array1[1],
+            //    success: function (response) {
+            //        var box = document.getElementById('pdfdiv');
+            //        if (response.responseText) {
+            //            var json = Ext.decode(response.responseText);
+            //            var str = '<embed id="pdf" width="100%" height="100%" src="' + json.src + '"></embed>';
+            //            box.innerHTML = str;
+            //        }
+            //    }
+            //});
+        }
+       
+        $("#cbl_attach").change(function () {
+            alert(1); 
+        });
+        function AddAccount() {
+            $("input[name^='cbl_attach']").each(function () {
+                alert($(this).val());
+                if ($(this).attr("checked")) {
+                    alert($(this).val());
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -87,15 +117,15 @@
                 <table style="width: 100%;height:100%;" cellpadding=" 0" cellspacing="0" >
                     <tr>
                         <td style="width:5%; text-align:right;">订单号：</td>
-                        <td style="width:25%;"><asp:RadioButtonList ID="rbl_Code" runat="server"></asp:RadioButtonList></td>
-                        <td style="width:25%">业务类型：<%--<input id="txt_Busitype" type="text" class="input" />--%><asp:TextBox ID="txt_Busitype" runat="server" CssClass="input"></asp:TextBox></td>
-                        <td style="width:25%">经营单位：<%--<input id="txt_busiunit" type="text" class="input" />--%><asp:TextBox ID="txt_busiunit" runat="server" CssClass="input"></asp:TextBox></td>
-                        <td style="width:25%">拆分状态：<%--<input id="txt_Splitstatus" type="text" class="input" />--%><asp:TextBox ID="txt_Splitstatus" runat="server" CssClass="input"></asp:TextBox></td>
+                        <td style="width:25%;"><asp:RadioButtonList ID="rbl_Code" runat="server" RepeatDirection="Horizontal" AutoPostBack="true"></asp:RadioButtonList></td>
+                        <td style="width:25%">业务类型：<asp:TextBox ID="txt_Busitype" runat="server" CssClass="input" ReadOnly="true"></asp:TextBox></td>
+                        <td style="width:25%">经营单位：<asp:TextBox ID="txt_busiunit" runat="server" CssClass="input" ReadOnly="true"></asp:TextBox></td>
+                        <td style="width:25%">拆分状态：<asp:TextBox ID="txt_Splitstatus" runat="server" CssClass="input" ReadOnly="true"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td style="width:5%; text-align:right;">订单文件：</td>
                         <td colspan="4" style="width:95%">
-                            <asp:CheckBoxList ID="cbl_attach" runat="server"></asp:CheckBoxList>
+                            <asp:CheckBoxList ID="cbl_attach" runat="server" RepeatDirection="Horizontal"></asp:CheckBoxList>
                         </td>
                     </tr>
                 </table>
@@ -104,9 +134,19 @@
                 <embed  id="pdf" width="100%" height="100%"></embed>
             </div>
             <div region="east" style="width:40%">
-                <table id="appConId" class="easyui-datagrid" toolbar="#tb" style="height:600px;width:100%;"></table>
+                 <div id="tb" style="padding:5px;height:auto"> 
+                    <div style="margin-bottom: 5px;">
+                        <a href="#" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="AddAccount()">文件合并</a>
+                        <a href="#" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="EditAccount()">确定拆分</a>
+                        <a href="#" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="DeleteAccount()">撤销拆分</a>
+                    </div>   
+        
+                </div> 
+                <table id="appConId" class="easyui-datagrid" toolbar="#tb"></table> <%--style="height:600px;width:100%;"--%>
             </div>
-        </div>
+        </div>        
+        <asp:TextBox ID="txt_ordercode" runat="server" ReadOnly="true"></asp:TextBox>
+        <asp:TextBox ID="txt_field" runat="server" ReadOnly="true"></asp:TextBox>
     </form>
 </body>
 </html>

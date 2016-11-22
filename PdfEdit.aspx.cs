@@ -14,69 +14,155 @@ namespace Web_Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string action = Request["action"];
-            string filetype = Request["filetype"];
             string ordercode = Request["ordercode"];
-            string fileid = Request["fileid"];
-            string userid = Request["userid"];
-            //string json = "";
-            string sql = "";
-            DataTable dt;
-            //PdfReader pdfReader;
-            //IDatabase db = SeRedis.redis.GetDatabase();
-            //FileInfo fi;
-            //switch (action)
-            //{
-            //    case "loadform":
-                    string result = "", result_file = ""; 
-                    //ListItem item = new ListItem();
+            string sql = ""; string result = "", result_file = "";  rbl_Code.Items.Clear(); cbl_attach.Items.Clear();            
+            DataTable dt; 
 
-                    sql = @"SELECT CODE,BUSITYPE,BUSIUNITNAME,FILESTATUS,ASSOCIATENO,(select name from cusdoc.sys_busitype where code=a.busitype)  as BUSITYPENAME 
+            sql = @"SELECT CODE,BUSITYPE,BUSIUNITNAME,FILESTATUS,ASSOCIATENO,(select name from cusdoc.sys_busitype where code=a.busitype)  as BUSITYPENAME 
                             ,(case FILESTATUS when 1 then '已拆分' else '未拆分' end) as FILESTATUSDESC
                             FROM list_order a WHERE CODE = '" + ordercode + "'";
-                    dt = DBMgr.GetDataTable(sql);
-                    if (dt.Rows.Count == 1)
-                    {
-                        //item.Text = dt.Rows[0]["CODE"].ToString(); item.Value = item.Text; rbl_Code.Items.Add(item);
-                        if (!string.IsNullOrEmpty(dt.Rows[0]["ASSOCIATENO"].ToString()))
-                        {
-                            sql = @"SELECT  CODE,BUSITYPE,BUSIUNITNAME,FILESTATUS,ASSOCIATENO,(select name from cusdoc.sys_busitype where code=a.busitype)  as BUSITYPENAME 
+            dt = DBMgr.GetDataTable(sql);
+            if (dt.Rows.Count == 1)
+            {
+                txt_Busitype.Text = dt.Rows[0]["BUSITYPENAME"].ToString();
+                txt_busiunit.Text = dt.Rows[0]["BUSIUNITNAME"].ToString();
+                txt_Splitstatus.Text = dt.Rows[0]["FILESTATUSDESC"].ToString();
+                rbl_Code.Items.Add(new ListItem(ordercode, ordercode));
+
+                if (!string.IsNullOrEmpty(dt.Rows[0]["ASSOCIATENO"].ToString()))
+                {
+                    sql = @"SELECT  CODE,BUSITYPE,BUSIUNITNAME,FILESTATUS,ASSOCIATENO,(select name from cusdoc.sys_busitype where code=a.busitype)  as BUSITYPENAME 
                             ,(case FILESTATUS when 1 then '已拆分' else '未拆分' end) as FILESTATUSDESC 
                             FROM list_order a WHERE CODE != '" + ordercode + "' and ASSOCIATENO='" + dt.Rows[0]["ASSOCIATENO"] + "'";
-                            DataTable dt_gl = DBMgr.GetDataTable(sql);
-                            if (dt_gl.Rows.Count == 1)
-                            {
-                                dt.Rows[0]["ASSOCIATENO"] = dt_gl.Rows[0]["CODE"];
-                                //item = new ListItem(); item.Text = dt.Rows[0]["ASSOCIATENO"].ToString(); item.Value = item.Text; rbl_Code.Items.Add(item);
-                            }
-
-                        }
-                        result = JsonConvert.SerializeObject(dt).TrimStart('[').TrimEnd(']');
-
-                        sql = "select * from list_attachment where ordercode='" + ordercode + "' and filetype=44 order by uploadtime asc";
-                        DataTable dt_file = DBMgr.GetDataTable(sql);
-                        result_file = JsonConvert.SerializeObject(dt_file);
-
-                        txt_Busitype.Text = dt.Rows[0]["BUSITYPENAME"].ToString();
-                        txt_busiunit.Text = dt.Rows[0]["BUSIUNITNAME"].ToString();
-                        txt_Splitstatus.Text = dt.Rows[0]["FILESTATUSDESC"].ToString();
-                        //rbl_Code.DataBind();
+                    DataTable dt_gl = DBMgr.GetDataTable(sql);
+                    if (dt_gl.Rows.Count == 1)
+                    {
+                        dt.Rows[0]["ASSOCIATENO"] = dt_gl.Rows[0]["CODE"];
+                        rbl_Code.Items.Add(new ListItem(dt.Rows[0]["ASSOCIATENO"].ToString(), dt.Rows[0]["ASSOCIATENO"].ToString()));
                     }
+                }
 
-            //        Response.Write("{\"formdata\":" + result + ",\"filedata\":" + result_file + "}");
-            //        Response.End();
-            //        break;
-            //}
+                sql = "select * from list_attachment where ordercode='" + ordercode + "' and filetype=44 order by uploadtime asc";
+                DataTable dt_file = DBMgr.GetDataTable(sql);
+                for (int i = 0; i < dt_file.Rows.Count; i++)
+                {
+                    ListItem itemchk = new ListItem();
+                    itemchk.Text = "<font color='blue'>订单文件" + (i + 1).ToString() + "</font>"; itemchk.Value = dt_file.Rows[i]["ID"].ToString();
+                    cbl_attach.Items.Add(itemchk);                    
+                }
+                rbl_Code.SelectedValue = ordercode;
+                //if (txt_field.Text != "")
+                //{
+                //    cbl_attach.SelectedValue = txt_field.Text;
+                //}
+                
+            }
+
+
         }
 
-        
-        [WebMethod(EnableSession = true)]
-        public static string SayHello(string action, string ordercode)
+        [WebMethod]
+        public static string loadpdf(string ordercode, string fileid)
         {
-            return "Hello Ajax!";  
-            //return "{\"formdata\":true}";
-            //Response.Write("{\"formdata\":true}");
-            //Response.End();
+            string sql = ""; DataTable dt;
+            sql = "select * from list_attachment where id='" + fileid + "'";
+            dt = DBMgr.GetDataTable(sql);
+//            splitfilename = dt.Rows[0]["FILENAME"] + "";
+//            fileid = Request["fileid"];
+//            filestatus = dt.Rows[0]["SPLITSTATUS"] + "";//0 未拆分  1 已拆分 
+//            if (filestatus == "" || filestatus == "0")  //如果未拆分,初始化拆分明细界面内容并写入缓存
+//            {
+//                //插入待压缩文件的记录【新的压缩方式】 因为工具端上传的文件是没有压缩日志的
+//                sql = "select t.* from pdfshrinklog t where t.attachmentid='" + fileid + "'";
+//                dt = DBMgr.GetDataTable(sql);
+//                if (dt.Rows.Count == 0)
+//                {
+//                    sql = "insert into pdfshrinklog (id,attachmentid) values (pdfshrinklog_id.nextval,'" + fileid + "')";
+//                    DBMgr.ExecuteNonQuery(sql);
+//                }
+//                pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
+//                int totalPages = pdfReader.NumberOfPages;
+//                sql = "select * from sys_filetype where parentfiletypeid=44  order by sortindex asc";//取该文件类型下面所有的子类型
+//                dt = DBMgr.GetDataTable(sql);
+//                //构建页码表格数据
+//                DataTable dt2 = new DataTable();
+//                DataColumn dc = new DataColumn("ID");
+//                dt2.Columns.Add(dc);
+//                for (int k = 0; k < dt.Rows.Count; k++)
+//                {
+//                    dc = new DataColumn("c-" + dt.Rows[k]["FILETYPEID"] + "@" + dt.Rows[k]["FILETYPENAME"]);
+//                    dt2.Columns.Add(dc);
+//                }
+//                for (int i = 1; i <= totalPages; i++)
+//                {
+//                    DataRow dr = dt2.NewRow();
+//                    dr["ID"] = i;
+//                    dt2.Rows.Add(dr);
+//                }
+//                json = JsonConvert.SerializeObject(dt2);
+//                //订单文件拆分明细保存至缓存数据库 并设置过期时间是24小时
+//                db.StringSet(ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
+//            }
+//            else//如果已拆分 直接读取缓存数据库
+//            {
+//                if (db.KeyExists(ordercode + ":" + fileid + ":splitdetail"))
+//                {
+//                    json = db.StringGet(ordercode + ":" + fileid + ":splitdetail");
+//                }
+//                else
+//                {
+//                    pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
+//                    int totalPages = pdfReader.NumberOfPages;
+//                    sql = "select * from sys_filetype where parentfiletypeid=44 order by sortindex asc";//取该文件类型下面所有的子类型
+//                    dt = DBMgr.GetDataTable(sql);
+//                    //构建页码表格数据
+//                    DataTable dt2 = new DataTable();
+//                    DataColumn dc = new DataColumn("ID");
+//                    dt2.Columns.Add(dc);
+//                    for (int k = 0; k < dt.Rows.Count; k++)
+//                    {
+//                        dc = new DataColumn("c-" + dt.Rows[k]["FILETYPEID"] + "@" + dt.Rows[k]["FILETYPENAME"]);
+//                        dt2.Columns.Add(dc);
+//                    }
+//                    for (int i = 1; i <= totalPages; i++)
+//                    {
+//                        DataRow dr = dt2.NewRow();
+//                        dr["ID"] = i;
+//                        foreach (DataRow tmp in dt.Rows)//一个子类型是一列  取每一列的值
+//                        {
+//                            sql = "select pages from list_attachmentdetail where ordercode='" + ordercode + "' and attachmentid=" + fileid + " and filetypeid=" + tmp["FILETYPEID"];
+//                            DataTable sub_dt = DBMgr.GetDataTable(sql);
+//                            if (sub_dt.Rows.Count > 0)
+//                            {
+//                                string[] tmparray = sub_dt.Rows[0]["PAGES"].ToString().Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+//                                if (tmparray.Contains<string>(i + ""))
+//                                {
+//                                    dr["c-" + tmp["FILETYPEID"] + "@" + tmp["FILETYPENAME"]] = "√";
+//                                }
+//                                else
+//                                {
+//                                    dr["c-" + tmp["FILETYPEID"] + "@" + tmp["FILETYPENAME"]] = "";
+//                                }
+//                            }
+//                        }
+//                        dt2.Rows.Add(dr);
+//                    }
+//                    json = JsonConvert.SerializeObject(dt2);
+//                    db.StringSet(ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
+//                }
+//            }
+//            //sql = "select * from sys_filetype where filetypeid=" + filetype;
+//            //dt = DBMgr.GetDataTable(sql);
+//            //string filetypename = dt.Rows[0]["FILETYPENAME"] + "";
+//            //如果是已经拆分好的 需要调出所有拆分好的文件类型 filetype:'" + filetypename + "'
+//            sql = @"select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype
+//                          b on a.filetypeid=b.filetypeid where a.attachmentid='" + fileid + "' order by b.sortindex asc";
+//            dt = DBMgr.GetDataTable(sql);
+//            string json_type = JsonConvert.SerializeObject(dt);
+//            Response.Write(@"{success:true,src:'\/file\/" + splitfilename + "',rows:" + json + ",fileid:" + fileid + ",filestatus:'" + filestatus + "',result:" + json_type + "}");
+//            Response.End();
+//            break;
+            return "";
         }
 
 
