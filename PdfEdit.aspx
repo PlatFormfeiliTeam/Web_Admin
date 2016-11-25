@@ -83,10 +83,9 @@
                     }
 
                     $("#td_cbl").text('');
-                    var filedata = eval(obj.filedata);
-                    for (var i = 0; i < filedata.length; i++) {
+                    for (var i = 0; i < obj.filedata.length; i++) {
                         $('<input />', {
-                            type: "checkbox", name: "cbox", val: filedata[i]["ID"],
+                            type: "checkbox", name: "cbox", val: obj.filedata[i]["ID"],
                             change: function () {
                                 fileid = $(this).val();
                                 pdfview();
@@ -95,7 +94,7 @@
                         $("<span style='margin-right:60px;'>订单文件" + (i + 1) + "</span>").appendTo("#td_cbl");
                     }
 
-                    if (filedata.length == 1) {
+                    if (obj.filedata.length == 1) {
                         $("input[name='cbox']").get(0).click(); /*$("input[name='cbox']").get(0).checked = true;  $("input[name='cbox']").trigger("change");*/
                     }
                 },
@@ -107,7 +106,6 @@
             });
 
         }
-
 
         function pdfview() {
             $.ajax({
@@ -183,17 +181,10 @@
                         onClickCell: function (index, field, value) {
                             if (allow_sel) {
                                 if (field != "ID") {
-                                    var rows = $('#appConId').datagrid("getRows");
-                                    rows[index][field] = value == "√" ? "" : "√";
-
-                                    alert(rows[index][field]);
-
-                                    //$('#appConId').datagrid('beginEdit', index);
-                                    //var ed = $('#dg').datagrid('getEditor', { index: index, field: field });
-                                    ////修改内容
-                                    //ed.target.val('√');
-                                    //$('#appConId').datagrid('endEdit', index);
-                                    //$('#appConId').datagrid('updateRow', { index: index });
+                                    var td = $('.datagrid-body td[field="' + field + '"]')[index];
+                                    var div = $(td).find('div')[0];
+                                    var newtext = $(div).text() == "√" ? "" : "√";
+                                    $(div).text(newtext);
                                 }
                             }
                         },
@@ -203,30 +194,24 @@
                             alert(textStatus);
                         }
                     });
-                    /*
+
                     //清除追加的button按钮
-                        var times = toolbar.items.length
-                        for (var i = 3; i < times; i++) {
-                            var btn = toolbar.getComponent(3);//移除了第4个元素后，后面的元素会自动填充到第4的位置
-                            if (btn) {
-                                toolbar.remove(btn);
-                            }
+                    $('#tb a').each(function (index, element) {
+                        if (index >= 3) {
+                            $(this).remove();
                         }
-                        //拆分完成后添加拆分好文件类型的查看按钮    
-                        for (var i = 0; i < json.result.length; i++) {
-                            var id = json.result[i].ID;
-                            var typeid = json.result[i].FILETYPEID;
-                            var btn = Ext.create('Ext.Button', {
-                                id: json.result[i].FILETYPEID + "_" + json.result[i].ID,
-                                text: '<i class="iconfont">&#xe61d;</i>&nbsp;' + json.result[i].FILETYPENAME,
-                                handler: function () {
-                                    gridpanel.getStore().removeAll();
-                                    loadfile(this.id);
-                                }
-                            })
-                            toolbar.add(btn);
-                        }
-                    */
+                    });
+
+                    //拆分完成后添加拆分好文件类型的查看按钮    
+                    for (var i = 0; i < obj.result.length; i++) {
+                        var id = obj.result[i]["ID"]; var typeid = obj.result[i]["FILETYPEID"]; var typename = obj.result[i]["FILETYPENAME"];
+
+                        $('<a id="' + typeid + "_" + id + '" href="#" onclick="viewfiledetail(this.id)">' + typename + '</a>').appendTo("#tb");
+                        $('#' + typeid + "_" + id).linkbutton({
+                            iconCls: 'icon-search', plain: 'true'
+                        });
+                    }
+
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
                     alert(XMLHttpRequest.status);
@@ -236,13 +221,85 @@
             });
         }
 
-        function AddAccount() {
+        function viewfiledetail(id) {
+            $('#appConId').datagrid('loadData', { total: 0, rows: [] });
+            loadfile(id);
+        }
+
+        function loadfile(id) {
+            var array1 = id.split('_');
+            $.ajax({
+                type: 'Post',
+                url: "PdfEdit.aspx",
+                dataType: "text",
+                data: { fileid: array1[1], action: 'loadfile' },
+                async: false,
+                success: function (data) {
+                    var obj = eval("(" + data + ")");//将字符串转为json
+                    if (obj.success) {
+                        var str = '<embed  id="pdf" width="100%" height="98%" src="/file/' + obj.src + '"></embed>';
+                        $("#pdfdiv").html(str);
+                    }                   
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
+                    alert(XMLHttpRequest.status);
+                    alert(XMLHttpRequest.readyState);
+                    alert(textStatus);
+                }
+            });
+        }
+
+        function mergefile() {//文件合并
             $("input[name='cbox']").each(function () {
                 if (this.checked) {
                     alert($(this).val());
                 }
             });
         }
+
+        function confirmsplit() {//确定拆分
+
+        }
+
+        function cancelsplit() {//撤销拆分       
+           // $("#pdf").remove();
+            $.messager.confirm("提示", "确定要撤销拆分吗？", function (r) {
+                if (r) {
+                    //$("#btn_cancelsplit").linkbutton('disable');
+
+                    //$.ajax({
+                    //    type: 'Post',
+                    //    url: "PdfEdit.aspx",
+                    //    dataType: "text",
+                    //    data: { ordercode: ordercode, fileid: fileid, userid: userid, action: 'cancelsplit' },
+                    //    async: false,
+                    //    success: function (data) {
+                           
+                    //            $.messager.alert('提示', '撤销拆分成功！', 'info', function () {
+                    //                $("#txt_Splitstatus").val("未拆分");
+                    //            });
+
+                    //            $("#btn_cancelsplit").linkbutton('enable');
+                    //            allow_sel = true;
+                    //            //清除追加的button按钮
+                    //            $('#tb a').each(function (index, element) {
+                    //                if (index >= 3) {
+                    //                    $(this).remove();
+                    //                }
+                    //            });
+                           
+                    //    },
+                    //    error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
+                    //        alert(XMLHttpRequest.status);
+                    //        alert(XMLHttpRequest.readyState);
+                    //        alert(textStatus);
+                    //    }
+                    //});
+                }
+            });
+               
+        }
+
     </script>
 
 </head>
@@ -269,11 +326,9 @@
             <div id="pdfdiv" region="center"></div>
             <div region="east" style="width:40%">
                  <div id="tb" style="padding:5px;height:auto"> 
-                    <div style="margin-bottom: 5px;">
-                        <a id="btn_merge" href="#" class="easyui-linkbutton" iconcls="icon-add" plain="true" disabled="true" onclick="AddAccount()">文件合并</a>
-                        <a id="btn_confirmsplit" href="#" class="easyui-linkbutton" iconcls="icon-edit" plain="true" disabled="true" onclick="EditAccount()">确定拆分</a>
-                        <a id="btn_cancelsplit" href="#" class="easyui-linkbutton" iconcls="icon-remove" plain="true" disabled="true" onclick="DeleteAccount()">撤销拆分</a>
-                    </div>          
+                    <a id="btn_merge" href="#" class="easyui-linkbutton" iconcls="icon-add" plain="true" disabled="true" onclick="mergefile()">文件合并</a>
+                    <a id="btn_confirmsplit" href="#" class="easyui-linkbutton" iconcls="icon-cut" plain="true" disabled="true" onclick="confirmsplit()">确定拆分</a>
+                    <a id="btn_cancelsplit" href="#" class="easyui-linkbutton" iconcls="icon-undo" plain="true" disabled="true" onclick="cancelsplit()">撤销拆分</a>
                 </div> 
                 <table id="appConId" class="easyui-datagrid" toolbar="#tb" style="height:100%;width:100%;"></table>
             </div>

@@ -96,16 +96,16 @@ namespace Web_Admin
                         }
                         json = JsonConvert.SerializeObject(dt2);
                         //订单文件拆分明细保存至缓存数据库 并设置过期时间是24小时
-                        db.StringSet("new:" + ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
+                        //db.StringSet("new:" + ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
                     }
                     else//如果已拆分 直接读取缓存数据库
                     {
-                        if (db.KeyExists("new:" + ordercode + ":" + fileid + ":splitdetail"))
-                        {
-                            json = db.StringGet("new:" + ordercode + ":" + fileid + ":splitdetail");
-                        }
-                        else
-                        {
+                        //if (db.KeyExists("new:" + ordercode + ":" + fileid + ":splitdetail"))
+                        //{
+                        //    json = db.StringGet("new:" + ordercode + ":" + fileid + ":splitdetail");
+                        //}
+                        //else
+                        //{
                             pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
                             int totalPages = pdfReader.NumberOfPages;
                             sql = "select * from sys_filetype where parentfiletypeid=44 order by sortindex asc";//取该文件类型下面所有的子类型
@@ -143,8 +143,8 @@ namespace Web_Admin
                                 dt2.Rows.Add(dr);
                             }
                             json = JsonConvert.SerializeObject(dt2);
-                            db.StringSet("new:" + ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
-                        }
+                            //db.StringSet("new:" + ordercode + ":" + fileid + ":splitdetail", json, TimeSpan.FromMinutes(1440));
+                        //}
                     }
                     //如果是已经拆分好的 需要调出所有拆分好的文件类型 filetype:'" + filetypename + "'
                     sql = @"select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype
@@ -152,6 +152,37 @@ namespace Web_Admin
                     dt = DBMgr.GetDataTable(sql);
                     string json_type = JsonConvert.SerializeObject(dt);
                     Response.Write("{\"success\":true,\"src\":\"" + splitfilename + "\",\"rows\":" + json + ",\"fileid\":" + fileid + ",\"filestatus\":'" + filestatus + "',\"result\":" + json_type + "}");
+                    Response.End();
+                    break;
+                case "loadfile":
+                    sql = "select * from list_attachmentdetail where id='" + fileid + "'";
+                    dt = DBMgr.GetDataTable(sql);
+                    if (dt.Rows.Count > 0)
+                    {
+                        Response.Write("{\"success\":true,\"src\":\"" + dt.Rows[0]["SOURCEFILENAME"] + "\"}");
+                        Response.End();
+                    }
+                    break;
+                case "cancelsplit":
+                    //删除文件明细
+                    sql = "select * from list_attachmentdetail where ordercode='" + ordercode + "' and attachmentid=" + fileid;
+                    dt = DBMgr.GetDataTable(sql);
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        if (File.Exists(@"d:/ftpserver/" + dt.Rows[i]["SOURCEFILENAME"]))
+                        {
+                            File.Delete(@"d:/ftpserver/" + dt.Rows[i]["SOURCEFILENAME"]);
+                        }
+                        sql = "delete from list_attachmentdetail where id=" + dt.Rows[i]["ID"];
+                        DBMgr.ExecuteNonQuery(sql);
+                    }
+                    sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id=" + fileid;
+                    DBMgr.ExecuteNonQuery(sql);
+                    //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
+                    sql = "update LIST_ORDER set FILESTATUS=0,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
+                    DBMgr.ExecuteNonQuery(sql);
+                    //db.KeyDelete("new:" + ordercode + ":" + fileid + ":splitdetail");
+                    Response.Write("{\"success\":true}");
                     Response.End();
                     break;
             }
