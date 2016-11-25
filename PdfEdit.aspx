@@ -24,36 +24,65 @@
             border-left-style: none;
             border-bottom: green 1px solid;
         }
+         
+        .datagrid-header td,
+        .datagrid-body td,
+        .datagrid-footer td {
+          border-width: 0 1px 1px 0;
+          border-style: solid;
+          margin: 0;
+          padding: 0;
+        }
     </style>
-    <script type="text/javascript">        
-        var ordercode = getQueryString("ordercode");
-        var userid = getQueryString("userid");
-        var filetype = 44;
-        var fileid = "";
 
-        $(function () {
 
-            //pdfview();
-        
-        });
-        function pdfview() {
-            $.ajax({
-                type: 'Post',
-                url: "PdfEdit.aspx/loadpdf",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: "{ordercode:'" + ordercode + "',fileid:'" + fileid + "'}",
-                async: false,
-                success: function (data) {
-                    //alert(data);
+</head>
+<body>
+    <form id="form1" runat="server">  
+        <div class="easyui-layout" style="height:100%;">
+            <div region="north" style="height:120px;">
+                <table style="width: 100%;height:100%;" cellpadding=" 0" cellspacing="0" >
+                    <tr>
+                        <td style="width:5%; text-align:right;">订单号：</td>
+                        <td style="width:25%;" id="td_radio">
+                        </td>
+                        <td style="width:25%">业务类型：<input id="txt_Busitype" type="text" class="input" readonly /></td>
+                        <td style="width:25%">经营单位：<input id="txt_busiunit" type="text" class="input" readonly /></td>
+                        <td style="width:25%">拆分状态：<input id="txt_Splitstatus" type="text" class="input"  readonly /></td>
+                    </tr>
+                    <tr>
+                        <td style="width:5%; text-align:right;">订单文件：</td>
+                        <td colspan="4" style="width:95%" id="td_cbl">
+                        </td>
+                    </tr>
+                </table>
+            </div>           
+            <div id="pdfdiv" region="center"></div>
+            <div region="east" style="width:40%">
+                 <div id="tb" style="padding:5px;height:auto"> 
+                    <div style="margin-bottom: 5px;">
+                        <a id="btn_merge" href="#" class="easyui-linkbutton" iconcls="icon-add" plain="true" disabled="true" onclick="AddAccount()">文件合并</a>
+                        <a id="btn_confirmsplit" href="#" class="easyui-linkbutton" iconcls="icon-edit" plain="true" disabled="true" onclick="EditAccount()">确定拆分</a>
+                        <a id="btn_cancelsplit" href="#" class="easyui-linkbutton" iconcls="icon-remove" plain="true" disabled="true" onclick="DeleteAccount()">撤销拆分</a>
+                    </div>          
+                </div> 
+                <table id="appConId" class="easyui-datagrid" toolbar="#tb" style="height:100%;width:100%;"></table>
+            </div>
+        </div>        
+    </form>
+</body>
+</html>
 
-                    //var obj = eval("(" + data + ")");//将字符串转为json
-                    //var formdata = obj.formdata;
-                    //$("#txt_Busitype").val(formdata["BUSITYPENAME"]);
-                    //$("#txt_busiunit").val(formdata["BUSIUNITNAME"]);
-                    //$("#txt_Splitstatus").val(formdata["FILESTATUSDESC"]);
 
-                    //if (obj.success) {
+
+                    <%--
+                        
+
+
+                        //var str = '<input type="radio" name="rdo" checked="checked" value="' + formdata["CODE"] + '" />' + formdata["CODE"];
+                        //$("#td_radio").html(str);
+                        
+                        //if (obj.success) {
                     //    var json = eval(obj.rows);
                         //var strul = "", strdiv = "";
                         //$.each(json, function (idx, item) {
@@ -70,86 +99,7 @@
                         //}
                         //html1 += '</div>';
                         //toolbar.add(html1);
-                    //}
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
-                    alert(XMLHttpRequest.status);
-                    alert(XMLHttpRequest.readyState);
-                    alert(textStatus);
-                }
-
-            })
-
-        }
-        
-        function loadfile(id) {
-            //var array1 = id.split('_');
-            //Ext.Ajax.request({
-            //    url: "PdfEdit.aspx?action=loadfile&fileid=" + array1[1],
-            //    success: function (response) {
-            //        var box = document.getElementById('pdfdiv');
-            //        if (response.responseText) {
-            //            var json = Ext.decode(response.responseText);
-            //            var str = '<embed id="pdf" width="100%" height="100%" src="' + json.src + '"></embed>';
-            //            box.innerHTML = str;
-            //        }
-            //    }
-            //});
-        }
-       
-        $("#cbl_attach").change(function () {
-            alert(1); 
-        });
-        function AddAccount() {
-            $("input[name^='cbl_attach']").each(function () {
-                alert($(this).val());
-                if ($(this).attr("checked")) {
-                    alert($(this).val());
-                }
-            });
-        }
-    </script>
-</head>
-<body>
-    <form id="form1" runat="server">  
-        <div class="easyui-layout" style="height:100%;">
-            <div region="north" style="height:120px;">
-                <table style="width: 100%;height:100%;" cellpadding=" 0" cellspacing="0" >
-                    <tr>
-                        <td style="width:5%; text-align:right;">订单号：</td>
-                        <td style="width:25%;"><asp:RadioButtonList ID="rbl_Code" runat="server" RepeatDirection="Horizontal" AutoPostBack="true"></asp:RadioButtonList></td>
-                        <td style="width:25%">业务类型：<asp:TextBox ID="txt_Busitype" runat="server" CssClass="input" ReadOnly="true"></asp:TextBox></td>
-                        <td style="width:25%">经营单位：<asp:TextBox ID="txt_busiunit" runat="server" CssClass="input" ReadOnly="true"></asp:TextBox></td>
-                        <td style="width:25%">拆分状态：<asp:TextBox ID="txt_Splitstatus" runat="server" CssClass="input" ReadOnly="true"></asp:TextBox></td>
-                    </tr>
-                    <tr>
-                        <td style="width:5%; text-align:right;">订单文件：</td>
-                        <td colspan="4" style="width:95%">
-                            <asp:CheckBoxList ID="cbl_attach" runat="server" RepeatDirection="Horizontal"></asp:CheckBoxList>
-                        </td>
-                    </tr>
-                </table>
-            </div>           
-            <div id="pdfdiv" region="center">
-                <embed  id="pdf" width="100%" height="100%"></embed>
-            </div>
-            <div region="east" style="width:40%">
-                 <div id="tb" style="padding:5px;height:auto"> 
-                    <div style="margin-bottom: 5px;">
-                        <a href="#" class="easyui-linkbutton" iconcls="icon-add" plain="true" onclick="AddAccount()">文件合并</a>
-                        <a href="#" class="easyui-linkbutton" iconcls="icon-edit" plain="true" onclick="EditAccount()">确定拆分</a>
-                        <a href="#" class="easyui-linkbutton" iconcls="icon-remove" plain="true" onclick="DeleteAccount()">撤销拆分</a>
-                    </div>   
-        
-                </div> 
-                <table id="appConId" class="easyui-datagrid" toolbar="#tb"></table> <%--style="height:600px;width:100%;"--%>
-            </div>
-        </div>        
-        <asp:TextBox ID="txt_ordercode" runat="server" ReadOnly="true"></asp:TextBox>
-        <asp:TextBox ID="txt_field" runat="server" ReadOnly="true"></asp:TextBox>
-    </form>
-</body>
-</html>
+                    //}--%>
 
     <%--        /*$('#appConId').datagrid({
                 url: "PdfEdit.aspx",
