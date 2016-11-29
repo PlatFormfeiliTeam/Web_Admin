@@ -112,7 +112,7 @@
                 type: 'Post',
                 url: "PdfEdit.aspx",
                 dataType: "text",
-                data: { ordercode: ordercode, fileid: fileid, action: 'loadpdf' },
+                data: { ordercode: ordercode, fileid: fileid, action: 'loadpdf', timestamp: new Date().getTime() },
                 async: false,
                 success: function (data) {
                     var obj = eval("(" + data + ")");//将字符串转为json
@@ -163,7 +163,7 @@
                             default:
                                 var start = key.indexOf("|");
                                 var header = key.slice(start + 1);
-                                columnarray.push({ title: header, field: key, width: 65, align: 'center' });
+                                columnarray.push({ title: header, field: key, width: 65, align: 'center', editor: 'text' });
                                 break;
                         }
                     }
@@ -178,13 +178,14 @@
                             var PDF = document.getElementById("pdf");
                             PDF.setCurrentPage(row["ID"]);
                         },
-                        onClickCell: function (index, field, value) {
+                        onClickCell: function (index, fieldname, value) {
                             if (allow_sel) {
-                                if (field != "ID") {
-                                    var td = $('.datagrid-body td[field="' + field + '"]')[index];
-                                    var div = $(td).find('div')[0];
-                                    var newtext = $(div).text() == "√" ? "" : "√";
-                                    $(div).text(newtext);
+                                if (fieldname != "ID" && fieldname != "_operate") {
+                                    //var td = $('.datagrid-body td[field="' + fieldname + '"]')[index];
+                                    //var div = $(td).find('div')[0];
+                                    //var newtext = $(div).text() == "√" ? "" : "√";
+                                    //$(div).text(newtext);
+                                    onClickCell(index, fieldname);
                                 }
                             }
                         },
@@ -194,6 +195,7 @@
                             alert(textStatus);
                         }
                     });
+
 
                     //清除追加的button按钮
                     $('#tb a').each(function (index, element) {
@@ -221,6 +223,49 @@
             });
         }
 
+        $.extend($.fn.datagrid.methods, {
+            editCell: function (jq, param) {
+                return jq.each(function () {
+                    var opts = $(this).datagrid('options');
+                    var fields = $(this).datagrid('getColumnFields', true).concat($(this).datagrid('getColumnFields'));
+                    for (var i = 0; i < fields.length; i++) {
+                        var col = $(this).datagrid('getColumnOption', fields[i]);
+                        col.editor1 = col.editor;
+                        if (fields[i] != param.field) {
+                            col.editor = null;
+                        }
+                    }
+                    $(this).datagrid('beginEdit', param.index);
+                    for (var i = 0; i < fields.length; i++) {
+                        var col = $(this).datagrid('getColumnOption', fields[i]);
+                        col.editor = col.editor1;
+                    }
+                });
+            }
+        });
+       	
+       		var editIndex = undefined;
+       		function endEditing() {
+       		    if (editIndex == undefined) { return true }
+       		    if ($('#appConId').datagrid('validateRow', editIndex)) {
+       		        $('#appConId').datagrid('endEdit', editIndex);
+       		        editIndex = undefined;
+       		        return true;
+       		    } else {
+       		        return false;
+       		    }
+       		}
+
+       		function onClickCell(index, field) {
+       		    if (endEditing()) {
+       		        $('#appConId').datagrid('selectRow', index)
+                                    .datagrid('editCell', { index: index, field: field });
+       		        editIndex = index;
+       		    }
+       		}
+
+
+
         function viewfiledetail(id) {
             $('#appConId').datagrid('loadData', { total: 0, rows: [] });
             loadfile(id);
@@ -232,7 +277,7 @@
                 type: 'Post',
                 url: "PdfEdit.aspx",
                 dataType: "text",
-                data: { fileid: array1[1], action: 'loadfile' },
+                data: { fileid: array1[1], action: 'loadfile', timestamp: new Date().getTime() },
                 async: false,
                 success: function (data) {
                     var obj = eval("(" + data + ")");//将字符串转为json
@@ -258,46 +303,108 @@
         }
 
         function confirmsplit() {//确定拆分
+            var allowsplit = false;
 
+            var s = JSON.stringify($("#appConId").datagrid("getData"));
+            alert(s);
+
+            var gvdata = $("#appConId").datagrid("getData").rows; var td; var div;
+            for (var i = 0; i < gvdata.length; i++) {
+                for (var key in gvdata[i]) {
+                    td = $('.datagrid-body td[field="' + key + '"]')[i];
+                    div = $(td).find('div')[0];
+                    if ($(div).text() == "√") {
+                        allowsplit = true;
+                    }
+                }
+            }
+            if (!allowsplit) {
+                $("#pdf").hide();
+                $.messager.alert('提示', '请先勾选具体的拆分明细！', 'info', function () {
+                    $("#pdf").show();
+                });
+                return;
+            }
+
+            $("#btn_confirmsplit").linkbutton('disable');
+
+            //var pages = Ext.encode(Ext.pluck(gridpanel.store.data.items, 'data'));
+            //Ext.Ajax.request({
+            //    url: "PdfView.aspx",
+            //    //?action=split&fileid=" + fileid + "&filetype=" + filetype + "&ordercode=" + ordercode
+            //    params: { action: 'split', fileid: fileid, filetype: filetype, ordercode: ordercode, pages: pages, userid: userid },
+            //    success: function (response) {
+            //        panel.hide();
+            //        var json = Ext.decode(response.responseText);
+            //        if (json.success) {
+            //            Ext.MessageBox.alert('提示', '拆分成功！', function () {
+            //                panel.show();
+            //                field_filestatus.setValue('已拆分');
+            //            })
+            //            Ext.getCmp('btn_cancelsplit').setDisabled(false);
+            //            allow_sel = false;
+            //            for (var i = 0; i < json.result.length; i++) {
+            //                //拆分完成后添加拆分好文件类型的查看按钮  
+            //                var btn = Ext.create('Ext.Button', {
+            //                    id: json.result[i].FILETYPEID + "_" + json.result[i].ID,
+            //                    text: '<i class="fa fa-file-pdf-o"></i>&nbsp;' + json.result[i].FILETYPENAME,
+            //                    handler: function () {
+            //                        gridpanel.getStore().removeAll();
+            //                        loadfile(this.id);
+            //                    }
+            //                })
+            //                toolbar.add(btn);
+            //            }
+            //        }
+            //        else {
+            //            Ext.MessageBox.alert('提示', '拆分失败，文件压缩中，请稍后再试！', function () {
+            //                panel.show();
+            //            })
+            //        }
+            //    }
+            //});
         }
 
-        function cancelsplit() {//撤销拆分       
-           // $("#pdf").remove();
+        function cancelsplit() {//撤销拆分     
+            $("#pdf").hide();
             $.messager.confirm("提示", "确定要撤销拆分吗？", function (r) {
                 if (r) {
-                    //$("#btn_cancelsplit").linkbutton('disable');
+                    $("#btn_cancelsplit").linkbutton('disable');
+                    $.ajax({
+                        type: 'Post',
+                        url: "PdfEdit.aspx",
+                        dataType: "text",
+                        data: { ordercode: ordercode, fileid: fileid, userid: userid, action: 'cancelsplit', timestamp: new Date().getTime() },
+                        async: false,
+                        success: function (data) {
+                             $("#pdf").hide(); 
+                            $.messager.alert('提示', '撤销拆分成功！', 'info', function () {
+                                $("#txt_Splitstatus").val("未拆分");
+                                $("#pdf").show();
+                            });
 
-                    //$.ajax({
-                    //    type: 'Post',
-                    //    url: "PdfEdit.aspx",
-                    //    dataType: "text",
-                    //    data: { ordercode: ordercode, fileid: fileid, userid: userid, action: 'cancelsplit' },
-                    //    async: false,
-                    //    success: function (data) {
-                           
-                    //            $.messager.alert('提示', '撤销拆分成功！', 'info', function () {
-                    //                $("#txt_Splitstatus").val("未拆分");
-                    //            });
+                            $("#btn_cancelsplit").linkbutton('enable');
+                            allow_sel = true;
+                            //清除追加的button按钮
+                            $('#tb a').each(function (index, element) {
+                                if (index >= 3) {
+                                    $(this).remove();
+                                }
+                            });
 
-                    //            $("#btn_cancelsplit").linkbutton('enable');
-                    //            allow_sel = true;
-                    //            //清除追加的button按钮
-                    //            $('#tb a').each(function (index, element) {
-                    //                if (index >= 3) {
-                    //                    $(this).remove();
-                    //                }
-                    //            });
-                           
-                    //    },
-                    //    error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
-                    //        alert(XMLHttpRequest.status);
-                    //        alert(XMLHttpRequest.readyState);
-                    //        alert(textStatus);
-                    //    }
-                    //});
-                }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
+                            alert(XMLHttpRequest.status);
+                            alert(XMLHttpRequest.readyState);
+                            alert(textStatus);
+                        }
+                    });
+                } else {
+                    $("#pdf").show();
+                }               
+
             });
-               
+
         }
 
     </script>
