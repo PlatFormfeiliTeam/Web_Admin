@@ -181,11 +181,20 @@
                         onClickCell: function (index, fieldname, value) {
                             if (allow_sel) {
                                 if (fieldname != "ID" && fieldname != "_operate") {
-                                    //var td = $('.datagrid-body td[field="' + fieldname + '"]')[index];
-                                    //var div = $(td).find('div')[0];
-                                    //var newtext = $(div).text() == "√" ? "" : "√";
-                                    //$(div).text(newtext);
-                                    onClickCell(index, fieldname);
+
+                                    /***改变HTML的值
+                                    var td = $('.datagrid-body td[field="' + fieldname + '"]')[index];
+                                    var div = $(td).find('div')[0];
+                                    var newtext = $(div).text() == "√" ? "" : "√";
+                                    $(div).text(newtext);
+                                    */
+                                    
+                                    //改变val值，以便数据传后台
+                                    $(this).datagrid('beginEdit', index);
+                                    var ed = $(this).datagrid('getEditor', { index: index, field: fieldname });
+                                    $(ed.target).val($(ed.target).val() == "√" ? "" : "√");
+                                    $(this).datagrid('endEdit', index);
+
                                 }
                             }
                         },
@@ -222,49 +231,6 @@
                 }
             });
         }
-
-        $.extend($.fn.datagrid.methods, {
-            editCell: function (jq, param) {
-                return jq.each(function () {
-                    var opts = $(this).datagrid('options');
-                    var fields = $(this).datagrid('getColumnFields', true).concat($(this).datagrid('getColumnFields'));
-                    for (var i = 0; i < fields.length; i++) {
-                        var col = $(this).datagrid('getColumnOption', fields[i]);
-                        col.editor1 = col.editor;
-                        if (fields[i] != param.field) {
-                            col.editor = null;
-                        }
-                    }
-                    $(this).datagrid('beginEdit', param.index);
-                    for (var i = 0; i < fields.length; i++) {
-                        var col = $(this).datagrid('getColumnOption', fields[i]);
-                        col.editor = col.editor1;
-                    }
-                });
-            }
-        });
-       	
-       		var editIndex = undefined;
-       		function endEditing() {
-       		    if (editIndex == undefined) { return true }
-       		    if ($('#appConId').datagrid('validateRow', editIndex)) {
-       		        $('#appConId').datagrid('endEdit', editIndex);
-       		        editIndex = undefined;
-       		        return true;
-       		    } else {
-       		        return false;
-       		    }
-       		}
-
-       		function onClickCell(index, field) {
-       		    if (endEditing()) {
-       		        $('#appConId').datagrid('selectRow', index)
-                                    .datagrid('editCell', { index: index, field: field });
-       		        editIndex = index;
-       		    }
-       		}
-
-
 
         function viewfiledetail(id) {
             $('#appConId').datagrid('loadData', { total: 0, rows: [] });
