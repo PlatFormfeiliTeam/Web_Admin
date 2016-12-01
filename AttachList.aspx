@@ -58,21 +58,16 @@
                 bbar: pgbar,
                 tbar: toolbar,
                 columns: [
-                    { xtype: 'rownumberer', width: 35 },                    
-                    { header: '订单编号', dataIndex: 'ORDERCODE', width: 100, locked: true },
+                    { xtype: 'rownumberer', width: 35 },     
                     { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
-                    { header: '文件名', dataIndex: 'FILENAME', width: 350, locked: true },
+                    { header: '文件路径', dataIndex: 'FILENAME', width: 300, locked: true },
                     { header: '原文件名', dataIndex: 'ORIGINALNAME', width: 210, locked: true },
+                    { header: '订单编号', dataIndex: 'ORDERCODE', width: 100, locked: true },
                     { header: '是否拆分', dataIndex: 'SPLITSTATUS', width: 60, renderer: render, locked: true },
-                    { header: '文件类型', dataIndex: 'FILETYPE', width: 60},                    
-                    { header: '文件类型名称', dataIndex: 'FILETYPENAME', width: 80 },
-                    { header: '上传时间', dataIndex: 'UPLOADTIME', width: 120 },                 
-                    { header: 'CUSTOMERCODE', dataIndex: 'CUSTOMERCODE', width: 120 },
+                    { header: '文件类型', dataIndex: 'FILETYPE', width: 60}, 
+                    { header: '上传时间', dataIndex: 'UPLOADTIME', width: 120 },  
                     { header: '文件大小', dataIndex: 'SIZES', width: 80 },
-                    { header: '文件后缀名', dataIndex: 'FILESUFFIX', width: 130 },                    
-                    { header: '进出口类型', dataIndex: 'IETYPE', width: 130 },
-                    { header: '当前页', dataIndex: 'PGINDEX', width: 130 },
-                    { header: '关联订单数', dataIndex: 'ORDERCOUNT', width: 80 },
+                    { header: '文件扩展名', dataIndex: 'FILESUFFIX', width: 130 },  
                     { header: '上传人', dataIndex: 'UPLOADUSERID', width: 60},
                     { header: '上传人姓名', dataIndex: 'UPLOADUSERNAME', width: 130 }
                 ],
@@ -87,7 +82,6 @@
             })
 
         });
-
         function render(value, cellmeta, record, rowIndex, columnIndex, store) {
             var rtn = "";
             var dataindex = cellmeta.column.dataIndex;           

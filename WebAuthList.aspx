@@ -1,9 +1,9 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="WebAuthList.aspx.cs" Inherits="Web_Admin.WebAuthList" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
-
     <script type="text/javascript">
         var gridUser, store_user, treeModel, treeModelstore, gridStation, store_Station;
         var userid = '';
@@ -23,20 +23,20 @@
             })
 
             gridUser = Ext.create('Ext.grid.Panel', {
-                width: 400,
+                width: 500,
                 renderTo: "div_west",
                 store: store_user,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', hidden: true },
-                    { header: '姓名', dataIndex: 'REALNAME', width: 165 },
+                    { header: '姓名', dataIndex: 'REALNAME', width: 180 },
                     { header: '所属客户', dataIndex: 'CUSTOMERNAME', flex: 1 }
                 ],
                 listeners: {
                     itemclick: function (value, record, item, index, e, eOpts) {
                         treeModelstore.setProxy({
                             type: 'ajax',
-                            url: 'WebAuthList.aspx?action=selectModel',
+                            url: 'WebAuthList.aspx?action=loadauthority',
                             reader: 'json'
                         });
                         userid = record.get("ID");
@@ -56,7 +56,7 @@
                 nodeParam: 'id',
                 proxy: {
                     type: 'ajax',
-                    url: 'WebAuthList.aspx?action=selectModel',
+                    url: 'WebAuthList.aspx?action=loadauthority',
                     reader: 'json'
                 },
                 root: {
@@ -80,7 +80,7 @@
                 renderTo: "div_east",
                 store: treeModelstore,
                 height: 500,
-                width: 600,
+                // width: 600,
                 columns: [
                 { text: 'id', dataIndex: 'id', width: 500, hidden: true },
                 { text: 'leaf', dataIndex: 'leaf', width: 100, hidden: true },
@@ -88,14 +88,16 @@
                 { text: 'ParentID', dataIndex: 'ParentID', width: 100, hidden: true }
                 ],
                 listeners: {
-                    itemclick: function (view, rec, node) {
+                    'checkchange': function (node, checked) {
+                        setChildChecked(node, checked);
+                        setParentChecked(node, checked);
                     }
                 }
             });
-            var tbar = Ext.create('Ext.toolbar.Toolbar', {
-                renderTo: 'toolbar',
-                items: ['->', '<button onclick="SaveAuthorization()" type="button"><span class="icon iconfont" onclick="SaveAuthorization()">&#xe60c;</span>&nbsp;保 存</button>']
-            })
+            //var tbar = Ext.create('Ext.toolbar.Toolbar', {
+            //    renderTo: 'toolbar',
+            //    items: ['->', '<button onclick="SaveAuthorization()" type="button"><span class="icon iconfont" onclick="SaveAuthorization()">&#xe60c;</span>&nbsp;保 存</button>']
+            //})
 
             //======================联动选择==========================
             /*向上遍历父结点*/
@@ -128,14 +130,6 @@
                     });
                 }
             };
-            /*treeModel*/
-
-            treeModel.on('checkchange', function (node, checked) {
-                setChildChecked(node, checked);
-                setParentChecked(node, checked);
-            }, treeModel);
-            //================================================
-
         });
 
         //选择子节点
@@ -201,11 +195,13 @@
         }
 
     </script>
-    <div id="toolbar"></div>
+    <div class="btn-group" role="group">
+        <button type="button" onclick="SaveAuthorization()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe60c;</i>&nbsp;保存</button>
+    </div>
     <div>
-        <div id="div_west" class="fl">
+        <div id="div_west" style="float: left; width: 35%">
         </div>
-        <div id="div_east" class="fl">
+        <div id="div_east" style="float: left; width: 65%">
         </div>
     </div>
 </asp:Content>

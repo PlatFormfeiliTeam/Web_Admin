@@ -31,7 +31,7 @@ namespace Web_Admin
                         where += " and ORDERCODE like '%" + Request["ORDERCODE"] + "%'";
                     }
 
-                    sql = @"SELECT * FROM List_Attachment where ISUPLOAD='1' and ORDERCODE is not null " + where;
+                    sql = @"SELECT * FROM List_Attachment where 1=1 " + where;
 
                     sql = Extension.GetPageSql(sql, "UPLOADTIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
                     dt = DBMgr.GetDataTable(sql);

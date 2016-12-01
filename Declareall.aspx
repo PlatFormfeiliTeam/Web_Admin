@@ -13,7 +13,7 @@
         </div>
 
         <asp:Label ID="lbl_msg1" runat="server" Text=""></asp:Label>
-        <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" OnPageIndexChanging="GridView1_PageIndexChanging"
+        <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" OnPageIndexChanging="GridView1_PageIndexChanging"  Width="100%"
              CellPadding="3" ForeColor="Black" GridLines="Both" BackColor="White" BorderColor="#999999" BorderStyle="Solid" BorderWidth="1px" AllowPaging="True" PageSize="15">
              <AlternatingRowStyle BackColor="#CCCCCC" />
               <Columns>
@@ -57,7 +57,7 @@
         </asp:GridView>
     
         <asp:Label ID="lbl_msg2" runat="server" Text=""></asp:Label>
-        <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False" OnPageIndexChanging="GridView2_PageIndexChanging"
+        <asp:GridView ID="GridView2" runat="server" AutoGenerateColumns="False" OnPageIndexChanging="GridView2_PageIndexChanging"  Width="100%"
             CellPadding="3" ForeColor="Black" GridLines="Both" BackColor="White" BorderColor="#999999" BorderStyle="Solid" BorderWidth="1px" AllowPaging="True" PageSize="15">
                 <AlternatingRowStyle BackColor="#CCCCCC" />
                 <Columns>

@@ -11,6 +11,15 @@
     <script src="css/bootstrap32/js/bootstrap.min.js"></script>
     <link href="css/common.css" rel="stylesheet" />
     <link href="/css/iconfont/iconfont.css" rel="stylesheet" />
+    <link href="/css/superfish.css" rel="stylesheet" />
+    <script src="/js/hoverIntent.js"></script>
+    <script src="/js/superfish.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#na_menu').superfish({
+            });
+        });
+    </script>
     <%--<asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>--%>
 </head>
@@ -20,36 +29,29 @@
             <div style="margin: 5px 0px">
                 <img src="Images/banner.jpg" />
             </div>
-            <div style="width: 100%; text-align: right; font-size:12px;">
-           
+            <div style="background-color: #363c64; width: 100%">
+                <div class="container">
+                    <ul class="sf-menu" id="na_menu" style="font-size: 14px">
+                        <li><a href="ModuleList.aspx">模块管理</a></li>                    
+                        <li><a href="UserList.aspx">账户管理</a></li>
+                        <li><a href="WebAuthList.aspx">权限管理</a></li>
+                        <li><a href="AttachList.aspx">文件列表</a></li>
+                        <li><a href="Statuslogall.aspx">报关报检业务</a></li>
+                        <li><a href="Declareall.aspx">报关单</a></li>
+                        <li><a href="Inspectionall.aspx">报检单</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="width: 100%; text-align: right; font-size:12px;">           
                 <i class="icon iconfont">&#xe605;</i>
                 <span>当前用户：内部网站管理员</span>&nbsp;&nbsp;
-                <asp:LinkButton ID="lb_SignOut" runat="server" OnClick="lb_SignOut_Click"><i class="icon iconfont">&#xe609;</i><span>退出</span></asp:LinkButton>
-               
+                <asp:LinkButton ID="lb_SignOut" runat="server" OnClick="lb_SignOut_Click"><i class="icon iconfont">&#xe609;</i><span>退出</span></asp:LinkButton>               
             </div>
-            <table style="width:100%">
-                <tr>
-                    <td style="vertical-align:top">
-                        <div style="padding-right: 5px; width: 200px; font-size: 14px">
-                            <a href="ModuleList.aspx" class="list-group-item">模块管理</a>
-                            <a href="UserList.aspx" class="list-group-item">账户管理</a>
-                            <a href="WebAuthList.aspx" class="list-group-item">权限管理</a>
-                            <a href="AttachList.aspx" class="list-group-item">文件列表</a>
-                            <%--<a href="Declaration.aspx" class="list-group-item">报关单</a>
-                            <a href="DeclStatus.aspx" class="list-group-item">报关状态</a>
-                            <a href="DeclarationStatus.aspx" class="list-group-item">报关明细缓存</a>--%>
-                            <a href="Statuslogall.aspx" class="list-group-item">报关报检业务</a>
-                            <a href="Declareall.aspx" class="list-group-item">报关单</a>
-                            <a href="Inspectionall.aspx" class="list-group-item">报检单</a>
-                        </div>
-                    </td>
-                    <td style="width:1000px">
-                       <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
-        
-                        </asp:ContentPlaceHolder>
-                    </td>
-                </tr>
-            </table>
+            
+            <div>
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>                     
         </div>
     </form>
 </body>

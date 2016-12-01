@@ -16,7 +16,7 @@ namespace Web_Admin
         protected void Page_Load(object sender, EventArgs e)
         {
             string action = Request["action"];
-            string moduleid = Request["MODULEID"]; 
+            string moduleid = Request["MODULEID"];
             string sql = "";
             DataTable dt;
             switch (action)
@@ -24,24 +24,33 @@ namespace Web_Admin
                 case "select":
                     if (string.IsNullOrEmpty(moduleid))
                     {
-                        sql = @"select * from sysmodule where applicationid = 'f35cb450-cb38-4741-b8d7-9f726094b7ef' and ParentId is null order by SortIndex";
+                        sql = @"select * from sysmodule where ParentId is null order by SortIndex";
                     }
                     else
                     {
-                        sql = @"select * from sysmodule where applicationid = 'f35cb450-cb38-4741-b8d7-9f726094b7ef' and ParentId ='" + moduleid + "' order by SortIndex";
+                        sql = @"select * from sysmodule where ParentId ='" + moduleid + "' order by SortIndex";
                     }
                     dt = DBMgr.GetDataTable(sql);
                     string result = "[";
                     int i = 0;
                     foreach (DataRow smEnt in dt.Rows)
                     {
-                        if (i != dt.Rows.Count - 1)
+                        string children = string.Empty;
+                        if (smEnt["ISLEAF"] + "" == "1")
                         {
-                            result += "{MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "'},";
+                            result += "{children:[],";
                         }
                         else
                         {
-                            result += "{MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "'}";
+                            result += "{";
+                        }
+                        if (i != dt.Rows.Count - 1)
+                        {
+                            result += "MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "'},";
+                        }
+                        else
+                        {
+                            result += "MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "'}";
                         }
                         i++;
                     }
@@ -57,7 +66,7 @@ namespace Web_Admin
                     break;
                 case "create":
                     string json = Request["json"];
-                    JObject joc = (JObject)JsonConvert.DeserializeObject(json); 
+                    JObject joc = (JObject)JsonConvert.DeserializeObject(json);
                     string newid = Guid.NewGuid().ToString();
                     sql = @"insert into sysmodule (MODULEID,NAME,ISLEAF,URL,applicationid,PARENTID,SORTINDEX) 
                           values ('" + Guid.NewGuid().ToString() + "','" + joc.Value<string>("NAME") + "','1','" + joc.Value<string>("URL") + "','f35cb450-cb38-4741-b8d7-9f726094b7ef','" + joc.Value<string>("PARENTID") + "','" + joc.Value<string>("SORTINDEX") + "')";

@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Home.aspx.cs" Inherits="Web_Admin.Home" %>
  <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div class="carousel slide" id="carousel-595514" data-ride="carousel" style="padding-bottom:15px;width: 1000px; ">
+    <div class="carousel slide" id="carousel-595514" data-ride="carousel" style="padding-bottom:15px;">
         <ol class="carousel-indicators">
             <li class="active" data-slide-to="0" data-target="#carousel-595514"></li>
             <li data-slide-to="1" data-target="#carousel-595514"></li>
