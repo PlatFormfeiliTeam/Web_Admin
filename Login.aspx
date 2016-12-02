@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
     <link href="css/bootstrap32/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/jquery-1.8.2.min.js"></script>
     <script src="css/bootstrap32/js/bootstrap.min.js"></script>
     <link href="css/common.css" rel="stylesheet" />
     <link href="css/iconfont/iconfont.css" rel="stylesheet" />
