@@ -188,15 +188,15 @@ namespace Web_Admin
                 case "split":
                     string data = Request["pages"];
                     JArray jsonarray = JsonConvert.DeserializeObject<JArray>(data);
-                    db.StringSet(ordercode + ":" + fileid + ":splitdetail", data, TimeSpan.FromMinutes(1440));
+                    db.StringSet(ordercode + ":" + fileid + ":splitdetail", data);
                     sql = "select * from list_attachment where ID='" + fileid + "'";
                     dt = DBMgr.GetDataTable(sql);
                     //2016-6-16压缩改用pdfshrink在后台执行                   
                     string compressname = "";
                     //如果pdfshrink压缩文件存在               
-                    if (File.Exists(@"d:\ftpserver\" + (dt.Rows[0]["FILENAME"] + "").Replace(".pdf", "") + "-web.pdf"))
+                    if (File.Exists(@"d:\ftpserver\" + (dt.Rows[0]["FILENAME"] + "").Replace(".pdf", "").Replace(".PDF","") + "-web.pdf"))
                     {
-                        compressname = @"d:\ftpserver\" + (dt.Rows[0]["FILENAME"] + "").Replace(".pdf", "") + "-web.pdf";
+                        compressname = @"d:\ftpserver\" + (dt.Rows[0]["FILENAME"] + "").Replace(".pdf", "").Replace(".PDF", "") + "-web.pdf";
                     }
                     else
                     {
@@ -268,8 +268,9 @@ namespace Web_Admin
                         //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
                         sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
                         DBMgr.ExecuteNonQuery(sql);
-                        DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
-                        sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                       //  DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
+                       // sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                        sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate where code='" + ordercode + "'";
                         DBMgr.ExecuteNonQuery(sql);
 
                         sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
@@ -299,7 +300,7 @@ namespace Web_Admin
                     sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id=" + fileid;
                     DBMgr.ExecuteNonQuery(sql);
                     //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
-                    sql = "update LIST_ORDER set FILESTATUS=0,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
+                    sql = "update LIST_ORDER set FILESTATUS=0 where code='" + ordercode + "'";
                     DBMgr.ExecuteNonQuery(sql);
                     db.KeyDelete(ordercode + ":" + fileid + ":splitdetail");
                     Response.Write("{success:true}");

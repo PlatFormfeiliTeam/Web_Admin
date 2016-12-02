@@ -15,14 +15,15 @@
             border-bottom-color: black;
             border-right-color: black;
         }
+
         .cbg-font-color {
             color: blue;
         }
     </style>
-    <script type="text/javascript">        
+    <script type="text/javascript">
         var ordercode = getQueryString("ordercode");
-        var userid = getQueryString("userid"); 
-        var filetype = 44; 
+        var userid = getQueryString("userid");
+        var filetype = 44;
         var fileid = "";
         var path = "";
         var allow_sel;
@@ -186,7 +187,7 @@
                             });
                         }
                     }, {
-                        text: '<i class="iconfont">&#xe620;</i>&nbsp;撤销拆分', disabled: true, id: 'btn_cancelsplit', handler: function () {
+                        text: '<i class="iconfont">&#xe620;</i>&nbsp;撤销拆分', id: 'btn_cancelsplit', handler: function () {
                             panel.hide();
                             Ext.MessageBox.confirm('提示', '确定要撤销拆分吗？', function (btn) {
                                 if (btn == 'yes') {
@@ -303,13 +304,13 @@
                         var ordertatus = Ext.getCmp('field_filestatus').getValue();
                         if (ordertatus == '已拆分') {//订单的拆分状态
                             Ext.getCmp('btn_merge').setDisabled(true);
-                            Ext.getCmp("btn_confirmsplit").setDisabled(true);
+                            //  Ext.getCmp("btn_confirmsplit").setDisabled(true);
                             allow_sel = false;
                             if (json.filestatus == 0) {//文件的拆分状态
-                                Ext.getCmp('btn_cancelsplit').setDisabled(true);
+                                // Ext.getCmp('btn_cancelsplit').setDisabled(true);
                             }
                             else {
-                                Ext.getCmp('btn_cancelsplit').setDisabled(false);
+                                //  Ext.getCmp('btn_cancelsplit').setDisabled(false);
                             }
                         }
                         else {
@@ -319,9 +320,9 @@
                             else {
                                 Ext.getCmp('btn_merge').setDisabled(true);
                             }
-                            Ext.getCmp("btn_confirmsplit").setDisabled(false);
+                            //  Ext.getCmp("btn_confirmsplit").setDisabled(false);
                             allow_sel = true;
-                            Ext.getCmp('btn_cancelsplit').setDisabled(true);
+                            //  Ext.getCmp('btn_cancelsplit').setDisabled(true);
                         }
                         //按钮控制结束 
                         fileid = json.fileid;
