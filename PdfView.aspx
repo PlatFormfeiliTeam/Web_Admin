@@ -304,7 +304,7 @@
                         var ordertatus = Ext.getCmp('field_filestatus').getValue();
                         if (ordertatus == '已拆分') {//订单的拆分状态
                             Ext.getCmp('btn_merge').setDisabled(true);
-                            //  Ext.getCmp("btn_confirmsplit").setDisabled(true);
+                            Ext.getCmp("btn_confirmsplit").setDisabled(true);
                             allow_sel = false;
                             if (json.filestatus == 0) {//文件的拆分状态
                                 // Ext.getCmp('btn_cancelsplit').setDisabled(true);
@@ -320,7 +320,7 @@
                             else {
                                 Ext.getCmp('btn_merge').setDisabled(true);
                             }
-                            //  Ext.getCmp("btn_confirmsplit").setDisabled(false);
+                            Ext.getCmp("btn_confirmsplit").setDisabled(false);
                             allow_sel = true;
                             //  Ext.getCmp('btn_cancelsplit').setDisabled(true);
                         }
