@@ -68,6 +68,18 @@ namespace Web_Admin
 
 
             }
+
+            if (fenKeyStatuslogList != null)
+            {
+                this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4>";
+            }
+            else
+            {
+                if (TxtKey.Text.Trim() != "")
+                {
+                    this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4><p><font color='red'>No Data!</font></p>";
+                }
+            }
         }
 
 
@@ -81,7 +93,34 @@ namespace Web_Admin
 
             if (db.KeyExists("inspectionall"))
             {
-                RedisValue[] StatusList = db.ListRange("inspectionall");
+                long len = db.ListLength("inspectionall");
+                long tempi = 200; long i = 0;
+
+                for (; i < len; i = i + tempi)
+                {
+
+                    if ((i + tempi) >= len) { tempi = (len - i); }
+
+                    RedisValue[] StatusList = db.ListRange("inspectionall", i, i + (tempi - 1));
+                    StatusList.Where<RedisValue>(st =>
+                    {
+
+                        Inspection Inspection_temp = JsonConvert.DeserializeObject<Inspection>(st.ToString());
+
+                        if (Inspection_temp.CUSNO.Contains(cusno) && Inspection_temp.DIVIDEREDISKEY.Contains(key))
+                        {
+                            InspectionList.Add(Inspection_temp);
+                            return true;
+                        }
+
+
+                        return false;
+                    }).ToList<RedisValue>();
+
+                    tempi = 200;
+                }
+
+                /*RedisValue[] StatusList = db.ListRange("inspectionall");
                 //IEnumerable<RedisValue> ie = StatusList.Where<RedisValue>(st =>
                 StatusList.Where<RedisValue>(st =>
                 {
@@ -102,7 +141,7 @@ namespace Web_Admin
                 //string jons = string.Join(",", statusArray);
                 //JavaScriptSerializer Serializer = new JavaScriptSerializer();            
                 //List<Inspection> objs = Serializer.Deserialize<List<Inspection>>("["+jons+"]");
-
+                */
                 return InspectionList;
 
             }
@@ -117,7 +156,26 @@ namespace Web_Admin
 
             if (key != string.Empty && db.KeyExists(key))
             {
-                RedisValue[] StatusList = db.ListRange(key);
+                long len = db.ListLength("inspectionall");
+                long tempi = 200; long i = 0;
+
+                for (; i < len; i = i + tempi)
+                {
+
+                    if ((i + tempi) >= len) { tempi = (len - i); }
+
+                    RedisValue[] StatusList = db.ListRange(key, i, i + (tempi - 1));
+                    StatusList.Where<RedisValue>(st =>
+                    {
+                        Inspection Inspection_temp = JsonConvert.DeserializeObject<Inspection>(st.ToString());
+                        InspectionList.Add(Inspection_temp);
+                        return true;
+                    }).ToList<RedisValue>();
+
+                    tempi = 200;
+                }
+
+                /*RedisValue[] StatusList = db.ListRange(key);
                 StatusList.Where<RedisValue>(st =>
                 {
 
@@ -126,7 +184,7 @@ namespace Web_Admin
 
                     InspectionList.Add(Inspection_temp);
                     return true;
-                }).ToList<RedisValue>();
+                }).ToList<RedisValue>();*/
                 return InspectionList;
 
             }

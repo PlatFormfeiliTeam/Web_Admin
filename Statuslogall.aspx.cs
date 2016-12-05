@@ -69,6 +69,17 @@ namespace Web_Admin
                 
 
             }
+            if (fenKeyStatuslogList != null)
+            {
+                this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4>";
+            }
+            else
+            {
+                if (TxtKey.Text.Trim() != "")
+                {
+                    this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4><p><font color='red'>No Data!</font></p>";
+                }
+            }
         }
 
         public List<Statuslog> pageLoad()
@@ -81,7 +92,34 @@ namespace Web_Admin
 
             if (db.KeyExists("statuslogall"))
             {
-                RedisValue[] StatusList = db.ListRange("statuslogall");
+                long len = db.ListLength("statuslogall");
+                long tempi = 200; long i = 0;
+
+                for (; i < len; i = i + tempi)
+                {
+
+                    if ((i + tempi) >= len) { tempi = (len - i); }
+
+                    RedisValue[] StatusList = db.ListRange("statuslogall", i, i + (tempi - 1));
+                    StatusList.Where<RedisValue>(st =>
+                    {
+
+                        Statuslog statuslog_temp = JsonConvert.DeserializeObject<Statuslog>(st.ToString());
+
+                        if (statuslog_temp.CUSNO.Contains(cusno) && statuslog_temp.DIVIDEREDISKEY.Contains(key))
+                        {
+                            statuslogList.Add(statuslog_temp);
+                            return true;
+                        }
+
+
+                        return false;
+                    }).ToList<RedisValue>();
+
+                    tempi = 200;
+                }
+
+                /*RedisValue[] StatusList = db.ListRange("statuslogall");
                 //IEnumerable<RedisValue> ie = StatusList.Where<RedisValue>(st =>
                 StatusList.Where<RedisValue>(st =>
                 {
@@ -102,7 +140,7 @@ namespace Web_Admin
                 //string jons = string.Join(",", statusArray);
                 //JavaScriptSerializer Serializer = new JavaScriptSerializer();            
                 //List<Statuslog> objs = Serializer.Deserialize<List<Statuslog>>("["+jons+"]");
-
+                */
                 return statuslogList;
 
             }
@@ -117,7 +155,26 @@ namespace Web_Admin
 
             if (key!=string.Empty&&db.KeyExists(key))
             {
-                RedisValue[] StatusList = db.ListRange(key);
+                long len = db.ListLength("statuslogall");
+                long tempi = 200; long i = 0;
+
+                for (; i < len; i = i + tempi)
+                {
+
+                    if ((i + tempi) >= len) { tempi = (len - i); }
+
+                    RedisValue[] StatusList = db.ListRange(key, i, i + (tempi - 1));
+                    StatusList.Where<RedisValue>(st =>
+                    {
+                        Statuslog statuslog_temp = JsonConvert.DeserializeObject<Statuslog>(st.ToString());
+                        statuslogList.Add(statuslog_temp);
+                        return true;
+                    }).ToList<RedisValue>();
+
+                    tempi = 200;
+                }
+
+                /*RedisValue[] StatusList = db.ListRange(key);
                 StatusList.Where<RedisValue>(st =>
                 {
 
@@ -126,7 +183,7 @@ namespace Web_Admin
             
                         statuslogList.Add(statuslog_temp);
                         return true;
-                }).ToList<RedisValue>();
+                }).ToList<RedisValue>();*/
                 return statuslogList;
 
             }

@@ -60,14 +60,25 @@ namespace Web_Admin
 
         protected void GridView2_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
+            
             List<Declare> fenKeyStatuslogList = pageLoadFenKey();
             if (fenKeyStatuslogList != null)
             {
                 GridView2.DataSource = fenKeyStatuslogList;
                 GridView2.PageIndex = e.NewPageIndex;
                 GridView2.DataBind();
+            }
 
-
+            if (fenKeyStatuslogList != null)
+            {
+                this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4>";
+            }
+            else
+            {
+                if (TxtKey.Text.Trim() != "")
+                {
+                    this.lbl_msg2.Text = "<h4 style=\" color:blue;\">分KEY:" + TxtKey.Text.ToString() + "</h4><p><font color='red'>No Data!</font></p>";
+                }
             }
         }
 
@@ -82,6 +93,35 @@ namespace Web_Admin
 
             if (db.KeyExists("declareall"))
             {
+               
+                long len = db.ListLength("declareall");
+                long tempi = 200; long i = 0;
+
+                for (; i < len; i = i + tempi)
+                {
+
+                    if ((i + tempi) >= len) { tempi = (len - i); }
+
+                    RedisValue[] StatusList = db.ListRange("declareall", i, i + (tempi - 1));
+                    StatusList.Where<RedisValue>(st =>
+                    {
+
+                        Declare Declare_temp = JsonConvert.DeserializeObject<Declare>(st.ToString());
+
+                        if (Declare_temp.CUSNO.Contains(cusno) && Declare_temp.DIVIDEREDISKEY.Contains(key))
+                        {
+                            DeclareList.Add(Declare_temp);
+                            return true;
+                        }
+
+
+                        return false;
+                    }).ToList<RedisValue>();
+
+                    tempi = 200;
+                }
+
+                /*
                 RedisValue[] StatusList = db.ListRange("declareall");
                 //IEnumerable<RedisValue> ie = StatusList.Where<RedisValue>(st =>
                 StatusList.Where<RedisValue>(st =>
@@ -103,7 +143,7 @@ namespace Web_Admin
                 //string jons = string.Join(",", statusArray);
                 //JavaScriptSerializer Serializer = new JavaScriptSerializer();            
                 //List<Declare> objs = Serializer.Deserialize<List<Declare>>("["+jons+"]");
-
+                */
                 return DeclareList;
 
             }
@@ -118,6 +158,25 @@ namespace Web_Admin
 
             if (key != string.Empty && db.KeyExists(key))
             {
+                long len = db.ListLength("declareall");
+                long tempi = 200; long i = 0;
+
+                for (; i < len; i = i + tempi)
+                {
+
+                    if ((i + tempi) >= len) { tempi = (len - i); }
+
+                    RedisValue[] StatusList = db.ListRange(key, i, i + (tempi - 1));
+                    StatusList.Where<RedisValue>(st =>
+                    {
+                        Declare Declare_temp = JsonConvert.DeserializeObject<Declare>(st.ToString());
+                        DeclareList.Add(Declare_temp);
+                        return true;
+                    }).ToList<RedisValue>();
+
+                    tempi = 200;
+                }
+                /*
                 RedisValue[] StatusList = db.ListRange(key);
                 StatusList.Where<RedisValue>(st =>
                 {
@@ -127,7 +186,8 @@ namespace Web_Admin
 
                     DeclareList.Add(Declare_temp);
                     return true;
-                }).ToList<RedisValue>();
+                }).ToList<RedisValue>();*/
+
                 return DeclareList;
 
             }
