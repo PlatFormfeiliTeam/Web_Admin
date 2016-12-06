@@ -30,7 +30,8 @@ namespace Web_Admin
             string filetype = Request["filetype"];
             string ordercode = Request["ordercode"];
             string fileid = Request["fileid"];
-            string userid = Request["userid"]; 
+            string userid = Request["userid"];
+            string username = Request["username"]; 
             string json = "";
             string sql = "";
             DataTable dt;
@@ -213,70 +214,86 @@ namespace Web_Admin
                     }
                     if (File.Exists(compressname))//如果压缩文件存在
                     {
-                        pdfReader = new PdfReader(compressname);
-                        sql = "select * from sys_filetype where parentfiletypeid=" + filetype;//取该文件类型下面所有的子类型
-                        dt = DBMgr.GetDataTable(sql);
-                        IList<Int32> pagelist;
-                        for (int i = 0; i < dt.Rows.Count; i++)
-                        {
-                            int rotation = 0;
-                            pagelist = new List<Int32>();
-                            foreach (JObject jo in jsonarray)
-                            {
-                                if (jo.Value<string>("c-" + dt.Rows[i]["FILETYPEID"] + "@" + dt.Rows[i]["FILETYPENAME"]) == "√")
-                                {
-                                    pagelist.Add(jo.Value<Int32>("ID"));//统计出该子类型下面所有的页码
-                                }
-                            }
-                            if (pagelist.Count > 0)
-                            {
-                                string new_name = DateTimeToUnixTimestamp(DateTime.Now) + "";
-                                if (!Directory.Exists(@"d:/ftpserver/" + dt.Rows[i]["FILETYPEID"] + @"/" + ordercode))
-                                {
-                                    Directory.CreateDirectory(@"d:/ftpserver/" + dt.Rows[i]["FILETYPEID"] + @"/" + ordercode);
-                                }
-                                string newfilename = @"d:/ftpserver/" + dt.Rows[i]["FILETYPEID"] + @"/" + ordercode + @"/" + ordercode + "_" + new_name + ".pdf";
-                                FileStream fs = new FileStream(newfilename, FileMode.Create);
-                                Document newDocument = new Document();
-                                PdfWriter pdfWriter = PdfWriter.GetInstance(newDocument, fs);
-                                pdfWriter.CloseStream = true;
-                                newDocument.Open();
-                                PdfContentByte pdfContentByte = pdfWriter.DirectContent;
-                                foreach (Int32 page in pagelist)
-                                {
-                                    newDocument.SetPageSize(pdfReader.GetPageSizeWithRotation(page));
-                                    newDocument.NewPage();
-                                    PdfImportedPage importedPage = pdfWriter.GetImportedPage(pdfReader, page);
-                                    rotation = pdfReader.GetPageRotation(page);
-                                    pdfContentByte.AddTemplate(importedPage, 0, 0);
-                                    if (rotation == 90 || rotation == 270)
-                                    {
-                                        pdfContentByte.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pdfReader.GetPageSizeWithRotation(page).Height);
-                                    }
-                                    else
-                                    {
-                                        pdfContentByte.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
-                                    }
-                                }
-                                fs.Flush();
-                                newDocument.Close();
-                                sql = "insert into LIST_ATTACHMENTDETAIL (id,sourcefilename,filename,attachmentid,filetypeid,splitetime,ordercode,pages) values (list_attachmentdetail_id.nextval,'{0}','{1}','{2}','{3}',sysdate,'{4}','{5}')";
-                                sql = String.Format(sql, dt.Rows[i]["FILETYPEID"] + @"/" + ordercode + @"/" + ordercode + "_" + new_name + ".pdf", ordercode + "_" + new_name + ".pdf", fileid, dt.Rows[i]["FILETYPEID"], ordercode, string.Join(",", pagelist.ToArray()));
-                                DBMgr.ExecuteNonQuery(sql);
-                            }
-                        }
-                        //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
-                        sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
-                        DBMgr.ExecuteNonQuery(sql);
-                       //  DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
-                       // sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
-                        sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate where code='" + ordercode + "'";
-                        DBMgr.ExecuteNonQuery(sql);
 
-                        sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
-                        dt = DBMgr.GetDataTable(sql);
-                        json = JsonConvert.SerializeObject(dt);
-                        Response.Write("{success:true,result:" + json + "}");
+                        try
+                        {
+                            pdfReader = new PdfReader(compressname);
+                            sql = "select * from sys_filetype where parentfiletypeid=" + filetype;//取该文件类型下面所有的子类型
+                            dt = DBMgr.GetDataTable(sql);
+                            IList<Int32> pagelist;
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                int rotation = 0;
+                                pagelist = new List<Int32>();
+                                foreach (JObject jo in jsonarray)
+                                {
+                                    if (jo.Value<string>("c-" + dt.Rows[i]["FILETYPEID"] + "@" + dt.Rows[i]["FILETYPENAME"]) == "√")
+                                    {
+                                        pagelist.Add(jo.Value<Int32>("ID"));//统计出该子类型下面所有的页码
+                                    }
+                                }
+                                if (pagelist.Count > 0)
+                                {
+                                    string new_name = DateTimeToUnixTimestamp(DateTime.Now) + "";
+                                    if (!Directory.Exists(@"d:/ftpserver/" + dt.Rows[i]["FILETYPEID"] + @"/" + ordercode))
+                                    {
+                                        Directory.CreateDirectory(@"d:/ftpserver/" + dt.Rows[i]["FILETYPEID"] + @"/" + ordercode);
+                                    }
+                                    string newfilename = @"d:/ftpserver/" + dt.Rows[i]["FILETYPEID"] + @"/" + ordercode + @"/" + ordercode + "_" + new_name + ".pdf";
+                                    FileStream fs = new FileStream(newfilename, FileMode.Create);
+                                    Document newDocument = new Document();
+                                    PdfWriter pdfWriter = PdfWriter.GetInstance(newDocument, fs);
+                                    pdfWriter.CloseStream = true;
+                                    newDocument.Open();
+                                    PdfContentByte pdfContentByte = pdfWriter.DirectContent;
+                                    foreach (Int32 page in pagelist)
+                                    {
+                                        newDocument.SetPageSize(pdfReader.GetPageSizeWithRotation(page));
+                                        newDocument.NewPage();
+                                        PdfImportedPage importedPage = pdfWriter.GetImportedPage(pdfReader, page);
+                                        rotation = pdfReader.GetPageRotation(page);
+                                        pdfContentByte.AddTemplate(importedPage, 0, 0);
+                                        if (rotation == 90 || rotation == 270)
+                                        {
+                                            pdfContentByte.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pdfReader.GetPageSizeWithRotation(page).Height);
+                                        }
+                                        else
+                                        {
+                                            pdfContentByte.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
+                                        }
+                                    }
+                                    fs.Flush();
+                                    newDocument.Close();
+                                    sql = "insert into LIST_ATTACHMENTDETAIL (id,sourcefilename,filename,attachmentid,filetypeid,splitetime,ordercode,pages) values (list_attachmentdetail_id.nextval,'{0}','{1}','{2}','{3}',sysdate,'{4}','{5}')";
+                                    sql = String.Format(sql, dt.Rows[i]["FILETYPEID"] + @"/" + ordercode + @"/" + ordercode + "_" + new_name + ".pdf", ordercode + "_" + new_name + ".pdf", fileid, dt.Rows[i]["FILETYPEID"], ordercode, string.Join(",", pagelist.ToArray()));
+                                    DBMgr.ExecuteNonQuery(sql);
+                                }
+                            }
+                            //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
+                            sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
+                            DBMgr.ExecuteNonQuery(sql);
+
+                            DataTable dt_list_order = DBMgr.GetDataTable("select * from LIST_ORDER where  code='" + ordercode + "'");
+                            //  DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
+                            // sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                            sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                            DBMgr.ExecuteNonQuery(sql);
+                            //若正常拆分在字段修改历史记录表中记录
+                            sql = "insert into list_updatehistory values('" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order.Rows[0]["FILESTATUS"] + "','1','','" + username + "','业务—文件状态','" + ordercode + "','FILESTATUS')";
+                            DBMgr.ExecuteNonQuery(sql);
+
+                            sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
+                            dt = DBMgr.GetDataTable(sql);
+                            json = JsonConvert.SerializeObject(dt);
+                            Response.Write("{success:true,result:" + json + "}");
+
+                        }
+                        catch (Exception ex)
+                        {
+                            string error = "{\"ordercode\":\"" + ordercode + "\",\"fileid\":\"" + fileid + "\",\"error\":\"" + ex.Message + "\"}";
+                            db.ListRightPush("spliterror", error);
+                            Response.Write("{success:false,result:[" + error + "]}");//拆分异常
+                        }
                     }
                     else
                     {
