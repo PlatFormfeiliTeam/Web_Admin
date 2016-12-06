@@ -277,11 +277,15 @@ namespace Web_Admin
                             //  DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
                             // sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
                             sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate where code='" + ordercode + "'";
-                            DBMgr.ExecuteNonQuery(sql);
-                            //若正常拆分在字段修改历史记录表中记录
-                            sql = "insert into list_updatehistory values('" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order.Rows[0]["FILESTATUS"] + "','1','','" + username + "','业务—文件状态','" + ordercode + "','FILESTATUS')";
-                            DBMgr.ExecuteNonQuery(sql);
-
+                            int resultcode = DBMgr.ExecuteNonQuery(sql);
+                            if (resultcode > 0)
+                            {
+                                //若正常拆分在字段修改历史记录表中记录
+                                sql = "insert into list_updatehistory(id,ordercode,type,userid, updatetime, oldfield,newfield,name,fieldname,code,field)"
+                                    + " values('" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order.Rows[0]["FILESTATUS"] + "','1','" + username + "','业务—文件状态','"
+                                    + ordercode + "','FILESTATUS')";
+                                DBMgr.ExecuteNonQuery(sql);
+                            }
                             sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
                             dt = DBMgr.GetDataTable(sql);
                             json = JsonConvert.SerializeObject(dt);
