@@ -11,7 +11,7 @@
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
-                    url: 'EXT_Statuslogall?action=loadattach',
+                    url: 'EXT_Statuslogall.aspx?action=loadattach',
                     method:'post',
                     reader: {
                         root: 'rows',
@@ -80,7 +80,7 @@
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
-                    url: 'EXT_Declareall.aspx?action=loadattach1',
+                    url: 'EXT_Statuslogall.aspx?action=loadattach1',
                     reader: {
                         root: 'rows',
                         type: 'json',
