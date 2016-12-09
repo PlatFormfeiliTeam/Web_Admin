@@ -13,7 +13,7 @@
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
-                    url: 'EXT_Declareall.aspx?action=loadattach',
+                    url: 'EXT_Inspectionall?action=loadattach',
                     reader: {
                         root: 'rows',
                         type: 'json',

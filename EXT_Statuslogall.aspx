@@ -11,7 +11,7 @@
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
-                    url: 'EXT_Declareall.aspx?action=loadattach',
+                    url: 'EXT_Statuslogall?action=loadattach',
                     method:'post',
                     reader: {
                         root: 'rows',
