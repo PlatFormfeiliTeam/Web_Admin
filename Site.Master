@@ -40,6 +40,14 @@
                             <li><a href="Declareall.aspx">报关单</a></li>
                             <li><a href="Inspectionall.aspx">报检单</a></li>
                         </ul>        
+                    </li>  
+                    <li>
+                        <a>缓存管理Ext</a>
+                        <ul>
+                            <li><a href="EXT_Statuslogall.aspx">报关报检业务</a></li>
+                            <li><a href="EXT_Declareall.aspx">报关单</a></li>
+                            <li><a href="EXT_Inspectionall.aspx">报检单</a></li>
+                        </ul>        
                     </li>            
                 </ul>
             </div>

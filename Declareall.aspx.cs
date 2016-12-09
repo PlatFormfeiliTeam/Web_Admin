@@ -158,7 +158,7 @@ namespace Web_Admin
 
             if (key != string.Empty && db.KeyExists(key))
             {
-                long len = db.ListLength("declareall");
+                long len = db.ListLength(key);
                 long tempi = 200; long i = 0;
 
                 for (; i < len; i = i + tempi)
