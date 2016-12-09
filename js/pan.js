@@ -36,6 +36,7 @@ function module_edit_win(parentNode, action) {
         items: [
         { name: 'NAME', anchor: '95%', fieldLabel: '模块名称', allowBlank: false, blankText: '模块名称不能为空', emptyText: '请输入模块名称' },
         { name: 'URL', anchor: '95%', fieldLabel: '链接地址', allowBlank: true, emptyText: '请输入链接地址' },
+        { name: 'ICON', anchor: '95%', fieldLabel: '图标' },
         { name: 'SORTINDEX', anchor: '95%', fieldLabel: '显示顺序', xtype: 'numberfield' },
         { name: 'MODULEID', xtype: 'hidden' },
         { name: 'PARENTID', xtype: 'hidden', id: 'field_parentid' }
@@ -58,7 +59,7 @@ function module_edit_win(parentNode, action) {
                                         }
                                         else {
                                             if (parentNode.isExpanded()) {//如果已经展开了
-                                                var childNode = parentNode.createNode({ MODULEID: result.data.MODULEID, NAME: result.data.NAME, leaf: true, URL: result.data.URL });
+                                                var childNode = parentNode.createNode({ MODULEID: result.data.MODULEID, NAME: result.data.NAME, leaf: true, URL: result.data.URL,ICON:result.data.ICON});
                                                 parentNode.appendChild(childNode);
                                             }
                                             else {//如果未展开

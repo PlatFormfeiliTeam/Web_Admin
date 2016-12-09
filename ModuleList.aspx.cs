@@ -24,7 +24,7 @@ namespace Web_Admin
                 case "select":
                     if (string.IsNullOrEmpty(moduleid))
                     {
-                        sql = @"select * from sysmodule where ParentId is null order by SortIndex";
+                        sql = @"select * from sysmodule where ParentId='91a0657f-1939-4528-80aa-91b202a593ab' order by SortIndex";
                     }
                     else
                     {
@@ -46,11 +46,11 @@ namespace Web_Admin
                         }
                         if (i != dt.Rows.Count - 1)
                         {
-                            result += "MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "'},";
+                            result += "MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "',ICON:'" + smEnt["ICON"] + "'},";
                         }
                         else
                         {
-                            result += "MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "'}";
+                            result += "MODULEID:'" + smEnt["MODULEID"] + "',NAME:'" + smEnt["NAME"] + "',SORTINDEX:'" + smEnt["SORTINDEX"] + "',PARENTID:'" + smEnt["PARENTID"] + "',leaf:'" + smEnt["ISLEAF"] + "',URL:'" + smEnt["URL"] + "',ICON:'" + smEnt["ICON"] + "'}";
                         }
                         i++;
                     }
@@ -59,7 +59,7 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "loadform":
-                    sql = @"select ModuleID,Name,Url,ParentID,SORTINDEX from sysmodule where ModuleID = '" + moduleid + "'";
+                    sql = @"select ModuleID,Name,Url,ParentID,SORTINDEX,ICON from sysmodule where ModuleID = '" + moduleid + "'";
                     dt = DBMgr.GetDataTable(sql);
                     Response.Write("{success:true,data:" + JsonConvert.SerializeObject(dt).TrimStart('[').TrimEnd(']') + "}");
                     Response.End();
@@ -68,8 +68,8 @@ namespace Web_Admin
                     string json = Request["json"];
                     JObject joc = (JObject)JsonConvert.DeserializeObject(json);
                     string newid = Guid.NewGuid().ToString();
-                    sql = @"insert into sysmodule (MODULEID,NAME,ISLEAF,URL,applicationid,PARENTID,SORTINDEX) 
-                          values ('" + Guid.NewGuid().ToString() + "','" + joc.Value<string>("NAME") + "','1','" + joc.Value<string>("URL") + "','f35cb450-cb38-4741-b8d7-9f726094b7ef','" + joc.Value<string>("PARENTID") + "','" + joc.Value<string>("SORTINDEX") + "')";
+                    sql = @"insert into sysmodule (MODULEID,NAME,ISLEAF,URL,applicationid,PARENTID,SORTINDEX,ICON) 
+                          values ('" + Guid.NewGuid().ToString() + "','" + joc.Value<string>("NAME") + "','1','" + joc.Value<string>("URL") + "','f35cb450-cb38-4741-b8d7-9f726094b7ef','" + joc.Value<string>("PARENTID") + "','" + joc.Value<string>("SORTINDEX") + "','" + joc.Value<string>("ICON") + "')";
                     DBMgr.ExecuteNonQuery(sql);
                     joc.Remove("MODULEID");
                     joc.Add("MODULEID", newid);
@@ -90,7 +90,7 @@ namespace Web_Admin
                 case "update":
                     json = Request["json"];
                     JObject jou = (JObject)JsonConvert.DeserializeObject(json);
-                    sql = @"update sysmodule set NAME = '" + jou.Value<string>("NAME") + "' ,url = '" + jou.Value<string>("URL") + "',SORTINDEX = '" + jou.Value<string>("SORTINDEX") + "' where MODULEID = '" + jou.Value<string>("MODULEID") + "'";
+                    sql = @"update sysmodule set NAME = '" + jou.Value<string>("NAME") + "' ,url = '" + jou.Value<string>("URL") + "',SORTINDEX = '" + jou.Value<string>("SORTINDEX") + "',ICON='" + jou.Value<string>("ICON") + "' where MODULEID = '" + jou.Value<string>("MODULEID") + "'";
                     DBMgr.ExecuteNonQuery(sql);
                     Response.Write("{success:true,data:" + jou + "}");
                     Response.End();

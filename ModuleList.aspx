@@ -7,62 +7,7 @@
     <script type="text/javascript">
         var nodeid = getQueryString("nodeid");
         Ext.onReady(function () {
-            Ext.regModel("SysModule", { fields: ["MODULEID", "NAME", "leaf", "URL", "PARENTID", "SORTINDEX"] });
-            //var toolbar = Ext.create('Ext.toolbar.Toolbar', {
-            //    items: [
-            //    {
-            //        text: '<span class="icon iconfont">&#xe60b;</span>&nbsp;添 加', handler: function () {
-            //            var recs = Ext.getCmp('treepanel').getSelectionModel().getSelection();
-            //            //可以选择父节点，也可以不选择父节点，如果不选择的话默认父节点就是根节点 
-            //            var parentNode;
-            //            if (recs.length == 0) {
-            //                parentNode = Ext.getCmp('treepanel').store.getRootNode();
-            //            }
-            //            else {
-            //                parentNode = recs[0];
-            //            }
-            //            module_edit_win(parentNode, "create");
-            //        }
-            //    }, '-',
-            //    {
-            //        text: '<span class="icon iconfont">&#xe607;</span>&nbsp;修 改', handler: function () {
-            //            var recs = treepanel.getSelectionModel().getSelection();
-            //            if (recs.length == 0) {
-            //                Ext.Msg.alert("提示", "请选择要修改的节点!");
-            //                return;
-            //            }
-            //            module_edit_win(recs[0], "update");
-            //        }
-            //    }, '-', {
-            //        text: '<span class="icon iconfont">&#xe606;</span>&nbsp;删 除', handler: function () {
-            //            var recs = treepanel.getSelectionModel().getSelection();
-            //            if (recs.length == 0) {
-            //                Ext.Msg.alert("提示", "请选择要删除的节点!");
-            //                return;
-            //            }
-            //            if (!recs[0].data.leaf) {//删除某个节点后有可能父节点不存在
-            //                Ext.Msg.alert("提示", "包含子节点的对象不允许删除!");
-            //                return;
-            //            }
-            //            Ext.Ajax.request({
-            //                url: 'ModuleList.aspx?action=delete',
-            //                params: { json: Ext.encode(recs[0].data) },
-            //                callback: function (option, success, response) {
-            //                    var result = Ext.decode(response.responseText);
-            //                    if (result.success) {
-            //                        Ext.Msg.alert("提示", "删除成功!", function () {
-            //                            var pnode = recs[0].parentNode;
-            //                            pnode.removeChild(recs[0]);
-            //                            if (!pnode.hasChildNodes()) {//删除某个节点后有可能父节点不存在
-            //                                pnode.set("leaf", true);
-            //                            }
-            //                        });
-            //                    }
-            //                }
-            //            })
-            //        }
-            //    }]
-            //})
+            Ext.regModel("SysModule", { fields: ["MODULEID", "NAME", "leaf", "URL", "PARENTID", "SORTINDEX","ICON"] }); 
             var treepanelstore = new Ext.data.TreeStore({
                 model: 'SysModule',
                 proxy: {
@@ -92,7 +37,8 @@
                 { dataIndex: 'leaf', width: 100, hidden: true },
                 { header: '模块名称', xtype: 'treecolumn', dataIndex: 'NAME', width: 300 },
                 { header: '链接地址', dataIndex: 'URL', flex: 1 },
-                { header: '显示顺序', dataIndex: 'SORTINDEX', width: 100, hidden: false },
+                { header: '显示顺序', dataIndex: 'SORTINDEX', width: 100},
+                { header: '图标', dataIndex: 'ICON', width: 100},
                 { dataIndex: 'PARENTID', hidden: true }
                 ],
                 listeners: {
