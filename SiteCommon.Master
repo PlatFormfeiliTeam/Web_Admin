@@ -36,14 +36,14 @@
                         <li><a href="UserList.aspx">账户管理</a></li>
                         <li><a href="WebAuthList.aspx">权限管理</a></li>
                         <li><a href="AttachList.aspx">文件列表</a></li>
-                        <li>
+                      <%--  <li>
                             <a>缓存管理</a>
                             <ul>
                                 <li><a href="Statuslogall.aspx">报关报检业务</a></li>
                                 <li><a href="Declareall.aspx">报关单</a></li>
                                 <li><a href="Inspectionall.aspx">报检单</a></li>
                             </ul>        
-                        </li>    
+                        </li>  --%>  
                         <li>
                             <a>缓存管理Ext</a>
                             <ul>
