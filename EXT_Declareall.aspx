@@ -8,7 +8,7 @@
         Ext.onReady(function () {
             var store_attach = Ext.create('Ext.data.JsonStore', {
                 fields: [ 'ID','DECLARATIONCODE', 'TRADECODE', 'TRANSNAME', 'GOODSNUM', 'GOODSGW', 'SHEETNUM', 'COMMODITYNUM', 'CUSTOMSSTATUS',
-                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL', 'DIVIDEREDISKEY'],
+                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL', 'DIVIDEREDISKEY', 'SUPPLYCHAINCODE'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -76,6 +76,7 @@
                     { header: '企业编号', dataIndex: 'CUSNO', width: 60 },
                     { header: '旧报关单号', dataIndex: 'OLDDECLARATIONCODE', width: 130 },
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
+                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 60 },
                     { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 130 }
                 ]
             })
@@ -86,7 +87,7 @@
 
             var store_attach_fenkey = Ext.create('Ext.data.JsonStore', {
                 fields: ['ID','DECLARATIONCODE', 'TRADECODE', 'TRANSNAME', 'GOODSNUM', 'GOODSGW', 'SHEETNUM', 'COMMODITYNUM', 'CUSTOMSSTATUS',
-                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL', 'DIVIDEREDISKEY'],
+                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL','SUPPLYCHAINCODE'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -137,7 +138,7 @@
                     { header: '企业编号', dataIndex: 'CUSNO', width: 60 },
                     { header: '旧报关单号', dataIndex: 'OLDDECLARATIONCODE', width: 130 },
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 130 }
+                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 60 }
                 ]
             })
         });
