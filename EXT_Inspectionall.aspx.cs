@@ -42,7 +42,7 @@ namespace Web_Admin
                     }
                     if (!string.IsNullOrEmpty(fenkey))
                     {
-                        where = " and DIVIDEREDISKEY like '%" + fenkey + "%'";
+                        where += " and DIVIDEREDISKEY like '%" + fenkey + "%'";
                     }
                     sql += where;
 

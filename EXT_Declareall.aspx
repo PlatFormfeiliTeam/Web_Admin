@@ -8,7 +8,7 @@
         Ext.onReady(function () {
             var store_attach = Ext.create('Ext.data.JsonStore', {
                 fields: [ 'ID','DECLARATIONCODE', 'TRADECODE', 'TRANSNAME', 'GOODSNUM', 'GOODSGW', 'SHEETNUM', 'COMMODITYNUM', 'CUSTOMSSTATUS',
-                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL', 'DIVIDEREDISKEY', 'SUPPLYCHAINCODE'],
+                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL', 'DIVIDEREDISKEY', 'SUPPLYCHAINCODE', 'DATES'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -61,24 +61,28 @@
                 bbar: pgbar,
                 tbar: toolbar,
                 columns: [
-                    { xtype: 'rownumberer', width: 35 },
+                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
-                    { header: '报关单号', dataIndex: 'DECLARATIONCODE', width: 300, locked: true },
-                    { header: '贸易方式', dataIndex: 'TRADECODE', width: 210, locked: true },
+                    { header: '报关单号', dataIndex: 'DECLARATIONCODE', width: 150, locked: true },
+                    { header: '贸易方式', dataIndex: 'TRADECODE', width: 80, locked: true },
                     { header: '运输工具', dataIndex: 'TRANSNAME', width: 100, locked: true },
                     { header: '件数', dataIndex: 'GOODSNUM', width: 60, locked: true },
                     { header: '毛重', dataIndex: 'GOODSGW', width: 60 },
-                    { header: '报关单张数', dataIndex: 'SHEETNUM', width: 120 },
+                    { header: '报关单张数', dataIndex: 'SHEETNUM', width: 80 },
                     { header: '商品项数', dataIndex: 'COMMODITYNUM', width: 80 },
-                    { header: '海关状态', dataIndex: 'CUSTOMSSTATUS', width: 130 },
-                    { header: '删改单标志', dataIndex: 'MODIFYFLAG', width: 60 },
+                    { header: '海关状态', dataIndex: 'CUSTOMSSTATUS', width: 80 },
+                    { header: '删改单标志', dataIndex: 'MODIFYFLAG', width: 80 },
                     { header: '预制单编号', dataIndex: 'PREDECLCODE', width: 130 },
-                    { header: '企业编号', dataIndex: 'CUSNO', width: 60 },
-                    { header: '旧报关单号', dataIndex: 'OLDDECLARATIONCODE', width: 130 },
+                    { header: '企业编号', dataIndex: 'CUSNO', width: 100 },
+                    { header: '旧报关单号', dataIndex: 'OLDDECLARATIONCODE', width: 120 },
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
-                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 60 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 130 }
-                ]
+                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 70 },
+                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 130 },
+                    { header: '时间', dataIndex: 'DATES', width: 130 }
+                ],
+                viewConfig: {
+                    enableTextSelection: true
+                }
             })
 
 
@@ -125,21 +129,24 @@
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
-                    { header: '报关单号', dataIndex: 'DECLARATIONCODE', width: 300, locked: true },
-                    { header: '贸易方式', dataIndex: 'TRADECODE', width: 210, locked: true },
+                    { header: '报关单号', dataIndex: 'DECLARATIONCODE', width: 150, locked: true },
+                    { header: '贸易方式', dataIndex: 'TRADECODE', width: 80, locked: true },
                     { header: '运输工具', dataIndex: 'TRANSNAME', width: 100, locked: true },
                     { header: '件数', dataIndex: 'GOODSNUM', width: 60, locked: true },
                     { header: '毛重', dataIndex: 'GOODSGW', width: 60 },
-                    { header: '报关单张数', dataIndex: 'SHEETNUM', width: 120 },
+                    { header: '报关单张数', dataIndex: 'SHEETNUM', width: 80 },
                     { header: '商品项数', dataIndex: 'COMMODITYNUM', width: 80 },
-                    { header: '海关状态', dataIndex: 'CUSTOMSSTATUS', width: 130 },
-                    { header: '删改单标志', dataIndex: 'MODIFYFLAG', width: 60 },
+                    { header: '海关状态', dataIndex: 'CUSTOMSSTATUS', width: 80 },
+                    { header: '删改单标志', dataIndex: 'MODIFYFLAG', width: 80 },
                     { header: '预制单编号', dataIndex: 'PREDECLCODE', width: 130 },
-                    { header: '企业编号', dataIndex: 'CUSNO', width: 60 },
-                    { header: '旧报关单号', dataIndex: 'OLDDECLARATIONCODE', width: 130 },
+                    { header: '企业编号', dataIndex: 'CUSNO', width: 100 },
+                    { header: '旧报关单号', dataIndex: 'OLDDECLARATIONCODE', width: 120 },
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
-                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 60 }
-                ]
+                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 70 }
+                ],
+                viewConfig: {
+                    enableTextSelection: true
+                }
             })
         });
     </script>

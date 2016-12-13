@@ -7,7 +7,7 @@
     <script type="text/javascript">
         Ext.onReady(function () {
             var store_attach = Ext.create('Ext.data.JsonStore', {
-                fields: ['ID', 'TYPE', 'CUSNO', 'STATUSCODE', 'STATUSVALUE', 'DIVIDEREDISKEY'],
+                fields: ['ID', 'TYPE', 'CUSNO', 'STATUSCODE', 'STATUSVALUE', 'DIVIDEREDISKEY','DATES'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -62,13 +62,17 @@
                 tbar: toolbar,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
-                    { header: 'ID', dataIndex: 'ID', width: 80 },
+                    { header: 'ID', dataIndex: 'ID', width: 50 },
                     { header: '类型', dataIndex: 'TYPE', width: 100 },
-                    { header: '客户编号', dataIndex: 'CUSNO', width: 210 },
+                    { header: '客户编号', dataIndex: 'CUSNO', width: 150 },
                     { header: 'STATUSCODE', dataIndex: 'STATUSCODE', width: 100 },
                     { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 220 }
-                ]
+                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 150 },
+                    { header: '时间', dataIndex: 'DATES', width: 180 }
+                ],
+                viewConfig: {
+                    enableTextSelection: true
+                }
             })
 
 
@@ -113,13 +117,17 @@
                 bbar: pgbar_fenkey,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
-                    { header: 'ID', dataIndex: 'ID', width: 80 },
+                    { header: 'ID', dataIndex: 'ID', width: 50 },
                     { header: '类型', dataIndex: 'TYPE', width: 100 },
-                    { header: '客户编号', dataIndex: 'CUSNO', width: 210 },
+                    { header: '客户编号', dataIndex: 'CUSNO', width: 150 },
                     { header: 'STATUSCODE', dataIndex: 'STATUSCODE', width: 100 },
                     { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 220 }
-                ]
+                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 150 }
+                    
+                ],
+                viewConfig: {
+                    enableTextSelection: true
+                }
             })
         });
     </script>
