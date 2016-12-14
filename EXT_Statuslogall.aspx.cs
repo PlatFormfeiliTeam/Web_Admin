@@ -76,35 +76,42 @@ namespace Web_Admin
                             long len = db.ListLength(fenkey);
                             long tempi = 200; long i = 0;
 
-                            RedisValue[] jsonlist_t = new RedisValue[49];
+                            List<string> jsonlist_t = new List<string>();
                             for (; i < len; i = i + tempi)
                             {
 
                                 if ((i + tempi) >= len) { tempi = (len - i); }
 
                                 RedisValue[] StatusList = db.ListRange(fenkey, i, i + (tempi - 1));
-                                IEnumerable<RedisValue> IE_redis = StatusList.Where<RedisValue>(RV => RV.ToString().Contains(cusno));
-                                StatusList = IE_redis.ToArray<RedisValue>();
-
-
-                                StatusList.CopyTo(jsonlist_t, 0);
+                                StatusList.Where<RedisValue>(st =>
+                                {
+                                    if (st.ToString().Contains(cusno))
+                                    {
+                                        jsonlist_t.Add(st.ToString());
+                                        return true;
+                                    }
+                                    return false;
+                                }).ToList<RedisValue>();
                                 tempi = 200;
                             }
 
-                            totalProperty_fenkey = jsonlist_t.LongLength;
+                            totalProperty_fenkey = (long)jsonlist_t.Count;
                             if (totalProperty_fenkey < end) { end = totalProperty_fenkey; }
                             for (long j = start; j < end; j++)
                             {
                                 if (totalProperty_fenkey <= start) { break; }
-                                
-                                if (jsonlist_t[j] != "")
+
+
+                                if (jsonlist_t[(int)j] != "")
                                 {
-                                    json_fenkey += jsonlist_t[j];
+                                    json_fenkey += jsonlist_t[(int)j];
                                     if (j < (end - 1)) { json_fenkey += ","; }
                                 }
-                                
+
                             }
                             json_fenkey = "[" + json_fenkey + "]";
+
+                           
                         }                       
                     }
                     
