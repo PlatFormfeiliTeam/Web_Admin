@@ -133,7 +133,6 @@
                 bbar: pgbar_fenkey,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
-                    { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
                     { header: '流水单号', dataIndex: 'APPROVALCODE', width: 180, locked: true },
                     { header: '报检单号', dataIndex: 'INSPECTIONCODE', width: 180, locked: true },
                     { header: '监管方式', dataIndex: 'TRADEWAY', width: 100, locked: true },
@@ -147,8 +146,7 @@
                     { header: '旧报检单号', dataIndex: 'OLDINSPECTIONCODE', width: 120 },
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
                     { header: '通关标志', dataIndex: 'ISNEEDCLEARANCE', width: 60 },
-                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 60 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 150 }
+                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 60 }
                 ]
             })
         });

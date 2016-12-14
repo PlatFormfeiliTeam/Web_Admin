@@ -117,12 +117,10 @@
                 bbar: pgbar_fenkey,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
-                    { header: 'ID', dataIndex: 'ID', width: 50 },
                     { header: '类型', dataIndex: 'TYPE', width: 100 },
                     { header: '客户编号', dataIndex: 'CUSNO', width: 150 },
                     { header: 'STATUSCODE', dataIndex: 'STATUSCODE', width: 100 },
-                    { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 150 }
+                    { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 }
                     
                 ],
                 viewConfig: {

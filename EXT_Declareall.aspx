@@ -128,7 +128,6 @@
                 bbar: pgbar_fenkey,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
-                    { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
                     { header: '报关单号', dataIndex: 'DECLARATIONCODE', width: 150, locked: true },
                     { header: '贸易方式', dataIndex: 'TRADECODE', width: 80, locked: true },
                     { header: '运输工具', dataIndex: 'TRANSNAME', width: 100, locked: true },
