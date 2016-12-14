@@ -33,13 +33,14 @@
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: [
                             {
-                                xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE'
+                                xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE', flex: .25
                             },
-                              {//<i class="fa fa-search fa-fw"></i>&nbsp;
-                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>查询', handler: function () {//<span class="icon iconfont">&#xe632;</span>&nbsp;
-                                      gridpanel.store.load();
+                              {
+                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>查询', handler: function () {
+                                      pgbar.moveFirst();
+                                      //gridpanel.store.load();
                                   }
-                              }
+                              }, '->'
                 ]
             })
 
@@ -78,6 +79,9 @@
                         // /Pdfview.aspx?ordercode=16055238810&fileids=5696&filetype=44&userid=12                         
                         opencenterwin("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=-1", 1600, 900);
                     }
+                },
+                viewConfig: {
+                    enableTextSelection: true
                 }
             })
 

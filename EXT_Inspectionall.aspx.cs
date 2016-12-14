@@ -20,7 +20,7 @@ namespace Web_Admin
         protected void Page_Load(object sender, EventArgs e)
         {
             string action = Request["action"];
-            string cusno = Request["CUSNO"];
+            string cusno = Request["CUSNO"]; string approvalcode = Request["APPROVALCODE"]; string inspectioncode = Request["INSPECTIONCODE"];
             string fenkey = Request["FENKEY"];
             // fenkey = "declareall";
             int totalProperty = 0;
@@ -39,6 +39,14 @@ namespace Web_Admin
                     if (!string.IsNullOrEmpty(cusno))
                     {
                         where += " and CUSNO like '%" + cusno + "%'";
+                    }
+                    if (!string.IsNullOrEmpty(approvalcode))
+                    {
+                        where += " and APPROVALCODE like '%" + approvalcode + "%'";
+                    }
+                    if (!string.IsNullOrEmpty(inspectioncode))
+                    {
+                        where += " and INSPECTIONCODE like '%" + inspectioncode + "%'";
                     }
                     if (!string.IsNullOrEmpty(fenkey))
                     {

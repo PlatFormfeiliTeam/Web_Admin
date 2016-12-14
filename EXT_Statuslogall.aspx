@@ -32,17 +32,19 @@
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: [
                             {
-                                xtype: 'textfield', fieldLabel: '客户编号', labelWidth: 80, labelAlign: 'right', id: 'CUSNO'
+                                xtype: 'textfield', fieldLabel: '客户编号', labelWidth: 80, labelAlign: 'right', id: 'CUSNO', flex: .45
                             },
                             {
-                                xtype: 'textfield', fieldLabel: '分KEY', labelWidth: 80, labelAlign: 'right', id: 'FENKEY'
+                                xtype: 'textfield', fieldLabel: '分KEY', labelWidth: 80, labelAlign: 'right', id: 'FENKEY', flex: .45
                             },
                             {
                                 xtype: 'button', text: '<i class="iconfont">&#xe615;</i>查询', handler: function () {
-                                    gridpanel.store.load();
-                                    gridpanel_fenkey.store.load();
+                                    pgbar.moveFirst();
+                                    pgbar_fenkey.moveFirst();
+                                    //gridpanel.store.load();
+                                    //gridpanel_fenkey.store.load();
                                 }
-                            }
+                            }, '->'
                 ]
             })
 

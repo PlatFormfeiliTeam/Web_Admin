@@ -24,7 +24,8 @@
                 listeners: {
                     beforeload: function (store, options) {
                         var new_params = {
-                            CUSNO: Ext.getCmp("CUSNO").getValue(), FENKEY: Ext.getCmp("FENKEY").getValue()
+                            CUSNO: Ext.getCmp("CUSNO").getValue(), APPROVALCODE: Ext.getCmp("APPROVALCODE").getValue()
+                            , INSPECTIONCODE: Ext.getCmp("INSPECTIONCODE").getValue(), FENKEY: Ext.getCmp("FENKEY").getValue()
                         }
                         Ext.apply(store.proxy.extraParams, new_params);
                     }
@@ -33,15 +34,23 @@
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: [
                             {
-                                xtype: 'textfield', fieldLabel: '客户编号', labelWidth: 80, labelAlign: 'right', id: 'CUSNO'
+                                xtype: 'textfield', fieldLabel: '客户编号', labelWidth: 80, labelAlign: 'right', id: 'CUSNO', flex: .25
                             },
                             {
-                                xtype: 'textfield', fieldLabel: '分KEY', labelWidth: 80, labelAlign: 'right', id: 'FENKEY'
+                                xtype: 'textfield', fieldLabel: '流水单号', labelWidth: 80, labelAlign: 'right', id: 'APPROVALCODE', flex: .25
+                            },
+                            {
+                                xtype: 'textfield', fieldLabel: '报检单号', labelWidth: 80, labelAlign: 'right', id: 'INSPECTIONCODE', flex: .25
+                            },
+                            {
+                                xtype: 'textfield', fieldLabel: '分KEY', labelWidth: 80, labelAlign: 'right', id: 'FENKEY', flex: .25
                             },
                             {
                                 xtype: 'button', text: '<i class="iconfont">&#xe615;</i>查询', handler: function () {
-                                    gridpanel.store.load();
-                                    gridpanel_fenkey.store.load();
+                                    pgbar.moveFirst();
+                                    pgbar_fenkey.moveFirst();
+                                    //gridpanel.store.load();
+                                    //gridpanel_fenkey.store.load();
                                 }
                             }
                 ],
@@ -70,7 +79,7 @@
                     { header: '流水单号', dataIndex: 'APPROVALCODE', width: 180, locked: true },
                     { header: '报检单号', dataIndex: 'INSPECTIONCODE', width: 180, locked: true },
                     { header: '监管方式', dataIndex: 'TRADEWAY', width: 100, locked: true },
-                    { header: '通关单号', dataIndex: 'CLEARANCECODE', width: 60, locked: true },
+                    { header: '通关单号', dataIndex: 'CLEARANCECODE', width: 180, locked: true },
                     { header: '张数', dataIndex: 'SHEETNUM', width: 60 },
                     { header: '商品项数', dataIndex: 'COMMODITYNUM', width: 60 },
                     { header: '国检状态', dataIndex: 'INSPSTATUS', width: 80 },
