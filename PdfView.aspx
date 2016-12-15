@@ -152,7 +152,10 @@
                             }                            
                             if (Ext.getCmp('cbg_file').getChecked.length == 0)
                             {
-                                Ext.MessageBox.alert('提示', '请选择需要拆分的文件！');
+                                panel.hide();
+                                Ext.MessageBox.alert('提示', '请选择需要拆分的文件！', function () {
+                                    panel.show();
+                                });
                                 return;
                             }
                             Ext.getCmp("btn_confirmsplit").setDisabled(true);
