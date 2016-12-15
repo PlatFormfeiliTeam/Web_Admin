@@ -105,7 +105,7 @@
             var store_attach_fenkey = Ext.create('Ext.data.JsonStore', {
                 fields: ['ID', 'APPROVALCODE', 'INSPECTIONCODE', 'TRADEWAY', 'CLEARANCECODE', 'SHEETNUM', 'COMMODITYNUM',
                         'INSPSTATUS', 'MODIFYFLAG', 'PREINSPCODE', 'CUSNO', 'OLDINSPECTIONCODE', 'ISDEL', 'ISNEEDCLEARANCE',
-                        'LAWFLAG', 'DIVIDEREDISKEY'],
+                        'LAWFLAG', 'DIVIDEREDISKEY', 'CREATETIME'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -156,7 +156,8 @@
                     { header: '旧报检单号', dataIndex: 'OLDINSPECTIONCODE', width: 120 },
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
                     { header: '通关标志', dataIndex: 'ISNEEDCLEARANCE', width: 60 },
-                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 60 }
+                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 60 },
+                    { header: '创建时间', dataIndex: 'CREATETIME', width: 120 }
                 ],
                 viewConfig: {
                     enableTextSelection: true

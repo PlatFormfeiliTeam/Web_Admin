@@ -82,7 +82,7 @@
             // 分key
 
             var store_attach_fenkey = Ext.create('Ext.data.JsonStore', {
-                fields: ['ID', 'TYPE', 'CUSNO', 'STATUSCODE', 'STATUSVALUE', 'DIVIDEREDISKEY'],
+                fields: ['ID', 'TYPE', 'CUSNO', 'STATUSCODE', 'STATUSVALUE', 'DIVIDEREDISKEY','CREATETIME'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -122,7 +122,8 @@
                     { header: '类型', dataIndex: 'TYPE', width: 100 },
                     { header: '客户编号', dataIndex: 'CUSNO', width: 150 },
                     { header: 'STATUSCODE', dataIndex: 'STATUSCODE', width: 100 },
-                    { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 }
+                    { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 },
+                    { header: '创建时间', dataIndex: 'CREATETIME', width: 120 }
                     
                 ],
                 viewConfig: {

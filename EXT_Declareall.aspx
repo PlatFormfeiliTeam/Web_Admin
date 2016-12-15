@@ -96,7 +96,7 @@
 
             var store_attach_fenkey = Ext.create('Ext.data.JsonStore', {
                 fields: ['ID','DECLARATIONCODE', 'TRADECODE', 'TRANSNAME', 'GOODSNUM', 'GOODSGW', 'SHEETNUM', 'COMMODITYNUM', 'CUSTOMSSTATUS',
-                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL','SUPPLYCHAINCODE'],
+                         'MODIFYFLAG', 'PREDECLCODE', 'CUSNO', 'OLDDECLARATIONCODE', 'ISDEL', 'SUPPLYCHAINCODE', 'CREATETIME'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -146,7 +146,8 @@
                     { header: '企业编号', dataIndex: 'CUSNO', width: 100 },
                     { header: '旧报关单号', dataIndex: 'OLDDECLARATIONCODE', width: 120 },
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
-                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 70 }
+                    { header: '供应链代码', dataIndex: 'SUPPLYCHAINCODE', width: 70 },
+                    { header: '创建时间', dataIndex: 'CREATETIME', width: 120 }
                 ],
                 viewConfig: {
                     enableTextSelection: true
