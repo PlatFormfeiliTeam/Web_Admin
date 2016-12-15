@@ -42,6 +42,7 @@
                 listeners: {
                     change: function (rb, newValue, oldValue, eOpts) {
                         ordercode = newValue.rbg;
+                        fileid = "";
                         iniform();
                     }
                 }
@@ -147,6 +148,11 @@
                                 Ext.MessageBox.alert('提示', '请先勾选具体的拆分明细！', function () {
                                     panel.show();
                                 })
+                                return;
+                            }                            
+                            if (Ext.getCmp('cbg_file').getChecked.length == 0)
+                            {
+                                Ext.MessageBox.alert('提示', '请选择需要拆分的文件！');
                                 return;
                             }
                             Ext.getCmp("btn_confirmsplit").setDisabled(true);
