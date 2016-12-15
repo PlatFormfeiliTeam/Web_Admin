@@ -111,7 +111,7 @@
                 listeners: {
                     beforeload: function (store, options) {
                         var new_params = {
-                            CUSNO: Ext.getCmp("CUSNO").getValue(), FENKEY: Ext.getCmp("FENKEY").getValue()
+                            CUSNO: Ext.getCmp("CUSNO").getValue(), DECLARATIONCODE: Ext.getCmp("DECLARATIONCODE").getValue(), FENKEY: Ext.getCmp("FENKEY").getValue()
                         }
                         Ext.apply(store.proxy.extraParams, new_params);
                     }

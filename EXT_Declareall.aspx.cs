@@ -19,7 +19,8 @@ namespace Web_Admin
         protected void Page_Load(object sender, EventArgs e)
         {
             string action = Request["action"];
-            string cusno = Request["CUSNO"]; string declarationcode = Request["DECLARATIONCODE"]; 
+            string cusno = Request["CUSNO"]+"";
+            string declarationcode = Request["DECLARATIONCODE"]+""; 
             string fenkey = Request["FENKEY"];
            // fenkey = "declareall";
             int totalProperty = 0;
@@ -57,26 +58,93 @@ namespace Web_Admin
                     break;
                 case "loadattach1":
                     IDatabase db = SeRedis.redis.GetDatabase();
-                    if (fenkey != string.Empty && db.KeyExists(fenkey)) 
-                    { 
-                    long start = Convert.ToInt64(Request["start"]); 
-                    long end = Convert.ToInt64(Request["start"]) + Convert.ToInt64(Request["limit"]);
-                    RedisValue[] jsonlist = db.ListRange(fenkey, start, end-1);
-                    totalProperty_fenkey = db.ListLength(fenkey);
-                    for (long i = 0; i < jsonlist.Length; i++) 
+                    json_fenkey = "[]";
+                    if (fenkey != string.Empty && db.KeyExists(fenkey))
                     {
-                        json_fenkey += jsonlist[i];
-                        if (i < jsonlist.Length - 1) { json_fenkey += ","; } 
+                        json_fenkey = "";
+                        long start = Convert.ToInt64(Request["start"]);
+                        long end = Convert.ToInt64(Request["start"]) + Convert.ToInt64(Request["limit"]);
+
+                        if (cusno == string.Empty && declarationcode==string.Empty)
+                        {
+                            RedisValue[] jsonlist = db.ListRange(fenkey, start, end - 1);
+                            totalProperty_fenkey = db.ListLength(fenkey);
+                            for (long i = 0; i < jsonlist.Length; i++)
+                            {
+                                json_fenkey += jsonlist[i];
+                                if (i < jsonlist.Length - 1) { json_fenkey += ","; }
+                            }
+                            json_fenkey = "[" + json_fenkey + "]";
+                        }
+                        else
+                        {
+                            long len = db.ListLength(fenkey);
+                            long tempi = 200; long i = 0;
+
+                            List<string> jsonlist_t = new List<string>();
+                            for (; i < len; i = i + tempi)
+                            {
+
+                                if ((i + tempi) >= len) { tempi = (len - i); }
+
+                                RedisValue[] StatusList = db.ListRange(fenkey, i, i + (tempi - 1));
+                                StatusList.Where<RedisValue>(st =>
+                                {
+                                    if (st.ToString().Contains(cusno)&&st.ToString().Contains(declarationcode))
+                                    {
+                                        jsonlist_t.Add(st.ToString());
+                                        return true;
+                                    }
+                                    return false;
+                                }).ToList<RedisValue>();
+                                tempi = 200;
+                            }
+
+                            totalProperty_fenkey = (long)jsonlist_t.Count;
+                            if (totalProperty_fenkey < end) { end = totalProperty_fenkey; }
+                            for (long j = start; j < end; j++)
+                            {
+                                if (totalProperty_fenkey <= start) { break; }
+
+
+                                if (jsonlist_t[(int)j] != "")
+                                {
+                                    json_fenkey += jsonlist_t[(int)j];
+                                    if (j < (end - 1)) { json_fenkey += ","; }
+                                }
+
+                            }
+                            json_fenkey = "[" + json_fenkey + "]";
+
+                           
+                        }                       
                     }
-                    json_fenkey = "[" + json_fenkey + "]"; 
-                    } 
-                    else 
-                    {
-                        json_fenkey = "[]"; 
-                    }
-                    Response.Write("{rows:" + json_fenkey + ",total:" + totalProperty_fenkey + "}"); 
-                    Response.End(); 
+                    
+                    Response.Write("{rows:" + json_fenkey + ",total:" + totalProperty_fenkey + "}");
+                    Response.End();
                     break;
+
+                    //IDatabase db = SeRedis.redis.GetDatabase();
+                    //if (fenkey != string.Empty && db.KeyExists(fenkey)) 
+                    //{ 
+                    //long start = Convert.ToInt64(Request["start"]); 
+                    //long end = Convert.ToInt64(Request["start"]) + Convert.ToInt64(Request["limit"]);
+                    //RedisValue[] jsonlist = db.ListRange(fenkey, start, end-1);
+                    //totalProperty_fenkey = db.ListLength(fenkey);
+                    //for (long i = 0; i < jsonlist.Length; i++) 
+                    //{
+                    //    json_fenkey += jsonlist[i];
+                    //    if (i < jsonlist.Length - 1) { json_fenkey += ","; } 
+                    //}
+                    //json_fenkey = "[" + json_fenkey + "]"; 
+                    //} 
+                    //else 
+                    //{
+                    //    json_fenkey = "[]"; 
+                    //}
+                    //Response.Write("{rows:" + json_fenkey + ",total:" + totalProperty_fenkey + "}"); 
+                    //Response.End(); 
+                    //break;
                    
             }
         }

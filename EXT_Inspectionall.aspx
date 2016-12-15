@@ -120,7 +120,8 @@
                 listeners: {
                     beforeload: function (store, options) {
                         var new_params = {
-                            CUSNO: Ext.getCmp("CUSNO").getValue(), FENKEY: Ext.getCmp("FENKEY").getValue()
+                            CUSNO: Ext.getCmp("CUSNO").getValue(), APPROVALCODE: Ext.getCmp("APPROVALCODE").getValue()
+                            , INSPECTIONCODE: Ext.getCmp("INSPECTIONCODE").getValue(), FENKEY: Ext.getCmp("FENKEY").getValue()
                         }
                         Ext.apply(store.proxy.extraParams, new_params);
                     }
@@ -156,7 +157,10 @@
                     { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
                     { header: '通关标志', dataIndex: 'ISNEEDCLEARANCE', width: 60 },
                     { header: '法检标志', dataIndex: 'LAWFLAG', width: 60 }
-                ]
+                ],
+                viewConfig: {
+                    enableTextSelection: true
+                }
             })
         });
     </script>
