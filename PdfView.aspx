@@ -28,7 +28,7 @@
         var path = "";
         var allow_sel;
         var filedarray = [];
-        var formpanel, gridpanel, toolbar;
+        var formpanel, gridpanel, toolbar; var win_mergeordelete, store;
         Ext.onReady(function () {
             var field_code = Ext.create('Ext.form.RadioGroup', {
                 id: 'field_code',
@@ -89,46 +89,45 @@
                 readOnly: true
             });
 
-            var cbg_file = Ext.create('Ext.form.CheckboxGroup', {
-                id: 'cbg_file',
-                fieldLabel: '订单文件',
-                labelAlign: "right",
-                columnWidth: 1,
-                columns: 8,
+            var field_file = Ext.create('Ext.form.RadioGroup', {
+                id: 'field_file',
                 margin: 10,
-                items: []
-            })
+                columnWidth: 1,
+                labelAlign: "right",
+                fieldLabel: '订单文件',
+                columns: 10,
+                vertical: false,
+                items: [],
+                listeners: {
+                    change: function (rb, newValue, oldValue, eOpts) {
+                        fileid = newValue.rbgfile;
+                        pdfview();
+                    }
+                }
+            });
+
             formpanel = Ext.create('Ext.form.Panel', {
                 title: '文件拆分',
                 region: 'north',
                 height: 120,
                 items: [{ layout: 'column', border: 0, items: [field_code, combo_busitype, field_busiunit, field_filestatus] },
-                        { layout: 'column', border: 0, items: [cbg_file] }
+                        { layout: 'column', border: 0, items: [field_file] }
                 ]
             });
             var html = '<div id="pdfdiv" style="width:100%;height:100%"></div>';
             var panel = Ext.create('Ext.panel.Panel', {
                 region: 'center',
-                html: html
+                html: html,
+                id: 'panel_file'
             });
             toolbar = Ext.create("Ext.toolbar.Toolbar", {
                 items: [
                     {
-                        text: '<i class="iconfont">&#xe834;</i>文件合并', id: 'btn_merge', disabled: true,
-                        handler: function () {
-                            Ext.Ajax.request({
-                                url: 'PdfView.aspx?action=merge&ordercode=' + ordercode + "&fileids=" + cbg_file.getValue().cbg + "&userid=" + userid,
-                                success: function (response, opts) {
-                                    var json = Ext.decode(response.responseText);
-                                    if (json.success) {
-                                        panel.hide();
-                                        Ext.MessageBox.alert('提示', '文件合并成功！', function () {
-                                            panel.show();
-                                            iniform();
-                                        })
-                                    }
-                                }
-                            })
+                        text: '<i class="iconfont">&#xe834;</i>合并||删除', id: 'btn_mergedelete', 
+                        handler: function () {                            
+                            document.getElementById('pdfdiv').innerHTML = '<embed  id="pdf" width="100%" height="100%" src=""></embed>';
+                            panel.hide();
+                            win_mergeordelete.show();
                         }
                     },
                     {
@@ -150,7 +149,7 @@
                                 })
                                 return;
                             } 
-                            if (Ext.getCmp('cbg_file').getChecked().length == 0)
+                            if (Ext.getCmp('field_file').getChecked().length == 0)
                             {
                                 panel.hide();
                                 Ext.MessageBox.alert('提示', '请选择需要拆分的文件！', function () {
@@ -258,6 +257,7 @@
             //如果只有一个订单文件,直接加载进行拆分;如果有多个订单文件，则不予加载,勾选后
             //默认加载第一个订单文件 
             iniform();
+            init_mergeordelete();
         });
         function iniform() {
             Ext.Ajax.request({
@@ -278,24 +278,30 @@
                             Ext.getCmp('field_code').insert({ boxLabel: json.formdata.ASSOCIATENO, name: 'rbg', inputValue: json.formdata.ASSOCIATENO });
                         }
                     }
-                    Ext.getCmp('cbg_file').removeAll();
+                    
+                    Ext.getCmp('field_file').removeAll();
                     for (var i = 0; i < json.filedata.length; i++) {
-                        Ext.getCmp('cbg_file').insert(Ext.getCmp('cbg_file').items.length, {
-                            boxLabel: '订单文件' + (i + 1), name: 'cbg', inputValue: json.filedata[i].ID, listeners: {
-                                change: function (cb, newValue, oldValue, eOpts) {
-                                    fileid = cb.inputValue;
-                                    for (var j = 0; j < Ext.getCmp('cbg_file').items.length; j++) {
-                                        Ext.getCmp('cbg_file').getComponent(j).removeCls('cbg-font-color');
-                                    }
-                                    cb.addCls('cbg-font-color');
-                                    pdfview();
-                                }
-                            }
+                        Ext.getCmp('field_file').insert(Ext.getCmp('field_file').items.length, {
+                            boxLabel: '订单文件' + (i + 1), name: 'rbgfile', inputValue: json.filedata[i].ID
                         });
                     }
-                    if (Ext.getCmp('cbg_file').items.length == 1) {
-                        Ext.getCmp('cbg_file').getComponent(0).setValue(true);
+                    if (Ext.getCmp('field_file').items.length == 1) {
+                        Ext.getCmp('field_file').getComponent(0).setValue(true);
+                    } else {
+                        fileid = "";
+                        document.getElementById('pdfdiv').innerHTML = "";
+                        //清除追加的button按钮
+                        var times = toolbar.items.length
+                        for (var i = 3; i < times; i++) {
+                            var btn = toolbar.getComponent(3);//移除了第4个元素后，后面的元素会自动填充到第4的位置
+                            if (btn) {
+                                toolbar.remove(btn);
+                            }
+                        }
+                        gridpanel.getStore().removeAll();
+                        gridpanel.reconfigure(store,[]);
                     }
+
                 }
             });
         }
@@ -312,7 +318,6 @@
                         //按钮控制开始
                         var ordertatus = Ext.getCmp('field_filestatus').getValue();
                         if (ordertatus == '已拆分') {//订单的拆分状态
-                            Ext.getCmp('btn_merge').setDisabled(true);
                             Ext.getCmp("btn_confirmsplit").setDisabled(true);
                             allow_sel = false;
                             if (json.filestatus == 0) {//文件的拆分状态
@@ -323,12 +328,7 @@
                             }
                         }
                         else {
-                            if (Ext.getCmp('cbg_file').getChecked().length > 1) {
-                                Ext.getCmp('btn_merge').setDisabled(false);
-                            }
-                            else {
-                                Ext.getCmp('btn_merge').setDisabled(true);
-                            }
+                            
                             Ext.getCmp("btn_confirmsplit").setDisabled(false);
                             allow_sel = true;
                             //  Ext.getCmp('btn_cancelsplit').setDisabled(true);
@@ -412,6 +412,156 @@
                 }
             });
         }
+
+        function init_mergeordelete() {
+            var field_CODE_w = Ext.create('Ext.form.field.Text', {
+                id: 'field_CODE_w',
+                name: 'CODE_w',
+                fieldLabel: '订单编号',
+                labelAlign: "right",
+                readOnly: true
+            });
+            var cbg_files = Ext.create('Ext.form.CheckboxGroup', {
+                id: 'cbg_files',
+                fieldLabel: '订单文件',
+                labelAlign: "right",
+                columnWidth: 1,
+                columns: 8,
+                margin: 10,
+                items: []
+            });
+            
+            var w_formpanel = Ext.create('Ext.form.Panel', {
+                region: 'center',
+                items: [
+                    { layout: 'column',margin:5, border: 0, items: [field_CODE_w] },
+                    { layout: 'column', height: 52, border: 0, items: [cbg_files ] }
+                ]
+            });
+            
+            win_mergeordelete = Ext.create("Ext.window.Window", {
+                title: "文件合并&删除",
+                width: 800,
+                height: 250,
+                closeAction: 'hide',
+                layout: "border",
+                modal: true,
+                items: [w_formpanel],
+                buttonAlign: 'center',
+                buttons: [
+                    {
+                        text: '<i class="iconfont">&#xe834;</i>文件合并', id: 'btn_merge_w', handler: function () {                            
+                            if (Ext.getCmp('cbg_files').getChecked().length <= 1) {
+                                Ext.MessageBox.alert('提示', '请选择需要合并的文件！');
+                                return;
+                            }
+                            Ext.Ajax.request({
+                                url: 'PdfView.aspx?action=merge&ordercode=' + ordercode + "&fileids=" + cbg_files.getValue().cbg + "&userid=" + userid,
+                                success: function (response, opts) {
+                                    var json = Ext.decode(response.responseText);
+                                    if (json.success) {
+                                        Ext.MessageBox.alert('提示', '文件合并成功！', function () {
+                                            win_mergeordelete.close();
+                                            reloadform();
+                                        })
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    {
+                        text: '<i class="iconfont">&#xe606;</i>文件删除', id: 'btn_delete_w', handler: function () {
+                            if (Ext.getCmp('cbg_files').getChecked().length <= 0) {
+                                Ext.MessageBox.alert('提示', '请选择删除的文件！');
+                                return;
+                            }
+
+                            Ext.MessageBox.confirm('提示', '确定要删除吗？', function (btn) {
+                                if (btn == 'yes') {
+                                    Ext.Ajax.request({
+                                        url: 'PdfView.aspx?action=delete&ordercode=' + ordercode + "&fileids=" + cbg_files.getValue().cbg + "&userid=" + userid,
+                                        success: function (response, opts) {
+                                            var json = Ext.decode(response.responseText);
+                                            if (json.success) {
+                                                Ext.MessageBox.alert('提示', '删除成功！', function () {
+                                                    win_mergeordelete.close();
+                                                    reloadform();
+                                                })
+                                            } else {
+                                                Ext.MessageBox.alert('提示', '删除失败，错误信息:' + json.error);
+                                            }
+                                           
+                                        }
+                                    })
+                                }
+                            });
+                        
+                        }
+                    }
+                ],
+                listeners: {
+                    "show": function() {
+                        loadattach();
+                    },
+                    "close": function () {
+                        reloadform();
+                    } 
+                }
+            });
+        }
+
+        function loadattach() {
+            Ext.Ajax.request({
+                url: "PdfView.aspx",
+                params: { ordercode: ordercode, action: 'loadattach' },
+                success: function (response, option) {
+                    var json = Ext.decode(response.responseText);
+
+                    Ext.getCmp('cbg_files').removeAll();
+                    for (var i = 0; i < json.filedata.length; i++) {
+                        Ext.getCmp('cbg_files').insert(Ext.getCmp('cbg_files').items.length, {
+                            boxLabel: '订单文件' + (i + 1), name: 'cbg', inputValue: json.filedata[i].ID, listeners: {
+                                change: function (cb, newValue, oldValue, eOpts) {
+                                    fileid = cb.inputValue;
+                                    for (var j = 0; j < Ext.getCmp('cbg_files').items.length; j++) {
+                                        Ext.getCmp('cbg_files').getComponent(j).removeCls('cbg-font-color');
+                                    }
+                                    cb.addCls('cbg-font-color');
+                                }
+                            }
+                        });
+                    }
+                    if (Ext.getCmp('field_filestatus').getValue() == '已拆分') {
+                        Ext.getCmp('btn_merge_w').setDisabled(true);
+                    } else {
+                        Ext.getCmp('btn_merge_w').setDisabled(false);
+                    }
+                    Ext.getCmp("field_CODE_w").setValue(ordercode);
+                }
+            });
+        }
+
+        function reloadform() {
+           if (Ext.getCmp('field_file').items.length > 1) {
+                fileid = "";
+                document.getElementById('pdfdiv').innerHTML = '<embed  id="pdf" width="100%" height="100%" src=""></embed>';
+                //清除追加的button按钮
+                var times = toolbar.items.length
+                for (var i = 3; i < times; i++) {
+                    var btn = toolbar.getComponent(3);//移除了第4个元素后，后面的元素会自动填充到第4的位置
+                    if (btn) {
+                        toolbar.remove(btn);
+                    }
+                }
+                gridpanel.getStore().removeAll();
+                gridpanel.reconfigure(store, []);
+                
+            }
+            iniform(); pdfview();
+
+            Ext.getCmp('panel_file').show();
+        }
+
     </script>
 </head>
 <body>

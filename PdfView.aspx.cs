@@ -30,7 +30,7 @@ namespace Web_Admin
             string filetype = Request["filetype"];
             string ordercode = Request["ordercode"];
             string fileid = Request["fileid"];
-            string userid = Request["userid"];
+            string userid = Request["userid"] == null ? "" : Request["userid"];
             string username = Request["username"]; 
             string json = "";
             string sql = "";
@@ -40,7 +40,7 @@ namespace Web_Admin
             FileInfo fi;
             switch (action)
             {
-                case "merge": 
+                case "merge":
                     string splitfilename = "";
                     string filestatus = "";
                     string fileids = Request["fileids"].Replace("[", "").Replace("]", "");
@@ -106,6 +106,7 @@ namespace Web_Admin
                         }
                         pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
                         int totalPages = pdfReader.NumberOfPages;
+                        pdfReader.Close(); pdfReader.Dispose();
                         sql = "select * from sys_filetype where parentfiletypeid=44  order by sortindex asc";//取该文件类型下面所有的子类型
                         dt = DBMgr.GetDataTable(sql);
                         //构建页码表格数据
@@ -137,6 +138,7 @@ namespace Web_Admin
                         {
                             pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
                             int totalPages = pdfReader.NumberOfPages;
+                            pdfReader.Close(); pdfReader.Dispose();
                             sql = "select * from sys_filetype where parentfiletypeid=44 order by sortindex asc";//取该文件类型下面所有的子类型
                             dt = DBMgr.GetDataTable(sql);
                             //构建页码表格数据
@@ -195,7 +197,7 @@ namespace Web_Admin
                     //2016-6-16压缩改用pdfshrink在后台执行                   
                     string compressname = "";
                     //如果pdfshrink压缩文件存在               
-                    if (File.Exists(@"d:\ftpserver\" + (dt.Rows[0]["FILENAME"] + "").Replace(".pdf", "").Replace(".PDF","") + "-web.pdf"))
+                    if (File.Exists(@"d:\ftpserver\" + (dt.Rows[0]["FILENAME"] + "").Replace(".pdf", "").Replace(".PDF", "") + "-web.pdf"))
                     {
                         compressname = @"d:\ftpserver\" + (dt.Rows[0]["FILENAME"] + "").Replace(".pdf", "").Replace(".PDF", "") + "-web.pdf";
                     }
@@ -269,6 +271,8 @@ namespace Web_Admin
                                     DBMgr.ExecuteNonQuery(sql);
                                 }
                             }
+                            pdfReader.Close(); pdfReader.Dispose();
+
                             //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
                             sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
                             DBMgr.ExecuteNonQuery(sql);
@@ -288,7 +292,7 @@ namespace Web_Admin
                             }
                             sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
                             dt = DBMgr.GetDataTable(sql);
-                            json = JsonConvert.SerializeObject(dt); 
+                            json = JsonConvert.SerializeObject(dt);
                             Response.Write("{success:true,result:" + json + "}");
 
                         }
@@ -377,6 +381,63 @@ namespace Web_Admin
                     DataTable dt_file = DBMgr.GetDataTable(sql);
                     string result_file = JsonConvert.SerializeObject(dt_file);
                     Response.Write("{formdata:" + result + ",filedata:" + result_file + "}");
+                    Response.End();
+                    break;
+                case "loadattach":
+                    sql = "select * from list_attachment where ordercode='" + ordercode + "' and filetype=44 order by uploadtime asc";
+                    DataTable dt_attach = DBMgr.GetDataTable(sql);
+                    string result_attach = JsonConvert.SerializeObject(dt_attach);
+                    Response.Write("{filedata:" + result_attach + "}");
+                    Response.End();
+                    break;
+                case "delete"://删除及明细
+                    try
+                    {
+                        string del_fileids = Request["fileids"].Replace("[", "").Replace("]", "");
+                        string[] del_fileidarray = del_fileids.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                        for (int i = 0; i < del_fileidarray.Length; i++)
+                        {
+                            sql = "select * from list_attachment where ID=" + del_fileidarray[i];
+                            dt = DBMgr.GetDataTable(sql);
+                            if (dt.Rows.Count > 0)
+                            {
+                                //删除明细
+                                sql = "select * from list_attachmentdetail where ordercode='" + ordercode + "' and attachmentid=" + del_fileidarray[i];
+                                DataTable dt_detail = DBMgr.GetDataTable(sql);
+                                for (int j = 0; j < dt_detail.Rows.Count; j++)
+                                {
+                                    if (File.Exists(@"d:/ftpserver/" + dt_detail.Rows[j]["SOURCEFILENAME"]))
+                                    {
+                                        File.Delete(@"d:/ftpserver/" + dt_detail.Rows[j]["SOURCEFILENAME"]);
+                                    }
+                                    sql = "delete from list_attachmentdetail where id=" + dt_detail.Rows[j]["ID"];
+                                    DBMgr.ExecuteNonQuery(sql);
+                                }
+
+                                //删除                               
+                                if (File.Exists(@"d:/ftpserver/" + dt.Rows[0]["FILENAME"]))
+                                {                                    
+                                    File.Delete(@"d:/ftpserver/" + dt.Rows[0]["FILENAME"]);   
+                                }
+
+                                sql = "delete from list_attachment where id= '" + del_fileidarray[i] + "'";
+                                DBMgr.ExecuteNonQuery(sql);
+
+                                db.KeyDelete(ordercode + ":" + del_fileidarray[i] + ":splitdetail");
+                            }
+                        }
+
+                        sql = "update LIST_ORDER set FILESTATUS=0,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
+                        DBMgr.ExecuteNonQuery(sql);
+
+                        Response.Write("{success:true}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Response.Write("{success:false,error:\"" + ex.Message + "\"}");
+                    } 
+
                     Response.End();
                     break;
             }
@@ -499,9 +560,16 @@ namespace Web_Admin
                     #endregion
                 }
             }
+            reader.Close(); reader.Dispose();
         }
         protected void MergePDFFiles(IList<string> fileList, string outMergeFile)
         {
+            string filedir = outMergeFile.Substring(0, outMergeFile.LastIndexOf('/'));
+            if (!Directory.Exists(filedir))
+            {
+                Directory.CreateDirectory(filedir);
+            }
+
             int rotation = 0;
             PdfReader reader;
             Document document = new Document();
