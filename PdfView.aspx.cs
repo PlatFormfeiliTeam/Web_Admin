@@ -182,7 +182,7 @@ namespace Web_Admin
                     //string filetypename = dt.Rows[0]["FILETYPENAME"] + "";
                     //如果是已经拆分好的 需要调出所有拆分好的文件类型 filetype:'" + filetypename + "'
                     sql = @"select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype
-                          b on a.filetypeid=b.filetypeid where a.attachmentid='" + fileid + "' order by b.sortindex asc";
+                          b on a.filetypeid=b.filetypeid where a.attachmentid='" + fileid + "' and a.ordercode='" + ordercode + "' order by b.sortindex asc";
                     dt = DBMgr.GetDataTable(sql);
                     string json_type = JsonConvert.SerializeObject(dt);
                     Response.Write(@"{success:true,src:'\/file\/" + splitfilename + "',rows:" + json + ",fileid:" + fileid + ",filestatus:'" + filestatus + "',result:" + json_type + "}");
