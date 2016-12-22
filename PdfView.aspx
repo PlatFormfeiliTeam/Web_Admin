@@ -100,7 +100,7 @@
                 items: [],
                 listeners: {
                     change: function (rb, newValue, oldValue, eOpts) {
-                        fileid = newValue.rbgfile;
+                        fileid = newValue.rbgfile; 
                         pdfview();
                     }
                 }
@@ -285,6 +285,7 @@
                             boxLabel: '订单文件' + (i + 1), name: 'rbgfile', inputValue: json.filedata[i].ID
                         });
                     }
+                    
                     if (Ext.getCmp('field_file').items.length == 1) {
                         Ext.getCmp('field_file').getComponent(0).setValue(true);
                     } else {
@@ -504,7 +505,7 @@
                         loadattach();
                     },
                     "close": function () {
-                        reloadform();
+                        reloadform(); 
                     } 
                 }
             });
@@ -532,9 +533,11 @@
                         });
                     }
                     if (Ext.getCmp('field_filestatus').getValue() == '已拆分') {
-                        Ext.getCmp('btn_merge_w').setDisabled(true);
+                        Ext.getCmp('btn_merge_w').setDisabled(true); 
+                        Ext.getCmp('btn_delete_w').setDisabled(true);
                     } else {
                         Ext.getCmp('btn_merge_w').setDisabled(false);
+                        Ext.getCmp('btn_delete_w').setDisabled(false);
                     }
                     Ext.getCmp("field_CODE_w").setValue(ordercode);
                 }
