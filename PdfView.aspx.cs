@@ -189,6 +189,7 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "split":
+                    int filepages = 0;
                     string data = Request["pages"];
                     JArray jsonarray = JsonConvert.DeserializeObject<JArray>(data);
                     db.StringSet(ordercode + ":" + fileid + ":splitdetail", data);
@@ -219,7 +220,7 @@ namespace Web_Admin
 
                         try
                         {
-                            pdfReader = new PdfReader(compressname);
+                            pdfReader = new PdfReader(compressname); filepages = pdfReader.NumberOfPages;
                             sql = "select * from sys_filetype where parentfiletypeid=" + filetype;//取该文件类型下面所有的子类型
                             dt = DBMgr.GetDataTable(sql);
                             IList<Int32> pagelist;
@@ -280,7 +281,8 @@ namespace Web_Admin
                             DataTable dt_list_order = DBMgr.GetDataTable("select * from LIST_ORDER where  code='" + ordercode + "'");
                             //  DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
                             // sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
-                            sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate where code='" + ordercode + "'";
+                            sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate,FILEPAGES=" + filepages 
+                                + ",FILESPLITEUSERID='" + userid + "',FILESPLITEUSERNAME='" + username + "' where code='" + ordercode + "'";
                             int resultcode = DBMgr.ExecuteNonQuery(sql);
                             if (resultcode > 0)
                             {
@@ -325,7 +327,7 @@ namespace Web_Admin
                     sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id=" + fileid;
                     DBMgr.ExecuteNonQuery(sql);
                     //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
-                    sql = "update LIST_ORDER set FILESTATUS=0 where code='" + ordercode + "'";
+                    sql = "update LIST_ORDER set FILESTATUS=0,FILEPAGES=null,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
                     DBMgr.ExecuteNonQuery(sql);
                     db.KeyDelete(ordercode + ":" + fileid + ":splitdetail");
                     Response.Write("{success:true}");
@@ -428,7 +430,7 @@ namespace Web_Admin
                             }
                         }
 
-                        sql = "update LIST_ORDER set FILESTATUS=0,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
+                        sql = "update LIST_ORDER set FILESTATUS=0,FILEPAGES=null,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
                         DBMgr.ExecuteNonQuery(sql);
 
                         Response.Write("{success:true}");
