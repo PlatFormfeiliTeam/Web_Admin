@@ -196,15 +196,6 @@
                         }
                     }, {
                         text: '<i class="iconfont">&#xe620;</i>&nbsp;撤销拆分', id: 'btn_cancelsplit', handler: function () {
-
-                            if (Ext.getCmp('field_file').getChecked().length == 0) {
-                                panel.hide();
-                                Ext.MessageBox.alert('提示', '请选择需要撤销拆分的文件！', function () {
-                                    panel.show();
-                                });
-                                return;
-                            }
-
                             panel.hide();
                             Ext.MessageBox.confirm('提示', '确定要撤销拆分吗？', function (btn) {
                                 if (btn == 'yes') {

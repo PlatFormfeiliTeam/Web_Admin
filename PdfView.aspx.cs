@@ -341,26 +341,6 @@ namespace Web_Admin
 
                     Response.Write("{success:true}");
                     Response.End();
-
-                    /*sql = "select * from list_attachmentdetail where ordercode='" + ordercode + "' and attachmentid=" + fileid;
-                    dt = DBMgr.GetDataTable(sql);
-                    for (int i = 0; i < dt.Rows.Count; i++)
-                    {
-                        if (File.Exists(@"d:/ftpserver/" + dt.Rows[i]["SOURCEFILENAME"]))
-                        {
-                            File.Delete(@"d:/ftpserver/" + dt.Rows[i]["SOURCEFILENAME"]);
-                        }
-                        sql = "delete from list_attachmentdetail where id=" + dt.Rows[i]["ID"];
-                        DBMgr.ExecuteNonQuery(sql);
-                    }
-                    sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id=" + fileid;
-                    DBMgr.ExecuteNonQuery(sql);
-                    //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
-                    sql = "update LIST_ORDER set FILESTATUS=0,FILEPAGES=null,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
-                    DBMgr.ExecuteNonQuery(sql);
-                    db.KeyDelete(ordercode + ":" + fileid + ":splitdetail");
-                    Response.Write("{success:true}");
-                    Response.End();*/
                     break;
                 case "loadfile":
                     sql = "select * from list_attachmentdetail where id='" + fileid + "'";
