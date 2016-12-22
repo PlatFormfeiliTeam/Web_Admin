@@ -277,15 +277,16 @@
                         if (json.formdata.ASSOCIATENO) {//如果存在两单关联号
                             Ext.getCmp('field_code').insert({ boxLabel: json.formdata.ASSOCIATENO, name: 'rbg', inputValue: json.formdata.ASSOCIATENO });
                         }
-                    }
-                    
+                    }                   
+
                     Ext.getCmp('field_file').removeAll();
+                    Ext.getCmp('field_file').reset();//若不重置，会导致再选打开窗体之前的文件，点了没反应
                     for (var i = 0; i < json.filedata.length; i++) {
                         Ext.getCmp('field_file').insert(Ext.getCmp('field_file').items.length, {
                             boxLabel: '订单文件' + (i + 1), name: 'rbgfile', inputValue: json.filedata[i].ID
                         });
                     }
-                    
+
                     if (Ext.getCmp('field_file').items.length == 1) {
                         Ext.getCmp('field_file').getComponent(0).setValue(true);
                     } else {
@@ -303,6 +304,13 @@
                         gridpanel.reconfigure(store,[]);
                     }
 
+                    //var obj = Ext.getCmp("field_file").items.items;
+                    //for (var i in obj) {
+                    //    if (obj[i].checked) {
+                    //        Ext.Msg.alert("Tip", "您点击的radio名称是*****" + obj[i].inputValue);
+                    //    }
+                    //    obj[i].checked = false;
+                    //}
                 }
             });
         }
@@ -518,7 +526,7 @@
                 success: function (response, option) {
                     var json = Ext.decode(response.responseText);
 
-                    Ext.getCmp('cbg_files').removeAll();
+                    Ext.getCmp('cbg_files').removeAll(); Ext.getCmp('cbg_files').reset();
                     for (var i = 0; i < json.filedata.length; i++) {
                         Ext.getCmp('cbg_files').insert(Ext.getCmp('cbg_files').items.length, {
                             boxLabel: '订单文件' + (i + 1), name: 'cbg', inputValue: json.filedata[i].ID, listeners: {
