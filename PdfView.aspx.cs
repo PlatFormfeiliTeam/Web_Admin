@@ -331,9 +331,12 @@ namespace Web_Admin
                         DBMgr.ExecuteNonQuery(sql);
                     }
 
-                    fileids_temp = fileids_temp.Substring(0, fileids_temp.Length - 1);
-                    sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id in(" + fileids_temp + ")";
-                    DBMgr.ExecuteNonQuery(sql);
+                    if (fileids_temp != "")
+                    {
+                        fileids_temp = fileids_temp.Substring(0, fileids_temp.Length - 1);
+                        sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id in(" + fileids_temp + ")";
+                        DBMgr.ExecuteNonQuery(sql);
+                    }                    
 
                     //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
                     sql = "update LIST_ORDER set FILESTATUS=0,FILEPAGES=null,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
