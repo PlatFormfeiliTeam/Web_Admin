@@ -333,7 +333,7 @@
                                 // Ext.getCmp('btn_cancelsplit').setDisabled(true);
                             }
                             else {
-                                //  Ext.getCmp('btn_cancelsplit').setDisabled(false);
+                                  Ext.getCmp('btn_cancelsplit').setDisabled(false);
                             }
                         }
                         else {
