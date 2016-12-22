@@ -30,8 +30,8 @@ namespace Web_Admin
             string filetype = Request["filetype"];
             string ordercode = Request["ordercode"];
             string fileid = Request["fileid"];
-            string userid = Request["userid"] == null ? "" : Request["userid"];
-            string username = Request["username"]; 
+            string userid = Request["userid"] == "null" ? "" : Request["userid"];
+            string username = Request["username"] == "null" ? "" : Request["username"]; 
             string json = "";
             string sql = "";
             DataTable dt;
