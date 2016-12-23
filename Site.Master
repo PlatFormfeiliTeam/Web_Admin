@@ -40,7 +40,7 @@
                     <li>
                         <a><span style="font-size:14px;"><i class="icon iconfont">&#xe626;</i></span>&nbsp;网站配置</a>
                         <ul>
-                                    
+                             <li><a href="NoticeList.aspx">资讯管理</a></li>       
                         </ul>       
                     </li> 
                     <li>
