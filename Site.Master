@@ -29,26 +29,35 @@
         <div style="background-color: #363c64; width: 100%">
             <div class="container">
                 <ul class="sf-menu" id="na_menu" style="font-size: 14px">
-                    <li><a href="ModuleList.aspx">模块管理</a></li>                    
-                    <li><a href="UserList.aspx">账户管理</a></li>
-                    <li><a href="WebAuthList.aspx">权限管理</a></li>
-                    <li><a href="AttachList.aspx">文件列表</a></li> 
-                <%--    <li>
-                        <a>缓存管理</a>
-                        <ul>
-                            <li><a href="Statuslogall.aspx">报关报检业务</a></li>
-                            <li><a href="Declareall.aspx">报关单</a></li>
-                            <li><a href="Inspectionall.aspx">报检单</a></li>
-                        </ul>        
-                    </li> --%> 
                     <li>
-                        <a>缓存管理Ext</a>
+                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe605;</i></span>&nbsp;系统管理</a>
+                        <ul>                            
+                            <li><a href="ModuleList.aspx">模块管理</a></li>
+                            <li><a href="UserList.aspx">账户管理</a></li>
+                            <li><a href="WebAuthList.aspx">前端权限管理</a></li>                            
+                        </ul>       
+                    </li>  
+                    <li>
+                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe626;</i></span>&nbsp;网站配置</a>
+                        <ul>
+                                    
+                        </ul>       
+                    </li> 
+                    <li>
+                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe647;</i></span>&nbsp;缓存管理</a>
                         <ul>
                             <li><a href="EXT_Statuslogall.aspx">报关报检业务</a></li>
                             <li><a href="EXT_Declareall.aspx">报关单</a></li>
                             <li><a href="EXT_Inspectionall.aspx">报检单</a></li>
                         </ul>        
-                    </li>            
+                    </li> 
+                     <li>
+                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe61b;</i></span>&nbsp;其他管理</a>
+                        <ul>
+                            <li><a href="AttachList.aspx">文件列表</a></li>    
+                        </ul>       
+                    </li>                      
+                                         
                 </ul>
             </div>
         </div>
