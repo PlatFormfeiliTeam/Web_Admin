@@ -5,67 +5,11 @@
     <script src="/js/pan.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-        var groupid, store_Notice;
         Ext.onReady(function () {
 
-            var toolbar = Ext.create('Ext.toolbar.Toolbar', {
-                items: [
-                            {
-                                xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE'
-                            },
-                              {
-                                  xtype: 'button', text: '查 询', icon: '../../images/shared/search_show.gif', handler: function () {
-                                      store_Notice.load();
-                                  }
-                              }, '-', {
-                                  text: '添 加', icon: '../../images/shared/add.gif', handler: function () {
-                                      opencenterwin("NoticeEdit.aspx", 950, 600);
-                                  }
-                              }
-                              , '-', {
-                                  text: '修 改', icon: '../../images/shared/message_edit.png', handler: function () {
-
-                                      var recs = gridpanel.getSelectionModel().getSelection();
-                                      if (!recs || recs.length <= 0) {
-                                          Ext.Msg.alert("提示", "请选择修改记录!");
-                                          return;
-                                      }
-                                      opencenterwin("NoticeEdit.aspx?action=loadform&ID=" + recs[0].get("ID"), 950, 600);
-                                  }
-                              }
-                              , '-', {
-                                  text: '删 除', icon: '../../images/shared/delete.gif', handler: function () {
-                                      var recs = gridpanel.getSelectionModel().getSelection();
-                                      if (recs.length > 0) {
-                                          var formIds = "";
-                                          Ext.each(recs, function (rec) {
-                                              formIds += "'" + rec.get("ID") + "',";
-                                          })
-                                          if (formIds.length > 0) {
-                                              formIds = formIds.substr(0, formIds.length - 1);
-                                          }
-                                          Ext.Ajax.request({
-                                              url: 'NoticeList.aspx?action=delete',
-                                              params: { Ids: formIds },
-                                              callback: function () {
-                                                  Ext.Msg.alert("提示", "删除成功!");
-                                                  store_Notice.reload();
-                                              }
-                                          })
-                                      }
-                                      else {
-                                          Ext.Msg.alert("提示", "请选择要删除的记录!");
-                                      }
-
-                                  }
-                              }
-                ]
-            })
-
-            Ext.regModel('Notice', { fields: ['ID', 'TITLE', 'CONTENT', 'CREATEID', 'CREATENAME', 'AUDITID', 'AUDITNAME', 'STATE', 'TYPE', 'FILEPATH', 'RELEASETIME', 'CREATETIME', 'SUMMARY', 'TAG'] })
-            store_Notice = Ext.create('Ext.data.JsonStore', {
-                model: 'Notice',
-                pageSize: 25,
+            var store_Notice = Ext.create('Ext.data.JsonStore', {
+                fields: ['ID', 'TITLE', 'CONTENT', 'CREATEID', 'CREATENAME', 'AUDITID', 'AUDITNAME', 'STATE', 'TYPE', 'FILEPATH', 'RELEASETIME', 'CREATETIME', 'SUMMARY', 'TAG'],
+                pageSize: 20,
                 proxy: {
                     type: 'ajax',
                     url: 'NoticeList.aspx?action=load',
@@ -84,6 +28,60 @@
                         Ext.apply(store.proxy.extraParams, new_params);
                     }
                 }
+            })
+
+            var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+                items: [
+                            {
+                                xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE'
+                            },
+                              {
+                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>&nbsp;查 询', handler: function () {
+                                      pgbar.moveFirst();
+                                  }
+                              }, '-', {
+                                  text: '<i class="iconfont">&#xe60b;</i>&nbsp;添 加', handler: function () {
+                                      opencenterwin("NoticeEdit.aspx", 950, 600);
+                                  }
+                              }
+                              , '-', {
+                                  text: '<i class="icon iconfont">&#xe607;</i>&nbsp;修 改', handler: function () {
+
+                                      var recs = gridpanel.getSelectionModel().getSelection();
+                                      if (!recs || recs.length <= 0) {
+                                          Ext.Msg.alert("提示", "请选择修改记录!");
+                                          return;
+                                      }
+                                      opencenterwin("NoticeEdit.aspx?action=loadform&ID=" + recs[0].get("ID"), 950, 600);
+                                  }
+                              }
+                              , '-', {
+                                  text: '<i class="icon iconfont">&#xe606;</i>&nbsp;删 除', handler: function () {
+                                      var recs = gridpanel.getSelectionModel().getSelection();
+                                      if (recs.length > 0) {
+                                          var formIds = "";
+                                          Ext.each(recs, function (rec) {
+                                              formIds += "'" + rec.get("ID") + "',";
+                                          })
+                                          if (formIds.length > 0) {
+                                              formIds = formIds.substr(0, formIds.length - 1);
+                                          }
+                                          Ext.Ajax.request({
+                                              url: 'NoticeList.aspx?action=delete',
+                                              params: { Ids: formIds },
+                                              callback: function () {
+                                                  Ext.Msg.alert("提示", "删除成功!");
+                                                  pgbar.moveFirst();
+                                              }
+                                          })
+                                      }
+                                      else {
+                                          Ext.Msg.alert("提示", "请选择要删除的记录!");
+                                      }
+
+                                  }
+                              }
+                ]
             })
 
             var pgbar = Ext.create('Ext.toolbar.Paging', {

@@ -40,7 +40,7 @@
                                 xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE', flex: .25
                             },
                               {
-                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>查询', handler: function () {
+                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>&nbsp;查询', handler: function () {
                                       pgbar.moveFirst();
                                       //gridpanel.store.load();
                                   }

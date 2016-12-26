@@ -38,7 +38,7 @@
                                 xtype: 'textfield', fieldLabel: '分KEY', labelWidth: 80, labelAlign: 'right', id: 'FENKEY', flex: .45
                             },
                             {
-                                xtype: 'button', text: '<i class="iconfont">&#xe615;</i>查询', handler: function () {
+                                xtype: 'button', text: '<i class="iconfont">&#xe615;</i>&nbsp;查询', handler: function () {
                                     pgbar.moveFirst();
                                     pgbar_fenkey.moveFirst();
                                     //gridpanel.store.load();
