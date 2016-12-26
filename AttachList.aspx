@@ -3,11 +3,7 @@
     <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
-    <style type="text/css">
-        .tdValign {
-            font-size:12px;
-        }
-    </style>
+
     <script type="text/javascript">
         Ext.onReady(function () {
             var store_attach = Ext.create('Ext.data.JsonStore', {
@@ -60,9 +56,6 @@
                 store: store_attach,
                 selModel: { selType: 'checkboxmodel' },
                 bbar: pgbar,
-                style: {
-                    size:'12px'
-                },
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', width: 80, locked: true },

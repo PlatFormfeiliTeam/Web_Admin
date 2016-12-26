@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="NoticeList.aspx.cs" Inherits="Web_Admin.NoticeList" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-     <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
+    <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
 
@@ -8,7 +8,7 @@
         Ext.onReady(function () {
 
             var store_Notice = Ext.create('Ext.data.JsonStore', {
-                fields: ['ID', 'TITLE', 'CONTENT', 'CREATEID', 'CREATENAME', 'AUDITID', 'AUDITNAME', 'STATE', 'TYPE', 'FILEPATH', 'RELEASETIME', 'CREATETIME', 'SUMMARY', 'TAG'],
+                fields: ['ID', 'TITLE', 'UPDATEID', 'UPDATENAME', 'ISINVALID', 'TYPE', 'UPDATETIME'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -41,43 +41,43 @@
                                   }
                               }, '-', {
                                   text: '<i class="iconfont">&#xe60b;</i>&nbsp;添 加', handler: function () {
-                                      opencenterwin("NoticeEdit.aspx", 950, 600);
+                                      opencenterwin("NoticeEdit.aspx?option=add", 950, 800);
                                   }
                               }
                               , '-', {
                                   text: '<i class="icon iconfont">&#xe607;</i>&nbsp;修 改', handler: function () {
 
-                                      var recs = gridpanel.getSelectionModel().getSelection();
-                                      if (!recs || recs.length <= 0) {
-                                          Ext.Msg.alert("提示", "请选择修改记录!");
-                                          return;
-                                      }
-                                      opencenterwin("NoticeEdit.aspx?action=loadform&ID=" + recs[0].get("ID"), 950, 600);
+                                      //var recs = gridpanel.getSelectionModel().getSelection();
+                                      //if (!recs || recs.length <= 0) {
+                                      //    Ext.Msg.alert("提示", "请选择修改记录!");
+                                      //    return;
+                                      //}
+                                      //opencenterwin("NoticeEdit.aspx?action=loadform&ID=" + recs[0].get("ID"), 950, 800);
                                   }
                               }
                               , '-', {
                                   text: '<i class="icon iconfont">&#xe606;</i>&nbsp;删 除', handler: function () {
-                                      var recs = gridpanel.getSelectionModel().getSelection();
-                                      if (recs.length > 0) {
-                                          var formIds = "";
-                                          Ext.each(recs, function (rec) {
-                                              formIds += "'" + rec.get("ID") + "',";
-                                          })
-                                          if (formIds.length > 0) {
-                                              formIds = formIds.substr(0, formIds.length - 1);
-                                          }
-                                          Ext.Ajax.request({
-                                              url: 'NoticeList.aspx?action=delete',
-                                              params: { Ids: formIds },
-                                              callback: function () {
-                                                  Ext.Msg.alert("提示", "删除成功!");
-                                                  pgbar.moveFirst();
-                                              }
-                                          })
-                                      }
-                                      else {
-                                          Ext.Msg.alert("提示", "请选择要删除的记录!");
-                                      }
+                                      //var recs = gridpanel.getSelectionModel().getSelection();
+                                      //if (recs.length > 0) {
+                                      //    var formIds = "";
+                                      //    Ext.each(recs, function (rec) {
+                                      //        formIds += "'" + rec.get("ID") + "',";
+                                      //    })
+                                      //    if (formIds.length > 0) {
+                                      //        formIds = formIds.substr(0, formIds.length - 1);
+                                      //    }
+                                      //    Ext.Ajax.request({
+                                      //        url: 'NoticeList.aspx?action=delete',
+                                      //        params: { Ids: formIds },
+                                      //        callback: function () {
+                                      //            Ext.Msg.alert("提示", "删除成功!");
+                                      //            pgbar.moveFirst();
+                                      //        }
+                                      //    })
+                                      //}
+                                      //else {
+                                      //    Ext.Msg.alert("提示", "请选择要删除的记录!");
+                                      //}
 
                                   }
                               }
@@ -91,21 +91,30 @@
             })
 
             var gridpanel = Ext.create('Ext.grid.Panel', {
-                region: 'center',
                 store: store_Notice,
+                height: 500,
                 selModel: { selType: 'checkboxmodel' },
                 bbar: pgbar,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', hidden: true },
-                    { header: '标题', dataIndex: 'TITLE', width: 300 },
-                    { header: '概要', dataIndex: 'SUMMARY', width: 500 },
+                    { header: '标题', dataIndex: 'TITLE', width: 500 },
                     { header: '类型', dataIndex: 'TYPE', width: 200 },
-                    { header: '区域', dataIndex: 'TAG', width: 200, renderer: render },
-                    { header: '创建时间', dataIndex: 'CREATETIME', width: 200 },
-                    { header: '创建人', dataIndex: 'CREATENAME', width: 200 }
-                ]
-            })
+                    { header: '是否启用', dataIndex: 'ISINVALID', width: 100 },
+                    { header: '更新时间', dataIndex: 'UPDATETIME', width: 200 },
+                    { header: '更新人', dataIndex: 'UPDATENAME', width: 200 }
+                ],
+                //添加双击事件
+                listeners:
+                {
+                    'itemdblclick': function (view, record, item, index, e) {                       
+                        //opencenterwin("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=-1", 950, 800);
+                    }
+                },
+                viewConfig: {
+                    enableTextSelection: true
+                }
+            });
 
             var panel = Ext.create('Ext.panel.Panel', {
                 title: '资讯管理',
@@ -113,30 +122,9 @@
                 renderTo: 'renderto',
                 minHeight: 100,
                 items: [gridpanel]
-            })
+            });
 
-        })
-        function render(value) {
-            var rtn = "";
-            switch (value) {
-                case "1":
-                    rtn = "轮播区展示";
-                    break;
-                case "2":
-                    rtn = "活动区展示";
-                    break;
-                case "3":
-                    rtn = "列表区展示";
-                    break;
-                case "4":
-                    rtn = "Tab区展示";
-                    break;
-                default:
-                    rtn = "";
-                    break;
-            }
-            return rtn;
-        }
+        });
     </script>
     <div id="renderto"></div>
 </asp:Content>
