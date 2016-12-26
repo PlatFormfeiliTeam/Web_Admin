@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="EXT_Inspectionall.aspx.cs" Inherits="Web_Admin.EXT_Inspectionall" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
+     <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
 
@@ -66,39 +66,45 @@
             })
 
             var gridpanel = Ext.create('Ext.grid.Panel', {
-                title: '报检单--总KEY',
-                renderTo: 'renderto',
+                //title: '报检单--总KEY',
+                //renderTo: 'renderto',
                 height: 500,
                 store: store_attach,
                 selModel: { selType: 'checkboxmodel' },
                 bbar: pgbar,
-                tbar: toolbar,
+                //tbar: toolbar,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
                     { header: '流水单号', dataIndex: 'APPROVALCODE', width: 180, locked: true },
-                    { header: '报检单号', dataIndex: 'INSPECTIONCODE', width: 180, locked: true },
-                    { header: '监管方式', dataIndex: 'TRADEWAY', width: 100, locked: true },
-                    { header: '通关单号', dataIndex: 'CLEARANCECODE', width: 180, locked: true },
-                    { header: '张数', dataIndex: 'SHEETNUM', width: 60 },
-                    { header: '商品项数', dataIndex: 'COMMODITYNUM', width: 60 },
+                    { header: '报检单号', dataIndex: 'INSPECTIONCODE', width: 150, locked: true },
+                    { header: '监管方式', dataIndex: 'TRADEWAY', width: 150, locked: true },
+                    { header: '通关单号', dataIndex: 'CLEARANCECODE', width: 150, locked: true },
+                    { header: '张数', dataIndex: 'SHEETNUM', width: 80 },
+                    { header: '商品项数', dataIndex: 'COMMODITYNUM', width: 80 },
                     { header: '国检状态', dataIndex: 'INSPSTATUS', width: 80 },
                     { header: '删改单标志', dataIndex: 'MODIFYFLAG', width: 80 },
-                    { header: '预制单编号', dataIndex: 'PREINSPCODE', width: 120 },
+                    { header: '预制单编号', dataIndex: 'PREINSPCODE', width: 150 },
                     { header: '企业编号', dataIndex: 'CUSNO', width: 110 },
-                    { header: '旧报检单号', dataIndex: 'OLDINSPECTIONCODE', width: 120 },
-                    { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
-                    { header: '通关标志', dataIndex: 'ISNEEDCLEARANCE', width: 60 },
-                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 60 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 150 },
-                    { header: '时间', dataIndex: 'DATES', width: 130 }
+                    { header: '旧报检单号', dataIndex: 'OLDINSPECTIONCODE', width: 150 },
+                    { header: '是否删除', dataIndex: 'ISDEL', width: 80 },
+                    { header: '通关标志', dataIndex: 'ISNEEDCLEARANCE', width: 80 },
+                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 80 },
+                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 200 },
+                    { header: '时间', dataIndex: 'DATES', width: 150 }
                 ],
                 viewConfig: {
                     enableTextSelection: true
                 }
             })
 
-
+            var panel = Ext.create('Ext.panel.Panel', {
+                title: '报检单--总KEY',
+                tbar: toolbar,
+                renderTo: 'renderto',
+                minHeight: 100,
+                items: [gridpanel]
+            });
 
             // 分key
 
@@ -135,8 +141,8 @@
             })
 
             var gridpanel_fenkey = Ext.create('Ext.grid.Panel', {
-                title: '报检单--分KEY',
-                renderTo: 'rendertofenkey',
+                //title: '报检单--分KEY',
+                //renderTo: 'rendertofenkey',
                 height: 500,
                 store: store_attach_fenkey,
                 selModel: { selType: 'checkboxmodel' },
@@ -144,25 +150,33 @@
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: '流水单号', dataIndex: 'APPROVALCODE', width: 180, locked: true },
-                    { header: '报检单号', dataIndex: 'INSPECTIONCODE', width: 180, locked: true },
-                    { header: '监管方式', dataIndex: 'TRADEWAY', width: 100, locked: true },
-                    { header: '通关单号', dataIndex: 'CLEARANCECODE', width: 60, locked: true },
+                    { header: '报检单号', dataIndex: 'INSPECTIONCODE', width: 150, locked: true },
+                    { header: '监管方式', dataIndex: 'TRADEWAY', width: 150, locked: true },
+                    { header: '通关单号', dataIndex: 'CLEARANCECODE', width: 150, locked: true },
                     { header: '张数', dataIndex: 'SHEETNUM', width: 60 },
                     { header: '商品项数', dataIndex: 'COMMODITYNUM', width: 60 },
                     { header: '国检状态', dataIndex: 'INSPSTATUS', width: 80 },
                     { header: '删改单标志', dataIndex: 'MODIFYFLAG', width: 80 },
-                    { header: '预制单编号', dataIndex: 'PREINSPCODE', width: 120 },
+                    { header: '预制单编号', dataIndex: 'PREINSPCODE', width: 150 },
                     { header: '企业编号', dataIndex: 'CUSNO', width: 110 },
-                    { header: '旧报检单号', dataIndex: 'OLDINSPECTIONCODE', width: 120 },
-                    { header: '是否删除', dataIndex: 'ISDEL', width: 60 },
-                    { header: '通关标志', dataIndex: 'ISNEEDCLEARANCE', width: 60 },
-                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 60 },
-                    { header: '创建时间', dataIndex: 'CREATETIME', width: 120 }
+                    { header: '旧报检单号', dataIndex: 'OLDINSPECTIONCODE', width: 180 },
+                    { header: '是否删除', dataIndex: 'ISDEL', width: 80 },
+                    { header: '通关标志', dataIndex: 'ISNEEDCLEARANCE', width: 80 },
+                    { header: '法检标志', dataIndex: 'LAWFLAG', width: 80 },
+                    { header: '创建时间', dataIndex: 'CREATETIME', width: 150 }
                 ],
                 viewConfig: {
                     enableTextSelection: true
                 }
             })
+
+            var panelfenkey = Ext.create('Ext.panel.Panel', {
+                title: '报检单--分KEY',
+                renderTo: 'rendertofenkey',
+                minHeight: 100,
+                items: [gridpanel_fenkey]
+            });
+
         });
     </script>
     <div id="renderto"></div>

@@ -1,9 +1,13 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AttachList.aspx.cs" Inherits="Web_Admin.AttachList" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
+    <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
-
+    <style type="text/css">
+        .tdValign {
+            font-size:12px;
+        }
+    </style>
     <script type="text/javascript">
         Ext.onReady(function () {
             var store_attach = Ext.create('Ext.data.JsonStore', {
@@ -51,25 +55,26 @@
             })
 
             var gridpanel = Ext.create('Ext.grid.Panel', {
-                title: '文件信息-已上传至文件服务器',
-                renderTo: 'renderto',
+                //title: '文件列表',
                 height: 500,
                 store: store_attach,
                 selModel: { selType: 'checkboxmodel' },
                 bbar: pgbar,
-                tbar: toolbar,
+                style: {
+                    size:'12px'
+                },
                 columns: [
-                    { xtype: 'rownumberer', width: 35 },     
+                    { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', width: 80, locked: true },
-                    { header: '文件路径', dataIndex: 'FILENAME', width: 300, locked: true },
-                    { header: '原文件名', dataIndex: 'ORIGINALNAME', width: 210, locked: true },
-                    { header: '订单编号', dataIndex: 'ORDERCODE', width: 100, locked: true },
+                    { header: '文件路径', dataIndex: 'FILENAME', width: 300, locked: true, tdCls: 'tdValign' },
+                    { header: '原文件名', dataIndex: 'ORIGINALNAME', width: 250, locked: true },
+                    { header: '订单编号', dataIndex: 'ORDERCODE', width: 120, locked: true },
                     { header: '是否拆分', dataIndex: 'SPLITSTATUS', width: 60, renderer: render, locked: true },
-                    { header: '文件类型', dataIndex: 'FILETYPE', width: 60}, 
-                    { header: '上传时间', dataIndex: 'UPLOADTIME', width: 120 },  
+                    { header: '文件类型', dataIndex: 'FILETYPE', width: 60 },
+                    { header: '上传时间', dataIndex: 'UPLOADTIME', width: 150 },
                     { header: '文件大小', dataIndex: 'SIZES', width: 80 },
-                    { header: '文件扩展名', dataIndex: 'FILESUFFIX', width: 130 },  
-                    { header: '上传人', dataIndex: 'UPLOADUSERID', width: 60},
+                    { header: '文件扩展名', dataIndex: 'FILESUFFIX', width: 130 },
+                    { header: '上传人', dataIndex: 'UPLOADUSERID', width: 60 },
                     { header: '上传人姓名', dataIndex: 'UPLOADUSERNAME', width: 130 }
                 ],
                 //添加双击事件
@@ -83,7 +88,15 @@
                 viewConfig: {
                     enableTextSelection: true
                 }
-            })
+            });
+
+            var panel = Ext.create('Ext.panel.Panel', {
+                title: '文件列表',
+                tbar: toolbar,
+                renderTo: 'renderto',
+                minHeight: 100,
+                items: [gridpanel]
+            });
 
         });
         function render(value, cellmeta, record, rowIndex, columnIndex, store) {

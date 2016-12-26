@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="EXT_Statuslogall.aspx.cs" Inherits="Web_Admin.EXT_Statuslogall" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
+     <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
 
@@ -55,21 +55,21 @@
             })
 
             var gridpanel = Ext.create('Ext.grid.Panel', {
-                title: '报关报检业务--总KEY',
-                renderTo: 'renderto',
+                //title: '报关报检业务--总KEY',
+                //renderTo: 'renderto',
                 height: 500,
                 store: store_attach,
                 selModel: { selType: 'checkboxmodel' },
                 bbar: pgbar,
-                tbar: toolbar,
+                //tbar: toolbar,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
-                    { header: 'ID', dataIndex: 'ID', width: 50 },
+                    { header: 'ID', dataIndex: 'ID', width: 100 },
                     { header: '类型', dataIndex: 'TYPE', width: 100 },
-                    { header: '客户编号', dataIndex: 'CUSNO', width: 150 },
+                    { header: '客户编号', dataIndex: 'CUSNO', width: 180 },
                     { header: 'STATUSCODE', dataIndex: 'STATUSCODE', width: 100 },
                     { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 },
-                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 150 },
+                    { header: '分KEY', dataIndex: 'DIVIDEREDISKEY', width: 200 },
                     { header: '时间', dataIndex: 'DATES', width: 180 }
                 ],
                 viewConfig: {
@@ -77,7 +77,13 @@
                 }
             })
 
-
+            var panel = Ext.create('Ext.panel.Panel', {
+                title: '报关报检业务--总KEY',
+                tbar: toolbar,
+                renderTo: 'renderto',
+                minHeight: 100,
+                items: [gridpanel]
+            });
 
             // 分key
 
@@ -111,8 +117,8 @@
             })
 
             var gridpanel_fenkey = Ext.create('Ext.grid.Panel', {
-                title: '报关报检业务--分KEY',
-                renderTo: 'rendertofenkey',
+                //title: '报关报检业务--分KEY',
+                //renderTo: 'rendertofenkey',
                 height: 500,
                 store: store_attach_fenkey,
                 selModel: { selType: 'checkboxmodel' },
@@ -120,16 +126,24 @@
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: '类型', dataIndex: 'TYPE', width: 100 },
-                    { header: '客户编号', dataIndex: 'CUSNO', width: 150 },
+                    { header: '客户编号', dataIndex: 'CUSNO', width: 180 },
                     { header: 'STATUSCODE', dataIndex: 'STATUSCODE', width: 100 },
                     { header: 'STATUSVALUE', dataIndex: 'STATUSVALUE', width: 200 },
-                    { header: '创建时间', dataIndex: 'CREATETIME', width: 120 }
+                    { header: '创建时间', dataIndex: 'CREATETIME', width: 180 }
                     
                 ],
                 viewConfig: {
                     enableTextSelection: true
                 }
             })
+
+            var panelfenkey = Ext.create('Ext.panel.Panel', {
+                title: '报关报检业务--分KEY',
+                renderTo: 'rendertofenkey',
+                minHeight: 100,
+                items: [gridpanel_fenkey]
+            });
+
         });
     </script>
     <div id="renderto"></div>
