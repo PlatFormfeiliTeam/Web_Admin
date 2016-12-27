@@ -13,21 +13,16 @@
     <script type="text/javascript" src="/js/ueditor/ueditor.all.min.js"></script>
     <script type="text/javascript" src="/js/ueditor/lang/zh-cn/zh-cn.js"></script>
 
+    <script src="js/upload/plupload.full.min.js"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
 
-    <style type="text/css">
-        .input {
-            text-align: left;
-            background-color: #e5f1f4;
-            border-top-style: none;
-            border-right-style: none;
-            border-left-style: none;
-            border-bottom: green 1px solid;
-        }
-    </style>
+     <link href="/Extjs42/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
+    <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
+    <link href="css/common.css" rel="stylesheet" />
 
     <script type="text/javascript">
         var option = getQueryString("option");
+        var uploader, file_store;
 
         $(document).ready(function () {
             
@@ -69,58 +64,18 @@
                     }
                 }
 
-               <%-- var att = "<%=ATTACHMENT %>";
-                if (att == "") {
-                    $("#img_att").css("display", "none");
-                    $("#a_att").css("display", "none");
-                } else {
-                    var tp = (att.substring(att.lastIndexOf("."))).toLowerCase();
-
-                    if (tp != ".jpg" && tp != ".jpeg" && tp != ".gif" && tp != ".png" && tp != ".swf") {
-                        $("#img_att").css("display", "none");
-                    } else {
-                        $("#img_att").css("display", "block");
-                    }
-                    $("#a_att").css("display", "block");
-                }--%>
-
+            }
+            panel_file_ini();//随附文件初始化
+            if (uploader == null) {
+                upload_ini();
             }
         }
 
         var _editor = UE.getEditor('reContent');
         _editor.ready(function () {
             _editor.setContent('<%=reContent %>');
-            //_editor.addListener('beforeInsertImage', function (t, arg) { })
-            //_editor.addListener('afterUpfile', function (t, arg) { })
         });
-
-       var _editor2 = UE.getEditor('upload_ue');
-       _editor2.ready(function () {
-            //设置编辑器不可用        
-           _editor2.setDisabled();
-            //隐藏编辑器，因为不会用到这个编辑器实例，所以要隐藏        
-           _editor2.hide();         //侦听图片上传 
-           _editor2.addListener('beforeInsertImage', function (t, arg) {
-                //将地址赋值给相应的input,只去第一张图片的路径             
-                $("#picture").attr("value", arg[0].src);
-                //图片预览 
-                $("#preview").attr("src", arg[0].src);
-            })
-            //侦听文件上传，取上传文件列表中第一个上传的文件的路径         
-           _editor2.addListener('afterUpfile', function (t, arg) {
-               alert(1);
-               $("#file").attr("value", _editor2.options.filePath + arg[0].url);
-            })
-        });
-
-        //弹出图片上传的对话框 
-        function upImage() {
-            var myImage = _editor2.getDialog("insertimage"); myImage.open();
-        }
-        //弹出文件上传的对话框 
-        function upFiles() {
-            var myFiles = _editor2.getDialog("attachment"); myFiles.open();
-        }
+        
     </script>
 </head>
 <body>
@@ -165,19 +120,12 @@
                     <tr>
                         <td>
                             <label>附件</label></td>
-                        <td>
-                            <script type="text/plain" id="upload_ue"></script>
-                            <input type="text" id="picture" name="cover" /><a href="javascript:void(0);" onclick="upImage();">上传图片</a> 
-                            <input type="text" id="file" /><a href="javascript:void(0);" onclick="upFiles();">上传文件</a> 
-                            <%--<img id="img_att" style="width:80px; height:40px;" src="<%=ATTACHMENT %>" />
-                            <a id="a_att" onclick="opencenterwin('<%=ATTACHMENT %>', 1200, 600);"><span style="font-size:13px;">查看原件</span></a>
-                            <input type="hidden" id="iatt" name="iatt" value="<%=ATTACHMENT %>" />   
-                             
-                            <input type="text" name="upfile" id="upfile" style="width:90%;" />  
-                            <input type="button" value="选择文件" onclick="rtbAttachment.click()" 
-                                style="border:1px solid #888888;background:#fff;padding-top:2px; padding-bottom:2px;border-radius:4px;" />  
-
-                            <input type="file" id="rtbAttachment" name="rtbAttachment" style="display:none"  onchange="upfile.value=this.value" />  --%>       
+                        <td> 
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm" id="pickfiles"><i class="fa fa-upload"></i>&nbsp;上传文件</button>
+                                <button type="button" onclick="removeFile()" class="btn btn-primary btn-sm" id="deletefile"><i class="fa fa-trash-o"></i>&nbsp;删除文件</button>
+                            </div>    
+                            <div id="div_panel" style="width: 100%"></div>
                         </td>
                     </tr>
                 </table>

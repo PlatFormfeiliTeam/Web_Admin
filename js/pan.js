@@ -4,6 +4,12 @@
     var iLeft = (window.screen.availWidth - 10 - iWidth) / 2; //获得窗口的水平位置; 
     window.open(url, '', 'height=' + iHeight + ',,innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',toolbar=no,menubar=no,scrollbars=yes,resizable=yes');
 }
+function opencenterwin_no(url, width, height) {
+    var iWidth = width ? width : "1000", iHeight = height ? height : "600";
+    var iTop = (window.screen.availHeight - 30 - iHeight) / 2; //获得窗口的垂直位置;
+    var iLeft = (window.screen.availWidth - 10 - iWidth) / 2; //获得窗口的水平位置; 
+    window.open(url, '', 'height=' + iHeight + ',,innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',toolbar=no,menubar=no,scrollbars=yes,resizable=no');
+}
 function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
     var r = window.location.search.substr(1).match(reg);
@@ -97,6 +103,75 @@ function module_edit_win(parentNode, action) {
     if (action == "create" && parentNode.data.MODULEID) {
         Ext.getCmp("field_parentid").setValue(parentNode.get('MODULEID'));
     }
+}
+
+function upload_ini() {
+    uploader = new plupload.Uploader({
+        runtimes: 'html5,flash,silverlight,html4',
+        browse_button: 'pickfiles', // you can pass an id...
+        url: 'NoticeEdit.aspx?action=uploadfile',
+        flash_swf_url: '/js/upload/Moxie.swf',
+        silverlight_xap_url: '/js/upload/Moxie.xap',
+        unique_names: true,
+        filters: {
+            max_file_size: '5000mb',
+            mime_types: [
+                { title: "Image files", extensions: "*" },
+                { title: "Zip files", extensions: "zip,rar" }
+            ]
+        }
+    });
+    uploader.init();
+    uploader.bind('FilesAdded', function (up, files) {
+        uploader.start();
+    });
+    uploader.bind('FileUploaded', function (up, file) {
+
+        var timestamp = Ext.Date.now();  //1351666679575  这个方法只是获取的时间戳
+        var date = new Date(timestamp);
+
+        file_store.insert(file_store.data.length,
+       { FILENAME: '/FileUpload/file/' + file.target_name, ORIGINALNAME: file.target_name, SIZES: file.size, UPLOADTIME: Ext.Date.format(date, 'Y-m-d H:i:s') });
+    });
+}
+
+function panel_file_ini() {
+    file_store = Ext.create('Ext.data.JsonStore', {
+        fields: ['ID', 'FILENAME', 'ORIGINALNAME', 'UPLOADTIME', 'SIZES']
+    })
+    var tmp = new Ext.XTemplate(
+         '<tpl for=".">',
+        '<div class="panel panel-default thumb-wrap fl" style="margin-top:5px;margin-left:5px;width:240px">',
+        '<div class="panel-heading" style="padding-left:5px;padding-right:5px">{[values.ORIGINALNAME.substr(0,23)]}<div class="fr"><span class="glyphicon glyphicon-paperclip"></span></div></div>',
+        '<tpl>{[values.SIZES/1024 > 1024?Math.round(values.SIZES/(1024*1024))+"M":Math.round(values.SIZES/1024)+"K"]}</tpl>',
+        '|{[values.UPLOADTIME]}</div></div>',
+        '</tpl>'
+        )
+    var fileview = Ext.create('Ext.view.View', {
+        id: 'w_fileview',
+        store: file_store,
+        tpl: tmp,
+        itemSelector: 'div.thumb-wrap',
+        multiSelect: true
+    })
+    var panel = Ext.create('Ext.panel.Panel', {
+        renderTo: "div_panel",
+        border: 0,
+        items: [fileview]
+    })
+}
+//删除文件
+function removeFile() {
+    var records = Ext.getCmp('w_fileview').getSelectionModel().getSelection();
+    if (records.length == 0) {
+        Ext.MessageBox.alert("提示", "请选择要删除的记录！");
+        return
+    }
+    Ext.MessageBox.confirm('提示', '确定要删除选择的记录吗？', function (btn) {
+        if (btn == 'yes') {
+            Ext.getCmp('w_fileview').store.remove(records);
+        }
+    })
 }
 
 

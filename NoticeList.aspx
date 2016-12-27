@@ -33,7 +33,7 @@
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: [
                             {
-                                xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE'
+                                xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE', flex: .80
                             },
                               {
                                   xtype: 'button', text: '<i class="iconfont">&#xe615;</i>&nbsp;查 询', handler: function () {
@@ -41,7 +41,7 @@
                                   }
                               }, '-', {
                                   text: '<i class="iconfont">&#xe60b;</i>&nbsp;添 加', handler: function () {
-                                      opencenterwin("NoticeEdit.aspx?option=add", 950, 800);
+                                      opencenterwin_no("NoticeEdit.aspx?option=add", 950, 800);
                                   }
                               }
                               , '-', {
@@ -52,7 +52,7 @@
                                       //    Ext.Msg.alert("提示", "请选择修改记录!");
                                       //    return;
                                       //}
-                                      //opencenterwin("NoticeEdit.aspx?action=loadform&ID=" + recs[0].get("ID"), 950, 800);
+                                      //opencenterwin_no("NoticeEdit.aspx?action=loadform&ID=" + recs[0].get("ID"), 950, 800);
                                   }
                               }
                               , '-', {
@@ -80,7 +80,7 @@
                                       //}
 
                                   }
-                              }
+                              }, '->'
                 ]
             })
 
@@ -98,17 +98,17 @@
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', hidden: true },
-                    { header: '标题', dataIndex: 'TITLE', width: 500 },
-                    { header: '类型', dataIndex: 'TYPE', width: 200 },
+                    { header: '标题', dataIndex: 'TITLE', width: 550 },
+                    { header: '类型', dataIndex: 'TYPE', width: 150 },
                     { header: '是否启用', dataIndex: 'ISINVALID', width: 100 },
-                    { header: '更新时间', dataIndex: 'UPDATETIME', width: 200 },
-                    { header: '更新人', dataIndex: 'UPDATENAME', width: 200 }
+                    { header: '更新时间', dataIndex: 'UPDATETIME', width: 150 },
+                    { header: '更新人', dataIndex: 'UPDATENAME', width: 150 }
                 ],
                 //添加双击事件
                 listeners:
                 {
                     'itemdblclick': function (view, record, item, index, e) {                       
-                        //opencenterwin("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=-1", 950, 800);
+                        //opencenterwin_no("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=-1", 950, 800);
                     }
                 },
                 viewConfig: {
