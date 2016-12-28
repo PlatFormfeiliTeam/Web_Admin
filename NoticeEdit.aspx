@@ -33,6 +33,14 @@
             });
 
             $("#btnSubmit").click(function () {
+                if ($("#rcbType").val() == "其他" && $("#rtbOther").val() == "") {
+                    Ext.MessageBox.alert("提示", "请输入类型！");
+                    return;
+                }
+
+                var filedata = Ext.encode(Ext.pluck(file_store.data.items, 'data'));
+                $("#rchAttachment").val(filedata);
+
                 document.getElementById("form1").submit();
             });
 
@@ -44,9 +52,18 @@
             $.each(strjoson, function (i) {
                 $("#rcbType").append($("<option/>").text(this.TYPE).attr("value", this.TYPE));
             });
+            $("#rcbType").append($("<option/>").text("其他").attr("value", "其他"));
 
-            //$("#img_att").css("display", "none");
-            //$("#a_att").css("display", "none");
+            $("#rcbType").change(function () {
+                $("#rtbOther").val("");
+
+                if ($("#rcbType").val() == "其他") {
+                    $("#rtbOther").css('display', 'inline-block');                   
+                } else {
+                    $("#rtbOther").css('display', 'none');
+                }
+            });
+
 
             if (option == "update") {
                 var rcbType = "<%=rcbType %>";
@@ -54,7 +71,7 @@
                      $("#rcbType").find("option[value='" + rcbType + "']").attr("selected", true);
                  }
 
-                 var rcbIsinvalid = "<%=rcbIsinvalid %>";
+                 var rcbIsinvalid = "<%=rcbValid %>";
                 if (rcbIsinvalid != null && rcbIsinvalid.length > 0) {
                     if (rcbIsinvalid == "0") {
                         $("#rd_y").attr("selected", true);
@@ -79,7 +96,7 @@
     </script>
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form id="form1" action="?action=save" method="post" enctype="multipart/form-data">
         <input type="hidden" id="rtbID" name="rtbID" value="<%=rtbID %>" />
         <div class="panel panel-primary">
             <div class="panel-heading">资讯管理-新增||修改</div>
@@ -99,15 +116,16 @@
                         </td>
                         <td>
                             <select id="rcbType" name="rcbType" style="width:30%;"></select>
+                            <input type="text" style="width:69%;" id="rtbOther" name="rtbOther" class="input" hidden="hidden" />
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <label>是否启用</label></td>
                         <td>
-                            <input id="rd_y" type="radio" name="rd_valid" value="0" checked="checked" />是
+                            <input id="rd_y" type="radio" name="rcbValid" value="0" checked="checked" />是
                             &nbsp; &nbsp;&nbsp; &nbsp;
-                            <input id="rd_n" type="radio" name="rd_valid" value="1" />否
+                            <input id="rd_n" type="radio" name="rcbValid" value="1" />否
                         </td>
                     </tr>
                     <tr>
@@ -126,6 +144,7 @@
                                 <button type="button" onclick="removeFile()" class="btn btn-primary btn-sm" id="deletefile"><i class="fa fa-trash-o"></i>&nbsp;删除文件</button>
                             </div>    
                             <div id="div_panel" style="width: 100%"></div>
+                            <input id="rchAttachment" name="rchAttachment" type="text" value="<%=rchAttachment %>" />
                         </td>
                     </tr>
                 </table>

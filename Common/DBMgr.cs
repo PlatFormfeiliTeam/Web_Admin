@@ -104,5 +104,35 @@ namespace Web_Admin.Common
             return retcount;
         }
 
+        public static int ExecuteNonQuery(string sql, OracleParameter[] OraPara)
+        {
+            int retcount = -1;
+            OracleConnection orclCon = null;
+            try
+            {
+                using (orclCon = new OracleConnection(ConnectionString))
+                {
+                    OracleCommand oc = new OracleCommand(sql, orclCon);
+                    oc.Parameters.AddRange(OraPara);
+                    if (orclCon.State.ToString().Equals("Open"))
+                    {
+                        orclCon.Close();
+                    }
+                    orclCon.Open();
+                    retcount = oc.ExecuteNonQuery();
+                    oc.Parameters.Clear();
+                }
+            }
+            catch (Exception e)
+            {
+                //log.Error(e.Message + e.StackTrace);
+            }
+            finally
+            {
+                orclCon.Close();
+            }
+            return retcount;
+        }
+
     }
 }

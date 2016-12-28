@@ -30,14 +30,21 @@ namespace Web_Admin
             string filetype = Request["filetype"];
             string ordercode = Request["ordercode"];
             string fileid = Request["fileid"];
-            string userid = Request["userid"] == "null" ? "" : Request["userid"];
-            string username = Request["username"] == "null" ? "" : Request["username"]; 
+            string userid = Request["userid"] == "null" ? "" : Request["userid"];            
             string json = "";
             string sql = "";
             DataTable dt;
             PdfReader pdfReader;
             IDatabase db = SeRedis.redis.GetDatabase();
             FileInfo fi;
+
+            string username = ""; 
+            DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
+            if (dt_user.Rows.Count>0)
+            {
+                username = dt_user.Rows[0]["REALNAME"] + "";
+            }
+
             switch (action)
             {
                 case "merge":
@@ -279,8 +286,6 @@ namespace Web_Admin
                             DBMgr.ExecuteNonQuery(sql);
 
                             DataTable dt_list_order = DBMgr.GetDataTable("select * from LIST_ORDER where  code='" + ordercode + "'");
-                            //  DataTable dt_user = DBMgr.GetDataTable("select * from Sys_User where ID='" + userid + "'");
-                            // sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITEUSERNAME='" + dt_user.Rows[0]["REALNAME"] + "',FILESPLITEUSERID='" + userid + "',FILESPLITTIME=sysdate where code='" + ordercode + "'";
                             sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate,FILEPAGES=" + filepages 
                                 + ",FILESPLITEUSERID='" + userid + "',FILESPLITEUSERNAME='" + username + "' where code='" + ordercode + "'";
                             int resultcode = DBMgr.ExecuteNonQuery(sql);
@@ -288,7 +293,7 @@ namespace Web_Admin
                             {
                                 //若正常拆分在字段修改历史记录表中记录
                                 sql = "insert into list_updatehistory(id,ordercode,type,userid, updatetime, oldfield,newfield,name,fieldname,code,field)"
-                                    + " values(LIST_UPDATEHISTORY_ID.nextval,'" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order.Rows[0]["FILESTATUS"] + "','1','" + username + "','业务—文件状态','"
+                                    + " values(LIST_UPDATEHISTORY_ID.nextval,'" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order.Rows[0]["FILESTATUS"] + "','1','" + username + "','业务—文件状态-WEB','"
                                     + ordercode + "','FILESTATUS')";
                                 DBMgr.ExecuteNonQuery(sql);
                             }
@@ -336,11 +341,18 @@ namespace Web_Admin
                         fileids_temp = fileids_temp.Substring(0, fileids_temp.Length - 1);
                         sql = "update LIST_ATTACHMENT set SPLITSTATUS=0 where id in(" + fileids_temp + ")";
                         DBMgr.ExecuteNonQuery(sql);
-                    }                    
+                    }
+
+                    DataTable dt_list_order_c = DBMgr.GetDataTable("select * from LIST_ORDER where  code='" + ordercode + "'");
 
                     //20160922赵艳提出 拆分完，需要更新订单表的 拆分人和时间,和文件状态
                     sql = "update LIST_ORDER set FILESTATUS=0,FILEPAGES=null,FILESPLITEUSERNAME=null,FILESPLITEUSERID=null,FILESPLITTIME=null where code='" + ordercode + "'";
-                    DBMgr.ExecuteNonQuery(sql);                    
+                    DBMgr.ExecuteNonQuery(sql);
+
+                    sql = "insert into list_updatehistory(id,ordercode,type,userid, updatetime, oldfield,newfield,name,fieldname,code,field)"
+                        + " values(LIST_UPDATEHISTORY_ID.nextval,'" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order_c.Rows[0]["FILESTATUS"] + "','0','" + username + "','业务—文件状态-WEB','"
+                        + ordercode + "','FILESTATUS')";
+                    DBMgr.ExecuteNonQuery(sql);
 
                     Response.Write("{success:true}");
                     Response.End();

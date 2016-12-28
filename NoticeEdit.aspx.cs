@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Web_Admin.Common;
@@ -18,14 +20,28 @@ namespace Web_Admin
         public string rtbID = string.Empty;
         public string rtbTitle = string.Empty;
         public string rcbType = string.Empty;
-        public string rcbIsinvalid = string.Empty;
+        public string rcbValid = string.Empty;
         public string reContent = string.Empty;
-        public string ATTACHMENT = string.Empty;
+        public string rchAttachment = string.Empty;
+        public string UPDATEID= string.Empty;
+        public string UPDATENAME = string.Empty;
+        public string rtbOther = string.Empty;
 
         DataTable dt;
         protected void Page_Load(object sender, EventArgs e)
         {
-             string action = Request["action"]; 
+            FormsIdentity identity = User.Identity as FormsIdentity;
+            if (identity == null)
+            {
+                return;
+            }
+            dt = DBMgr.GetDataTable("select * from sys_user where name = '" + identity.Name + "'");
+            if (dt.Rows.Count>0)
+            {
+                UPDATEID = dt.Rows[0]["ID"].ToString(); UPDATENAME = dt.Rows[0]["REALNAME"].ToString();
+            }
+
+            string action = Request["action"];
             switch (action)
             {
                 case "uploadfile":
@@ -40,6 +56,52 @@ namespace Web_Admin
                         fileUpload.InputStream.Read(buffer, 0, buffer.Length);
                         fs.Write(buffer, 0, buffer.Length);
                     }
+                    Response.End();
+                    break;
+                case "save":
+                    rtbID = Request.Form["rtbID"];
+                    rtbTitle = Request.Form["rtbTitle"];
+                    rcbType = Request.Form["rcbType"];
+                    reContent = Request.QueryString["reContent"];//.Form["reContent"];
+                    rcbValid = Request.Form["rcbValid"];
+                    rchAttachment = Request.Form["rchAttachment"];
+                    if (rcbType == "其他")
+                    {
+                        rcbType = rtbOther;
+                    }
+
+                    if (!string.IsNullOrEmpty(rtbID))
+                    {
+                        sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ISINVALID = '{3}',ATTACHMENT='{4}',
+                                ,UPDATEID='{5}', UPDATENAME='{6}',UPDATETIME=sysdate where id = '{0}' ";
+                        sql = string.Format(sql, rtbID, rtbTitle, rcbType, rcbValid, rchAttachment, UPDATEID, UPDATENAME);
+                    }
+                    else
+                    {
+                        sql += @" insert into WEB_NOTICE (ID,TITLE,CONTENT,TYPE,ISINVALID,UPDATEID, UPDATENAME,UPDATETIME,ATTACHMENT) 
+                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}',sysdate,'{4}','{5}') ";
+                        sql = string.Format(sql, rtbTitle, rcbType, rcbValid, UPDATEID, UPDATENAME, rchAttachment);
+                    }
+
+                    OracleParameter[] parameters = new OracleParameter[]
+                       {                  
+                           new OracleParameter(":recon",OracleDbType.Clob)
+                       };
+                    parameters[0].Value = reContent;
+
+                    int i = DBMgr.ExecuteNonQuery(sql, parameters);
+
+                    if (i > 0)
+                    {
+                        Response.Write("<script>alert('保存成功');</script>");
+                    }
+                    else
+                    {
+                        Response.Write("<script>alert('保存失败');</script>");
+                    }
+
+                    //Response.Write("<script>window.opener.store_Notice.reload();</script>");
+                    Response.Write("<script>window.close();</script>");
                     Response.End();
                     break;
             }
