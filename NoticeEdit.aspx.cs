@@ -62,7 +62,7 @@ namespace Web_Admin
                     rtbID = Request.Form["rtbID"];
                     rtbTitle = Request.Form["rtbTitle"];
                     rcbType = Request.Form["rcbType"];
-                    reContent = Request.QueryString["reContent"];//.Form["reContent"];
+                    reContent = Request.Form["reContent"];
                     rcbValid = Request.Form["rcbValid"];
                     rchAttachment = Request.Form["rchAttachment"];
                     if (rcbType == "其他")
