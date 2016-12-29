@@ -92,16 +92,6 @@
             });
 
         });
-        function render(value, cellmeta, record, rowIndex, columnIndex, store) {
-            var rtn = "";
-            var dataindex = cellmeta.column.dataIndex;           
-            switch (dataindex) {
-                case "SPLITSTATUS":
-                    rtn = value == "1" ? "是" : "否";
-                    break;
-            }
-            return rtn;
-        }
     </script>
     <div id="renderto"></div>
 </asp:Content>

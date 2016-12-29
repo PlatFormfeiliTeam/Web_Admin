@@ -109,7 +109,7 @@
                     { header: 'ID', dataIndex: 'ID', hidden: true },
                     { header: '标题', dataIndex: 'TITLE', width: 550 },
                     { header: '类型', dataIndex: 'TYPE', width: 150 },
-                    { header: '是否启用', dataIndex: 'ISINVALID', width: 100 },
+                    { header: '是否启用', dataIndex: 'ISINVALID', width: 100, renderer: render },
                     { header: '更新时间', dataIndex: 'UPDATETIME', width: 150 },
                     { header: '更新人', dataIndex: 'UPDATENAME', width: 150 }
                 ],

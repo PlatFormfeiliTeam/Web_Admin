@@ -23,11 +23,17 @@ function render(value, cellmeta, record, rowIndex, columnIndex, store) {
         case "TYPE":
             rtn = value != 4 ? '外部账户' : '内部账户';
             break;
-        case "ENABLED":
+        case "ENABLED": 
             rtn = value ? '启用' : '停用';
             break;
         case "ID":
             rtn = "<span onclick='inipsd(\"" + record.get("ID") + "\",\"" + record.get("NAME") + "\")'><i class=\"fa fa-key fa-fw\"></i></span>";
+            break;
+        case "SPLITSTATUS":
+            rtn = value == "1" ? "是" : "否";
+            break;
+        case "ISINVALID": 
+            rtn = value == "0" ? "是" : "否";
             break;
     }
     return rtn;
