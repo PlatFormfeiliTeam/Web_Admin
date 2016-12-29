@@ -21,7 +21,7 @@
     <link href="css/common.css" rel="stylesheet" />
 
     <script type="text/javascript">
-        var option = getQueryString("option");
+        var option = getQueryString("option"); var ID = getQueryString("ID");
         var uploader, file_store;
 
         $(document).ready(function () {
@@ -58,20 +58,25 @@
                 $("#rtbOther").val("");
 
                 if ($("#rcbType").val() == "其他") {
-                    $("#rtbOther").css('display', 'inline-block');                   
+                    $("#rtbOther").css('display', 'inline-block');
                 } else {
                     $("#rtbOther").css('display', 'none');
                 }
             });
+            $("#rcbType").trigger('change');
 
+            panel_file_ini();//随附文件初始化
+            if (uploader == null) {
+                upload_ini();
+            }
 
             if (option == "update") {
                 var rcbType = "<%=rcbType %>";
-                 if (rcbType != null && rcbType.length > 0) {
-                     $("#rcbType").find("option[value='" + rcbType + "']").attr("selected", true);
-                 }
+                if (rcbType != null && rcbType.length > 0) {
+                    $("#rcbType").find("option[value='" + rcbType + "']").attr("selected", true);
+                }
 
-                 var rcbIsinvalid = "<%=rcbValid %>";
+                var rcbIsinvalid = "<%=rcbValid %>";
                 if (rcbIsinvalid != null && rcbIsinvalid.length > 0) {
                     if (rcbIsinvalid == "0") {
                         $("#rd_y").attr("selected", true);
@@ -80,14 +85,12 @@
                         $("#rd_n").attr("selected", true);
                     }
                 }
-
+                var rchAttachment = eval('<%=rchAttachment %>');
+                file_store.loadData(rchAttachment);
             }
-            panel_file_ini();//随附文件初始化
-            if (uploader == null) {
-                upload_ini();
-            }
+           
         }
-
+        
         var _editor = UE.getEditor('reContent');
         _editor.ready(function () {
             _editor.setContent('<%=reContent %>');
@@ -144,7 +147,7 @@
                                 <button type="button" onclick="removeFile()" class="btn btn-primary btn-sm" id="deletefile"><i class="fa fa-trash-o"></i>&nbsp;删除文件</button>
                             </div>    
                             <div id="div_panel" style="width: 100%"></div>
-                            <input id="rchAttachment" name="rchAttachment" type="text" value="<%=rchAttachment %>" />
+                            <input id="rchAttachment" name="rchAttachment" type="text" value="<%=rchAttachment %>" hidden="hidden" />
                         </td>
                     </tr>
                 </table>

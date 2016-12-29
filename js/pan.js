@@ -137,12 +137,12 @@ function upload_ini() {
 
 function panel_file_ini() {
     file_store = Ext.create('Ext.data.JsonStore', {
-        fields: ['ID', 'FILENAME', 'ORIGINALNAME', 'UPLOADTIME', 'SIZES']
+        fields: ['FILENAME', 'ORIGINALNAME', 'UPLOADTIME', 'SIZES']
     })
     var tmp = new Ext.XTemplate(
          '<tpl for=".">',
         '<div class="panel panel-default thumb-wrap fl" style="margin-top:5px;margin-left:5px;width:240px">',
-        '<div class="panel-heading" style="padding-left:5px;padding-right:5px">{[values.ORIGINALNAME.substr(0,23)]}<div class="fr"><span class="glyphicon glyphicon-paperclip"></span></div></div>',
+        '<div class="panel-heading" style="padding-left:5px;padding-right:5px">{[values.ORIGINALNAME.substr(0,23)]}<div class="fr"><a href={[values.FILENAME]} target="_blank"><span class="glyphicon glyphicon-paperclip"></span></a></div></div>',
         '<tpl>{[values.SIZES/1024 > 1024?Math.round(values.SIZES/(1024*1024))+"M":Math.round(values.SIZES/1024)+"K"]}</tpl>',
         '|{[values.UPLOADTIME]}</div></div>',
         '</tpl>'

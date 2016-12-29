@@ -5,6 +5,7 @@
     <script src="/js/pan.js" type="text/javascript"></script>
 
     <script type="text/javascript">
+        var pgbar;
         Ext.onReady(function () {
 
             var store_Notice = Ext.create('Ext.data.JsonStore', {
@@ -47,44 +48,52 @@
                               , '-', {
                                   text: '<i class="icon iconfont">&#xe607;</i>&nbsp;修 改', handler: function () {
 
-                                      //var recs = gridpanel.getSelectionModel().getSelection();
-                                      //if (!recs || recs.length <= 0) {
-                                      //    Ext.Msg.alert("提示", "请选择修改记录!");
-                                      //    return;
-                                      //}
-                                      //opencenterwin_no("NoticeEdit.aspx?action=loadform&ID=" + recs[0].get("ID"), 950, 800);
+                                      var recs = gridpanel.getSelectionModel().getSelection();
+                                      if (recs.length == 0) {
+                                          Ext.Msg.alert("提示", "请选择修改记录!");
+                                          return;
+                                      }
+                                      opencenterwin_no("NoticeEdit.aspx?action=load&option=update&ID=" + recs[0].get("ID"), 950, 800);
                                   }
                               }
                               , '-', {
                                   text: '<i class="icon iconfont">&#xe606;</i>&nbsp;删 除', handler: function () {
-                                      //var recs = gridpanel.getSelectionModel().getSelection();
-                                      //if (recs.length > 0) {
-                                      //    var formIds = "";
-                                      //    Ext.each(recs, function (rec) {
-                                      //        formIds += "'" + rec.get("ID") + "',";
-                                      //    })
-                                      //    if (formIds.length > 0) {
-                                      //        formIds = formIds.substr(0, formIds.length - 1);
-                                      //    }
-                                      //    Ext.Ajax.request({
-                                      //        url: 'NoticeList.aspx?action=delete',
-                                      //        params: { Ids: formIds },
-                                      //        callback: function () {
-                                      //            Ext.Msg.alert("提示", "删除成功!");
-                                      //            pgbar.moveFirst();
-                                      //        }
-                                      //    })
-                                      //}
-                                      //else {
-                                      //    Ext.Msg.alert("提示", "请选择要删除的记录!");
-                                      //}
+                                      var recs = gridpanel.getSelectionModel().getSelection();
+                                      if (recs.length == 0) {
+                                          Ext.MessageBox.alert('提示', '请选择需要删除的记录！');
+                                          return;
+                                      }
 
+                                      var formIds = "";
+                                      Ext.each(recs, function (rec) {
+                                          formIds += "'" + rec.get("ID") + "',";
+                                      })
+                                      if (formIds.length > 0) { formIds = formIds.substr(0, formIds.length - 1); }
+
+                                      Ext.MessageBox.confirm("提示", "确定要删除所选择的记录吗？", function (btn) {
+                                          if (btn == 'yes') {
+                                              Ext.Ajax.request({
+                                                  url: 'NoticeList.aspx?action=delete',
+                                                  params: { Id: formIds },
+                                                  success: function (response, success, option) {
+                                                      var res = Ext.decode(response.responseText);
+                                                      if (res.success) {
+                                                          Ext.MessageBox.alert('提示', '删除成功！');
+                                                          pgbar.moveFirst();
+                                                      }
+                                                      else {
+                                                          Ext.MessageBox.alert('提示', '删除失败！');
+                                                      }
+                                                  }
+                                              });
+                                          }
+                                      });
                                   }
                               }, '->'
                 ]
             })
 
-            var pgbar = Ext.create('Ext.toolbar.Paging', {
+            pgbar = Ext.create('Ext.toolbar.Paging', {
                 displayMsg: '显示 {0} - {1} 条,共计 {2} 条',
                 store: store_Notice,
                 displayInfo: true
@@ -108,7 +117,7 @@
                 listeners:
                 {
                     'itemdblclick': function (view, record, item, index, e) {                       
-                        //opencenterwin_no("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=-1", 950, 800);
+                        opencenterwin_no("NoticeEdit.aspx?action=load&option=update&ID=" + record.data.ID, 950, 800);
                     }
                 },
                 viewConfig: {

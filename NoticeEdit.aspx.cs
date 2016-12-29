@@ -41,14 +41,14 @@ namespace Web_Admin
                 UPDATEID = dt.Rows[0]["ID"].ToString(); UPDATENAME = dt.Rows[0]["REALNAME"].ToString();
             }
 
-            string action = Request["action"];
+            string action = Request["action"]; string ID = Request["ID"];
             switch (action)
             {
                 case "uploadfile":
                     var fileUpload = Request.Files[0];
                     var uploadPath = Server.MapPath("/FileUpload/file");
                     int chunk = Request.Params["chunk"] != null ? int.Parse(Request.Params["chunk"]) : 0;
-                    string name = Request.Params["name"] != null ? Request.Params["name"] : "1.jpg";
+                    string name = Request.Params["name"] != null ? Request.Params["name"] : "";
 
                     using (var fs = new FileStream(Path.Combine(uploadPath, name), chunk == 0 ? FileMode.Create : FileMode.Append))
                     {
@@ -58,6 +58,20 @@ namespace Web_Admin
                     }
                     Response.End();
                     break;
+                case "load":
+                    sql = "select t.* from WEB_NOTICE t where id = '" + ID + "' ";
+                    dt = DBMgr.GetDataTable(sql);
+                    if (dt.Rows.Count > 0)
+                    {
+                        rtbID = dt.Rows[0]["ID"] + "";
+                        rtbTitle = dt.Rows[0]["TITLE"] + "";
+                        rcbType = dt.Rows[0]["TYPE"] + "";
+                        reContent = dt.Rows[0]["CONTENT"] + "";
+                        //reContent = reContent.Replace("\r\n", "<br />");//add
+                        rcbValid = dt.Rows[0]["ISINVALID"] + "";
+                        rchAttachment = dt.Rows[0]["ATTACHMENT"] + "";
+                    }
+                    break;
                 case "save":
                     rtbID = Request.Form["rtbID"];
                     rtbTitle = Request.Form["rtbTitle"];
@@ -65,21 +79,22 @@ namespace Web_Admin
                     reContent = Request.Form["reContent"];
                     rcbValid = Request.Form["rcbValid"];
                     rchAttachment = Request.Form["rchAttachment"];
+
                     if (rcbType == "其他")
                     {
-                        rcbType = rtbOther;
+                        rcbType = Request.Form["rtbOther"];
                     }
 
                     if (!string.IsNullOrEmpty(rtbID))
                     {
-                        sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ISINVALID = '{3}',ATTACHMENT='{4}',
+                        sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ISINVALID = '{3}',ATTACHMENT='{4}'
                                 ,UPDATEID='{5}', UPDATENAME='{6}',UPDATETIME=sysdate where id = '{0}' ";
                         sql = string.Format(sql, rtbID, rtbTitle, rcbType, rcbValid, rchAttachment, UPDATEID, UPDATENAME);
                     }
                     else
                     {
                         sql += @" insert into WEB_NOTICE (ID,TITLE,CONTENT,TYPE,ISINVALID,UPDATEID, UPDATENAME,UPDATETIME,ATTACHMENT) 
-                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}',sysdate,'{4}','{5}') ";
+                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}','{4}',sysdate,'{5}') ";
                         sql = string.Format(sql, rtbTitle, rcbType, rcbValid, UPDATEID, UPDATENAME, rchAttachment);
                     }
 
@@ -100,7 +115,7 @@ namespace Web_Admin
                         Response.Write("<script>alert('保存失败');</script>");
                     }
 
-                    //Response.Write("<script>window.opener.store_Notice.reload();</script>");
+                    Response.Write("<script>window.opener.pgbar.moveFirst();</script>");
                     Response.Write("<script>window.close();</script>");
                     Response.End();
                     break;
