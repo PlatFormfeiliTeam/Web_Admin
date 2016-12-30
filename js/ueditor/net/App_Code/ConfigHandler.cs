@@ -12,12 +12,15 @@ public class ConfigHandler : Handler
 
     public override void Process()
     {
-        string imageUrlPrefix = ConfigurationManager.AppSettings["imageUrlPrefix"];
+        string UrlPrefix = ConfigurationManager.AppSettings["UrlPrefix"];
         var obj = Config.Items;
-        if (imageUrlPrefix != null)
+        if (UrlPrefix != null)
         {
             obj.Remove("imageUrlPrefix");
-            obj.Add("imageUrlPrefix", imageUrlPrefix);
+            obj.Add("imageUrlPrefix", UrlPrefix);
+            obj.Remove("fileUrlPrefix");
+            obj.Add("fileUrlPrefix",UrlPrefix);
+            
 
         }
         WriteJson(obj);
