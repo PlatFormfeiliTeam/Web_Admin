@@ -120,7 +120,7 @@ function upload_ini() {
         silverlight_xap_url: '/js/upload/Moxie.xap',
         unique_names: true,
         filters: {
-            max_file_size: '5000mb',
+            max_file_size: '10000mb',
             mime_types: [
                 { title: "Image files", extensions: "*" },
                 { title: "Zip files", extensions: "zip,rar" }
@@ -137,7 +137,7 @@ function upload_ini() {
         var date = new Date(timestamp);
 
         file_store.insert(file_store.data.length,
-       { FILENAME: '/FileUpload/file/' + file.target_name, ORIGINALNAME: file.target_name, SIZES: file.size, UPLOADTIME: Ext.Date.format(date, 'Y-m-d H:i:s') });
+       { FILENAME: '/FileUpload/file/' + file.target_name, ORIGINALNAME: file.name, SIZES: file.size, UPLOADTIME: Ext.Date.format(date, 'Y-m-d H:i:s') });
     });
 }
 
