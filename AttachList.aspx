@@ -3,13 +3,53 @@
     <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
+    <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
     <script type="text/javascript">
+        var formpanel, gridpanel, pgbar;
         Ext.onReady(function () {
+
+            var store_filetype = Ext.create('Ext.data.JsonStore', {
+                fields: ['CODE', 'NAME'],
+                data: [{ "CODE": "44", "NAME": "订单文件" }, { "CODE": "61", "NAME": "报关单" }]
+            });
+            var combo_filetype = Ext.create('Ext.form.field.ComboBox', {
+                id: 'combo_filetype',
+                store: store_filetype,
+                fieldLabel: '文件类型',
+                displayField: 'NAME',
+                queryMode: 'local',
+                valueField: 'CODE', labelAlign: 'right'
+            });
+            var start_date = Ext.create('Ext.form.field.Date', {
+                id: 'start_date',
+                format: 'Y-m-d',
+                fieldLabel: '开始时间', labelAlign: 'right'
+            })
+            var end_date = Ext.create('Ext.form.field.Date', {
+                id: 'end_date',
+                format: 'Y-m-d',
+                fieldLabel: '结束时间', labelAlign: 'right'
+            })
+
+            formpanel = Ext.create('Ext.form.Panel', {
+                renderTo: 'div_form',
+                fieldDefaults: {
+                    margin: '5', columnWidth: 0.24
+                },
+                items: [
+                {
+                    layout: 'column', border: 0, items: [{
+                        xtype: 'textfield', fieldLabel: '订单编号', id: 'ORDERCODE'
+                    }, combo_filetype, start_date, end_date]
+                }
+                ]
+            });
+
             var store_attach = Ext.create('Ext.data.JsonStore', {
                 fields: ['ID','FILENAME','ORIGINALNAME','UPLOADTIME','UPLOADUSERID','FILETYPE','CUSTOMERCODE'
                     , 'SIZES', 'ORDERCODE', 'FILESUFFIX', 'FILETYPENAME', 'SPLITSTATUS', 'IETYPE', 'PGINDEX'
-                    , 'ORDERCOUNT', 'UPLOADUSERNAME'],
+                    , 'ORDERCOUNT', 'UPLOADUSERNAME', 'FILEPAGES'],
                 pageSize: 20,
                 proxy: {
                     type: 'ajax',
@@ -24,36 +64,26 @@
                 listeners: {
                     beforeload: function (store, options) {
                         var new_params = {
-                            ORDERCODE: Ext.getCmp("ORDERCODE").getValue()
+                            ORDERCODE: Ext.getCmp("ORDERCODE").getValue(),
+                            FILETYPE: Ext.getCmp("combo_filetype").getValue(),
+                            START_DATE: Ext.Date.format(Ext.getCmp("start_date").getValue(), 'Y-m-d H:i:s'),
+                            END_DATE: Ext.Date.format(Ext.getCmp("end_date").getValue(), 'Y-m-d H:i:s'),
                         }
                         Ext.apply(store.proxy.extraParams, new_params);
                     }
                 }
-            })
-            var toolbar = Ext.create('Ext.toolbar.Toolbar', {
-                items: [
-                            {
-                                xtype: 'textfield', fieldLabel: '订单编号', labelWidth: 80, labelAlign: 'right', id: 'ORDERCODE', flex: .25
-                            },
-                              {
-                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>&nbsp;查询', handler: function () {
-                                      pgbar.moveFirst();
-                                      //gridpanel.store.load();
-                                  }
-                              }, '->'
-                ]
-            })
+            })            
 
-            var pgbar = Ext.create('Ext.toolbar.Paging', {
+            pgbar = Ext.create('Ext.toolbar.Paging', {
                 displayMsg: '显示 {0} - {1} 条,共计 {2} 条',
                 store: store_attach,
                 displayInfo: true
             })
 
-            var gridpanel = Ext.create('Ext.grid.Panel', {
-                //title: '文件列表',
+            gridpanel = Ext.create('Ext.grid.Panel', {
                 height: 500,
                 store: store_attach,
+                renderTo: 'appConId',
                 selModel: { selType: 'checkboxmodel' },
                 bbar: pgbar,
                 columns: [
@@ -64,18 +94,18 @@
                     { header: '订单编号', dataIndex: 'ORDERCODE', width: 120, locked: true },
                     { header: '是否拆分', dataIndex: 'SPLITSTATUS', width: 60, renderer: render, locked: true },
                     { header: '文件类型', dataIndex: 'FILETYPE', width: 60 },
+                    { header: '文件类型名称', dataIndex: 'FILETYPENAME', width: 120 },
+                    { header: '页数', dataIndex: 'FILEPAGES', width: 60 },
                     { header: '上传时间', dataIndex: 'UPLOADTIME', width: 150 },
                     { header: '文件大小', dataIndex: 'SIZES', width: 80 },
                     { header: '文件扩展名', dataIndex: 'FILESUFFIX', width: 130 },
                     { header: '上传人', dataIndex: 'UPLOADUSERID', width: 60 },
                     { header: '上传人姓名', dataIndex: 'UPLOADUSERNAME', width: 130 }
                 ],
-                //添加双击事件
                 listeners:
                 {
-                    'itemdblclick': function (view, record, item, index, e) {
-                        // /Pdfview.aspx?ordercode=16055238810&fileids=5696&filetype=44&userid=12                         
-                        opencenterwin("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&fileids=" + record.data.ID + "&filetype=" + record.data.FILETYPE + "&userid=-1", 1600, 900);
+                    'itemdblclick': function (view, record, item, index, e) {                       
+                        opencenterwin("/PdfView.aspx?ordercode=" + record.data.ORDERCODE + "&userid=15", 1600, 900);
                     }
                 },
                 viewConfig: {
@@ -83,15 +113,44 @@
                 }
             });
 
-            var panel = Ext.create('Ext.panel.Panel', {
-                title: '文件列表',
-                tbar: toolbar,
-                renderTo: 'renderto',
-                minHeight: 100,
-                items: [gridpanel]
-            });
+            
 
         });
+
+        function Select() {
+            pgbar.moveFirst();
+        }
+        function Views() {
+            var recs = gridpanel.getSelectionModel().getSelection();
+            if (recs.length == 0) {
+                Ext.MessageBox.alert('提示', '请选择需要查看详细的记录！');
+                return;
+            }
+            opencenterwin("/PdfView.aspx?ordercode=" + recs[0].get("ORDERCODE") + "&userid=15", 1600, 900);
+        }
+        function Export() {
+            var ORDERCODE = Ext.getCmp("ORDERCODE").getValue();
+            var FILETYPE = Ext.getCmp("combo_filetype").getValue(); FILETYPE = FILETYPE == null ? "" : FILETYPE;
+            var START_DATE= Ext.Date.format(Ext.getCmp("start_date").getValue(), 'Y-m-d H:i:s');
+            var END_DATE = Ext.Date.format(Ext.getCmp("end_date").getValue(), 'Y-m-d H:i:s');
+
+            var path = '/AttachList.aspx?action=export&ORDERCODE=' + ORDERCODE + '&FILETYPE=' + FILETYPE + '&START_DATE=' + START_DATE + '&END_DATE=' + END_DATE;
+            $('#exportform').attr("action", path).submit();
+        }
     </script>
-    <div id="renderto"></div>
+    <div id="renderto">
+        <div id="div_form" style="width:100%;height:40px"></div>
+        <div>
+            <div class="btn-group" role="group">
+                <button type="button" onclick="Views()" class="btn btn-primary btn-sm"><i class="fa fa-file-text-o"></i>&nbsp;文件拆分</button>
+            </div>
+            <div class="btn-group fr" role="group">
+                <button onclick="Select()" class="btn btn-primary btn-sm"><i class="fa fa-search"></i>&nbsp;查询</button>
+                <form id="exportform" name="form" enctype="multipart/form-data" method="post" style="display:inline-block">
+                    <button type="button" id="btn_Export" class="btn btn-primary btn-sm" onclick="Export()"><i class="fa fa-level-down"></i>&nbsp;导出</button>
+                </form>
+            </div>
+        </div>
+        <div id="appConId" style="width:100%;"></div>
+    </div>
 </asp:Content>

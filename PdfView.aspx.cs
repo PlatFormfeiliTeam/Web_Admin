@@ -282,7 +282,7 @@ namespace Web_Admin
                             pdfReader.Close(); pdfReader.Dispose();
 
                             //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
-                            sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1 where id=" + fileid;
+                            sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1,FILEPAGES=" + filepages +" where id=" + fileid;
                             DBMgr.ExecuteNonQuery(sql);
 
                             DataTable dt_list_order = DBMgr.GetDataTable("select * from LIST_ORDER where  code='" + ordercode + "'");
