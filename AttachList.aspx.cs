@@ -59,12 +59,13 @@ namespace Web_Admin
                     //添加一个导出成功sheet
                     NPOI.SS.UserModel.ISheet sheet_S = book.CreateSheet("文件信息");
                     NPOI.SS.UserModel.IRow row1 = sheet_S.CreateRow(0);
-                    row1.CreateCell(0).SetCellValue("业务编号"); row1.CreateCell(1).SetCellValue("页数");
+                    row1.CreateCell(0).SetCellValue("业务编号"); row1.CreateCell(1).SetCellValue("页数");row1.CreateCell(2).SetCellValue("上传时间");
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         NPOI.SS.UserModel.IRow rowtemp = sheet_S.CreateRow(i + 1);
                         rowtemp.CreateCell(0).SetCellValue(dt.Rows[i]["ORDERCODE"].ToString());
                         rowtemp.CreateCell(1).SetCellValue(dt.Rows[i]["FILEPAGES"].ToString());
+                        rowtemp.CreateCell(2).SetCellValue(dt.Rows[i]["UPLOADTIME"].ToString());
                     }
                     // 输出Excel
                     string filename = "文件信息.xls";
