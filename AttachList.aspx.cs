@@ -39,11 +39,11 @@ namespace Web_Admin
             {
                 where += " and UPLOADTIME<=to_date('" + Request["END_DATE"].Replace("00:00:00", "23:59:59") + "','yyyy-mm-dd hh24:mi:ss') ";
             }
+            sql = @"SELECT * FROM List_Attachment where ORDERCODE is not null and (abolishstatus=0 or abolishstatus is null) " + where + " order by UPLOADTIME";
 
             switch (action)
             {
-                case "loadattach":
-                    sql = @"SELECT * FROM List_Attachment where (abolishstatus=0 or abolishstatus is null) " + where;
+                case "loadattach":                    
                     sql = Extension.GetPageSql(sql, "UPLOADTIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
                     dt = DBMgr.GetDataTable(sql);
                     json = JsonConvert.SerializeObject(dt, iso);
@@ -51,7 +51,6 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "export":
-                    sql = @"SELECT * FROM List_Attachment where (abolishstatus=0 or abolishstatus is null) " + where;
                     dt = DBMgr.GetDataTable(sql);
 
                     //创建Excel文件的对象
