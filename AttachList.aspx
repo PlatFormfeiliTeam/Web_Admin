@@ -8,7 +8,18 @@
     <script type="text/javascript">
         var formpanel, gridpanel, pgbar;
         Ext.onReady(function () {
-
+            var store_splitstatus = Ext.create('Ext.data.JsonStore', {
+                fields: ['CODE', 'NAME'],
+                data: [{ "CODE": "0", "NAME": "未拆分" }, { "CODE": "1", "NAME": "已拆分" }]
+            });
+            var combo_splitstatus = Ext.create('Ext.form.field.ComboBox', {
+                id: 'combo_splitstatus',
+                store: store_splitstatus,
+                fieldLabel: '拆分状态',
+                displayField: 'NAME',
+                queryMode: 'local',
+                valueField: 'CODE', labelAlign: 'right'                
+            });
             var store_filetype = Ext.create('Ext.data.JsonStore', {
                 fields: ['CODE', 'NAME'],
                 data: [{ "CODE": "44", "NAME": "订单文件" }, { "CODE": "61", "NAME": "报关单" }]
@@ -35,13 +46,13 @@
             formpanel = Ext.create('Ext.form.Panel', {
                 renderTo: 'div_form',
                 fieldDefaults: {
-                    margin: '5', columnWidth: 0.24
+                    margin: '5', columnWidth: 0.20
                 },
                 items: [
                 {
                     layout: 'column', border: 0, items: [{
                         xtype: 'textfield', fieldLabel: '订单编号', id: 'ORDERCODE'
-                    }, combo_filetype, start_date, end_date]
+                    }, combo_splitstatus, combo_filetype, start_date, end_date]
                 }
                 ]
             });
@@ -65,6 +76,7 @@
                     beforeload: function (store, options) {
                         var new_params = {
                             ORDERCODE: Ext.getCmp("ORDERCODE").getValue(),
+                            SPLITSTATUS: Ext.getCmp("combo_splitstatus").getValue(),
                             FILETYPE: Ext.getCmp("combo_filetype").getValue(),
                             START_DATE: Ext.Date.format(Ext.getCmp("start_date").getValue(), 'Y-m-d H:i:s'),
                             END_DATE: Ext.Date.format(Ext.getCmp("end_date").getValue(), 'Y-m-d H:i:s'),

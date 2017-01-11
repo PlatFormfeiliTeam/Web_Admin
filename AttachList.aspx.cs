@@ -27,6 +27,10 @@ namespace Web_Admin
             {
                 where += " and ORDERCODE like '%" + Request["ORDERCODE"] + "%'";
             }
+            if (!string.IsNullOrEmpty(Request["SPLITSTATUS"]))
+            {
+                where += " and SPLITSTATUS = '" + Request["SPLITSTATUS"] + "'";
+            }
             if (!string.IsNullOrEmpty(Request["FILETYPE"]))
             {
                 where += " and FILETYPE = '" + Request["FILETYPE"] + "'";
@@ -39,7 +43,7 @@ namespace Web_Admin
             {
                 where += " and UPLOADTIME<=to_date('" + Request["END_DATE"].Replace("00:00:00", "23:59:59") + "','yyyy-mm-dd hh24:mi:ss') ";
             }
-
+            
             switch (action)
             {
                 case "loadattach":
