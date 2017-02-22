@@ -68,8 +68,14 @@ namespace Web_Admin
                     string json = Request["json"];
                     JObject joc = (JObject)JsonConvert.DeserializeObject(json);
                     string newid = Guid.NewGuid().ToString();
-                    sql = @"insert into sysmodule (MODULEID,NAME,ISLEAF,URL,applicationid,PARENTID,SORTINDEX,ICON) 
-                          values ('" + Guid.NewGuid().ToString() + "','" + joc.Value<string>("NAME") + "','1','" + joc.Value<string>("URL") + "','f35cb450-cb38-4741-b8d7-9f726094b7ef','" + joc.Value<string>("PARENTID") + "','" + joc.Value<string>("SORTINDEX") + "','" + joc.Value<string>("ICON") + "')";
+                    string PARENTID = joc.Value<string>("PARENTID");
+                    if (string.IsNullOrEmpty(PARENTID)) { PARENTID = "91a0657f-1939-4528-80aa-91b202a593ab"; }
+
+                    sql = @"insert into sysmodule (MODULEID,NAME,ISLEAF,URL,PARENTID,SORTINDEX,ICON) 
+                          values ('" + Guid.NewGuid().ToString() + "','" + joc.Value<string>("NAME") + "','1','" + joc.Value<string>("URL")
+                                     + "','" + PARENTID + "','" + joc.Value<string>("SORTINDEX") + "','" 
+                                     //+ "','" + joc.Value<string>("PARENTID") + "','" + joc.Value<string>("SORTINDEX") + "','" 
+                                     + joc.Value<string>("ICON") + "')";
                     DBMgr.ExecuteNonQuery(sql);
                     joc.Remove("MODULEID");
                     joc.Add("MODULEID", newid);
