@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.Services;
 
 namespace Web_Admin
 {
@@ -19,6 +20,13 @@ namespace Web_Admin
         {
             FormsAuthentication.SignOut();
             Response.Redirect("Login.aspx");
+        }
+
+        [WebMethod]
+        public static string Getmenu(string action)
+        {
+            return action;
+
         }
     }
 }
