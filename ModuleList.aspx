@@ -102,9 +102,9 @@
         }
     </script>
     <div class="btn-group" role="group">
-        <button type="button" onclick="add_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe60b;</i>&nbsp;添加</button>
-        <button type="button" onclick="modify_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe607;</i>&nbsp;修改</button>
-        <button type="button" onclick="delete_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe606;</i>&nbsp;删除</button>
+        <button type="button" onclick="add_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe622;</i>&nbsp;添加</button>
+        <button type="button" onclick="modify_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe632;</i>&nbsp;修改</button>
+        <button type="button" onclick="delete_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe6d3;</i>&nbsp;删除</button>
     </div>
     <div id="renderto"></div>
 </asp:Content>

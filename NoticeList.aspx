@@ -37,16 +37,16 @@
                                 xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE', flex: .80
                             },
                               {
-                                  xtype: 'button', text: '<i class="iconfont">&#xe615;</i>&nbsp;查 询', handler: function () {
+                                  xtype: 'button', text: '<i class="iconfont">&#xe60b;</i>&nbsp;查 询', handler: function () {
                                       pgbar.moveFirst();
                                   }
                               }, '-', {
-                                  text: '<i class="iconfont">&#xe60b;</i>&nbsp;添 加', handler: function () {
+                                  text: '<i class="iconfont">&#xe622;</i>&nbsp;添 加', handler: function () {
                                       opencenterwin_no("NoticeEdit.aspx?option=add", 950, 800);
                                   }
                               }
                               , '-', {
-                                  text: '<i class="icon iconfont">&#xe607;</i>&nbsp;修 改', handler: function () {
+                                  text: '<i class="icon iconfont">&#xe632;</i>&nbsp;修 改', handler: function () {
 
                                       var recs = gridpanel.getSelectionModel().getSelection();
                                       if (recs.length == 0) {
@@ -57,7 +57,7 @@
                                   }
                               }
                               , '-', {
-                                  text: '<i class="icon iconfont">&#xe606;</i>&nbsp;删 除', handler: function () {
+                                  text: '<i class="icon iconfont">&#xe6d3;</i>&nbsp;删 除', handler: function () {
                                       var recs = gridpanel.getSelectionModel().getSelection();
                                       if (recs.length == 0) {
                                           Ext.MessageBox.alert('提示', '请选择需要删除的记录！');

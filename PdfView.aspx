@@ -123,7 +123,7 @@
             toolbar = Ext.create("Ext.toolbar.Toolbar", {
                 items: [
                     {
-                        text: '<i class="iconfont">&#xe834;</i>合并||删除', id: 'btn_mergedelete', 
+                        text: '<i class="iconfont">&#xe66c;</i>合并||删除', id: 'btn_mergedelete', 
                         handler: function () {                            
                             document.getElementById('pdfdiv').innerHTML = '<embed  id="pdf" width="100%" height="100%" src=""></embed>';
                             panel.hide();
@@ -131,7 +131,7 @@
                         }
                     },
                     {
-                        text: '<i class="iconfont">&#xe841;</i>&nbsp;确定拆分', id: 'btn_confirmsplit', disabled: true, handler: function () {
+                        text: '<i class="iconfont">&#xe6c3;</i>&nbsp;确定拆分', id: 'btn_confirmsplit', disabled: true, handler: function () {
                             var allowsplit = false;
                             var store_tmp = gridpanel.getStore();
                             for (var i = 0; i < store_tmp.getCount() ; i++) {
@@ -195,7 +195,7 @@
                             });
                         }
                     }, {
-                        text: '<i class="iconfont">&#xe620;</i>&nbsp;撤销拆分', id: 'btn_cancelsplit', handler: function () {
+                        text: '<i class="iconfont">&#xe633;</i>&nbsp;撤销拆分', id: 'btn_cancelsplit', handler: function () {
                             panel.hide();
                             Ext.MessageBox.confirm('提示', '确定要撤销拆分吗？', function (btn) {
                                 if (btn == 'yes') {
@@ -459,7 +459,7 @@
                 buttonAlign: 'center',
                 buttons: [
                     {
-                        text: '<i class="iconfont">&#xe834;</i>文件合并', id: 'btn_merge_w', handler: function () {                            
+                        text: '<i class="iconfont">&#xe66c;</i>文件合并', id: 'btn_merge_w', handler: function () {                            
                             if (Ext.getCmp('cbg_files').getChecked().length <= 1) {
                                 Ext.MessageBox.alert('提示', '请选择需要合并的文件！');
                                 return;
@@ -479,7 +479,7 @@
                         }
                     },
                     {
-                        text: '<i class="iconfont">&#xe606;</i>文件删除', id: 'btn_delete_w', handler: function () {                           
+                        text: '<i class="iconfont">&#xe6d3;</i>文件删除', id: 'btn_delete_w', handler: function () {                           
                             
                             if (Ext.getCmp('cbg_files').getChecked().length <= 0) {
                                 Ext.MessageBox.alert('提示', '请选择删除的文件！');
