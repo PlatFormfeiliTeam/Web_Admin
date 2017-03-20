@@ -14,7 +14,7 @@
     <link href="/css/superfish.css" rel="stylesheet" />
     <script src="/js/hoverIntent.js"></script>
     <script src="/js/superfish.js"></script>
-    <script type="text/javascript">
+    <script type="text/javascript"> 
         $(document).ready(function () {
             initmenu();
             $('#na_menu').superfish({
@@ -23,15 +23,17 @@
         function initmenu() {
             $.ajax({
                 type: 'Post',
-                url: "SiteMaster.aspx/Getmenu",
-                contentType: "application/json; charset=utf-8",                 
-                data: { action: 'loadform' },
+                url: "MenuHandler.ashx",
                 dataType: "text",
+                ContentType: "application/json; charset=utf-8",
+                data: {},//action: 'sss'
                 async: false,
                 success: function (data) {
-                    alert(data.action);
-                    //var obj = eval("(" + data + ")");//将字符串转为json
-                    //var formdata = obj.formdata;
+                    if (data == undefined || data == "") {
+                        $('#na_menu').html('');
+                    } else {
+                        $('#na_menu').html(data);
+                    }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {//请求失败处理函数  
                     alert(XMLHttpRequest.status);
@@ -39,6 +41,7 @@
                     alert(textStatus);
                 }
             });
+        }
 
     </script>
 </head>
@@ -49,38 +52,7 @@
         </div>
         <div style="background-color: #363c64; width: 100%">
             <div class="container">
-                <ul class="sf-menu" id="na_menu" style="font-size: 14px">
-                    <li>
-                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe605;</i></span>&nbsp;系统管理</a>
-                        <ul>           
-                            <li><a href="UserList.aspx">账户管理</a></li>                 
-                            <li><a href="ModuleList.aspx">前端模块管理</a></li>
-                            <li><a href="WebAuthList.aspx">前端权限管理</a></li>
-                            <li><a href="WebAuthList_After.aspx">后端权限管理</a></li>                            
-                        </ul>       
-                    </li>  
-                    <li>
-                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe626;</i></span>&nbsp;网站配置</a>
-                        <ul>
-                             <li><a href="NoticeList.aspx">资讯管理</a></li>       
-                        </ul>       
-                    </li> 
-                    <li>
-                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe647;</i></span>&nbsp;缓存管理</a>
-                        <ul>
-                            <li><a href="EXT_Statuslogall.aspx">报关报检业务</a></li>
-                            <li><a href="EXT_Declareall.aspx">报关单</a></li>
-                            <li><a href="EXT_Inspectionall.aspx">报检单</a></li>
-                        </ul>        
-                    </li> 
-                     <li>
-                        <a><span style="font-size:14px;"><i class="icon iconfont">&#xe61b;</i></span>&nbsp;其他管理</a>
-                        <ul>
-                            <li><a href="AttachList.aspx">文件列表</a></li>    
-                        </ul>       
-                    </li>                      
-                                         
-                </ul>
+                <ul class="sf-menu" id="na_menu" style="font-size: 14px"></ul>
             </div>
         </div>
         <div style="width: 100%; text-align: right; font-size:12px;">

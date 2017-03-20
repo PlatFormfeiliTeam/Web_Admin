@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Security.Cryptography;
@@ -20,14 +23,19 @@ namespace Web_Admin.Common
             return result;
         }
 
-        ////获得用户信息
-        //public static DataTable GetUserInfo(this string username)
-        //{
-        //    string strSql = @"select * from sys_user where name = '{0}'";
-        //    strSql = string.Format(strSql, username);
-        //    DataTable ents = DBMgr.GetDataTable(strSql);
-        //    return ents;
-        //}
+        //获得用户信息
+        public static JObject Get_UserInfo(string username)
+        {
+            IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
+            iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+
+
+            string sql = @"select * from sys_user where name = '{0}'";
+            sql = string.Format(sql, username);
+
+            string jsonstr = JsonConvert.SerializeObject(DBMgr.GetDataTable(sql), iso).Replace("[", "").Replace("]", "");
+            return (JObject)JsonConvert.DeserializeObject(jsonstr);
+        }
 
 
         public static string GetPageSql(string tempsql, string order, string asc, ref int totalProperty, int start, int limit)

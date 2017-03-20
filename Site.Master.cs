@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.Services;
+using Web_Admin.Common;
 
 namespace Web_Admin
 {
@@ -22,11 +23,5 @@ namespace Web_Admin
             Response.Redirect("Login.aspx");
         }
 
-        [WebMethod]
-        public static string Getmenu(string action)
-        {
-            return action;
-
-        }
     }
 }
