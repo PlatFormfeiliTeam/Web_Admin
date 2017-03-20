@@ -41,12 +41,12 @@
                 <form runat="server">
                     <label for="user_name">登录名</label>
                     <div class="input-group" style="margin-bottom: 20px">
-                        <span class="input-group-addon ico iconfont">&#xe605;</span>
+                        <span class="input-group-addon ico iconfont">&#xe611;</span>
                         <asp:TextBox ID="user_name" runat="server" CssClass="form-control"> </asp:TextBox>
                     </div>
                     <label for="password">登录密码</label>
                     <div class="input-group">
-                        <span class="input-group-addon icon iconfont">&#xe608;</span>
+                        <span class="input-group-addon icon iconfont">&#xe65e;</span>
                         <asp:TextBox ID="password" runat="server" CssClass="form-control" TextMode="Password"> </asp:TextBox>
                     </div>
                     <div style="height: 35px">
