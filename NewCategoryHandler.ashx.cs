@@ -41,7 +41,6 @@ namespace Web_Admin
             }
             result += "]";
             return result;
-            //return "{treeList:" + result + "}";
         }
 
         private string getchildren(string id)
