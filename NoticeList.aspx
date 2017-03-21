@@ -5,18 +5,13 @@
     <script src="/js/pan.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-        var data_category;
-
         Ext.onReady(function () {
-            getTreeStore();
             var treepanelstore = Ext.create('Ext.data.TreeStore', {
                 fields: ["ID", "NAME", "leaf", "PID"],
                 proxy: {
-                    type: 'memory',
-                    data: data_category,
-                    reader: {
-                        type: 'json'
-                    }
+                    type: 'ajax',
+                    url: 'NewCategoryHandler.ashx',
+                    reader:  'json',
                 },
                 root: {
                     expanded: true,
@@ -44,20 +39,6 @@
                 }
             });
         });
-
-        function getTreeStore() {
-            Ext.Ajax.request({
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json;utf-8' },
-                url: 'NoticeList.aspx/getCate',
-                params: {},
-                async: false,
-                success: function (reps, option) {
-                    var json = Ext.decode(reps.responseText);
-                    data_category = Ext.decode(json.d);
-                }
-            });
-        }
 
     </script>
     <div>
