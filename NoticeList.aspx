@@ -5,135 +5,65 @@
     <script src="/js/pan.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-        var pgbar;
+        var data_category;
+
         Ext.onReady(function () {
-
-            var store_Notice = Ext.create('Ext.data.JsonStore', {
-                fields: ['ID', 'TITLE', 'UPDATEID', 'UPDATENAME', 'ISINVALID', 'TYPE', 'UPDATETIME'],
-                pageSize: 20,
+            getTreeStore();
+            var treepanelstore = Ext.create('Ext.data.TreeStore', {
+                fields: ["ID", "NAME", "leaf", "PID"],
                 proxy: {
-                    type: 'ajax',
-                    url: 'NoticeList.aspx?action=load',
+                    type: 'memory',
+                    data: data_category,
                     reader: {
-                        root: 'rows',
-                        type: 'json',
-                        totalProperty: 'total'
+                        type: 'json'
                     }
                 },
-                autoLoad: true,
-                listeners: {
-                    beforeload: function (store, options) {
-                        var new_params = {
-                            TITLE: Ext.getCmp("TITLE").getValue()
-                        }
-                        Ext.apply(store.proxy.extraParams, new_params);
-                    }
+                root: {
+                    expanded: true,
+                    text: "my root"
                 }
-            })
+            });
 
-            var toolbar = Ext.create('Ext.toolbar.Toolbar', {
-                items: [
-                            {
-                                xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE', flex: .80
-                            },
-                              {
-                                  xtype: 'button', text: '<i class="iconfont">&#xe60b;</i>&nbsp;查 询', handler: function () {
-                                      pgbar.moveFirst();
-                                  }
-                              }, '-', {
-                                  text: '<i class="iconfont">&#xe622;</i>&nbsp;添 加', handler: function () {
-                                      opencenterwin_no("NoticeEdit.aspx?option=add", 950, 800);
-                                  }
-                              }
-                              , '-', {
-                                  text: '<i class="icon iconfont">&#xe632;</i>&nbsp;修 改', handler: function () {
-
-                                      var recs = gridpanel.getSelectionModel().getSelection();
-                                      if (recs.length == 0) {
-                                          Ext.Msg.alert("提示", "请选择修改记录!");
-                                          return;
-                                      }
-                                      opencenterwin_no("NoticeEdit.aspx?action=load&option=update&ID=" + recs[0].get("ID"), 950, 800);
-                                  }
-                              }
-                              , '-', {
-                                  text: '<i class="icon iconfont">&#xe6d3;</i>&nbsp;删 除', handler: function () {
-                                      var recs = gridpanel.getSelectionModel().getSelection();
-                                      if (recs.length == 0) {
-                                          Ext.MessageBox.alert('提示', '请选择需要删除的记录！');
-                                          return;
-                                      }
-
-                                      var formIds = "";
-                                      Ext.each(recs, function (rec) {
-                                          formIds += "'" + rec.get("ID") + "',";
-                                      })
-                                      if (formIds.length > 0) { formIds = formIds.substr(0, formIds.length - 1); }
-
-                                      Ext.MessageBox.confirm("提示", "确定要删除所选择的记录吗？", function (btn) {
-                                          if (btn == 'yes') {
-                                              Ext.Ajax.request({
-                                                  url: 'NoticeList.aspx?action=delete',
-                                                  params: { Id: formIds },
-                                                  success: function (response, success, option) {
-                                                      var res = Ext.decode(response.responseText);
-                                                      if (res.success) {
-                                                          Ext.MessageBox.alert('提示', '删除成功！');
-                                                          pgbar.moveFirst();
-                                                      }
-                                                      else {
-                                                          Ext.MessageBox.alert('提示', '删除失败！');
-                                                      }
-                                                  }
-                                              });
-                                          }
-                                      });
-                                  }
-                              }, '->'
-                ]
-            })
-
-            pgbar = Ext.create('Ext.toolbar.Paging', {
-                displayMsg: '显示 {0} - {1} 条,共计 {2} 条',
-                store: store_Notice,
-                displayInfo: true
-            })
-
-            var gridpanel = Ext.create('Ext.grid.Panel', {
-                store: store_Notice,
+            var treepanel = Ext.create('Ext.tree.Panel', {
+                useArrows: true,
+                animate: true,
+                rootVisible: false,
+                renderTo: "div_west",
+                store: treepanelstore,
                 height: 500,
-                selModel: { selType: 'checkboxmodel' },
-                bbar: pgbar,
                 columns: [
-                    { xtype: 'rownumberer', width: 35 },
-                    { header: 'ID', dataIndex: 'ID', hidden: true },
-                    { header: '标题', dataIndex: 'TITLE', width: 550 },
-                    { header: '类型', dataIndex: 'TYPE', width: 150 },
-                    { header: '是否启用', dataIndex: 'ISINVALID', width: 100, renderer: render },
-                    { header: '更新时间', dataIndex: 'UPDATETIME', width: 150 },
-                    { header: '更新人', dataIndex: 'UPDATENAME', width: 150 }
+                { text: 'ID', dataIndex: 'ID', width: 500, hidden: true },
+                { text: 'leaf', dataIndex: 'leaf', width: 100, hidden: true },
+                { header: '类别名称', xtype: 'treecolumn', text: 'NAME', dataIndex: 'NAME', flex: 1 },
+                { text: 'PID', dataIndex: 'PID', width: 100, hidden: true }
                 ],
-                //添加双击事件
-                listeners:
-                {
-                    'itemdblclick': function (view, record, item, index, e) {                       
-                        opencenterwin_no("NoticeEdit.aspx?action=load&option=update&ID=" + record.data.ID, 950, 800);
+                listeners: {
+                    'itemclick': function (node, checked) {
+                      
                     }
-                },
-                viewConfig: {
-                    enableTextSelection: true
                 }
             });
-
-            var panel = Ext.create('Ext.panel.Panel', {
-                title: '资讯管理',
-                tbar: toolbar,
-                renderTo: 'renderto',
-                minHeight: 100,
-                items: [gridpanel]
-            });
-
         });
+
+        function getTreeStore() {
+            Ext.Ajax.request({
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json;utf-8' },
+                url: 'NoticeList.aspx/getCate',
+                params: {},
+                async: false,
+                success: function (reps, option) {
+                    var json = Ext.decode(reps.responseText);
+                    data_category = Ext.decode(json.d);
+                }
+            });
+        }
+
     </script>
-    <div id="renderto"></div>
+    <div>
+        <div id="div_west" style="float: left; width: 15%">
+        </div>
+        <div id="div_east" style="float: left; width: 85%">
+        </div>
+    </div>
 </asp:Content>

@@ -8,52 +8,96 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Web_Admin.Common;
+using System.Web.Services;
 
 namespace Web_Admin
 {
     public partial class NoticeList : System.Web.UI.Page
     {
-        
+        //string action = string.Empty;
         protected void Page_Load(object sender, EventArgs e)
         {
-            int totalProperty = 0; DataTable dt;
-            string json = string.Empty; string sql = "";
+            //string result = ""; string sql = string.Empty;
 
-            string action = Request["action"]; string id = Request["id"];
-            switch (action)
-            {
-                case "load":
-                    IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
-                    iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+            //action = Request["action"];
+            //switch (action)
+            //{
+            //    case "loadnewscategory":
+            //        sql = @"select t.* from NEWSCATEGORY t where t.PID is null";
 
-                    string where = "";
-                    if (!string.IsNullOrEmpty(Request["TITLE"]))
-                    {
-                        where += " and TITLE like '%" + Request["TITLE"] + "%'";
-                    }
-                    sql = @"SELECT t.* FROM WEB_NOTICE t WHERE 1= 1 " + where;
+            //        result = "[";
+            //        DataTable dt = DBMgr.GetDataTable(sql);
+            //        int i = 0;
+            //        string children = string.Empty;
+            //        foreach (DataRow dr in dt.Rows)
+            //        {
+            //            children = getchildren(dr["id"].ToString());
+            //            result += "{id:'" + dr["id"] + "',name:'" + dr["NAME"] + "',PID:'" + dr["PID"] + "',leaf:'" + dr["ISLEAF"] + "',children:" + children + "}";
 
-                    sql = Extension.GetPageSql(sql, "UPDATETIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
-                    dt = DBMgr.GetDataTable(sql);
-                    json = JsonConvert.SerializeObject(dt, iso);
-                    Response.Write("{rows:" + json + ",total:" + totalProperty + "}");
-                    Response.End();
-                    break;
-                case "delete":
-                    sql = @"delete from WEB_NOTICE where id in (" + id + ")";
-                    int i = DBMgr.ExecuteNonQuery(sql);
-                    if (i > 0)
-                    {
-                        Response.Write("{success:true}");
-                    }
-                    else
-                    {
-                        Response.Write("{success:false}");
-                    }
-
-                    Response.End();
-                    break;
-            }
+            //            if (i != dt.Rows.Count - 1)
+            //            {
+            //                result += ",";
+            //            }
+            //            i++;
+            //        }
+            //        result += "]";
+            //        Response.Write(result);
+            //        Response.End();
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
+
+        [WebMethod]
+        public static string getCate()
+        {
+            string result = ""; string sql = string.Empty;
+            sql = @"select t.* from NEWSCATEGORY t where t.PID is null";
+
+            result = "[";
+            DataTable dt = DBMgr.GetDataTable(sql);
+            int i = 0;
+            string children = string.Empty;
+            foreach (DataRow dr in dt.Rows)
+            {
+                children = getchildren(dr["id"].ToString());
+                result += "{ID:'" + dr["id"] + "',NAME:'" + dr["NAME"] + "',PID:'" + dr["PID"] + "',leaf:'" + dr["ISLEAF"] + "',children:" + children + "}";
+
+                if (i != dt.Rows.Count - 1)
+                {
+                    result += ",";
+                }
+                i++;
+            }
+            result += "]";
+            return result;
+        }
+
+        private static string getchildren(string id)
+        {
+            string sql = string.Empty;
+
+            string children = "[";
+            sql = @"select t.* from NEWSCATEGORY t where  t.PID ='{0}'";
+            sql = string.Format(sql, id);
+            DataTable dt = DBMgr.GetDataTable(sql);
+            int i = 0;
+            foreach (DataRow dr in dt.Rows)
+            {
+                string tmp_children = getchildren(dr["id"].ToString());
+
+                children += "{ID:'" + dr["id"] + "',NAME:'" + dr["NAME"] + "',PID:'" + dr["PID"] + "',leaf:'" + dr["ISLEAF"] + "',children:" + tmp_children + "}";
+
+                if (i != dt.Rows.Count - 1)
+                {
+                    children += ",";
+                }
+                i++;
+            }
+            children += "]";
+            return children;
+        }
+
     }
 }
