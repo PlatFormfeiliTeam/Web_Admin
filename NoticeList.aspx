@@ -51,7 +51,7 @@
 
         function east() {
             var store_Notice = Ext.create('Ext.data.JsonStore', {
-                fields: ['ID', 'TITLE', 'ISINVALID', 'TYPE', 'PUBLISHDATE', 'TYPENAME'],
+                fields: ['ID', 'TITLE', 'ISINVALID', 'TYPE', 'PUBLISHDATE', 'TYPENAME','UPDATETIME'],
                 pageSize: 15,
                 proxy: {
                     type: 'ajax',
@@ -161,7 +161,8 @@
                     { header: 'ID', dataIndex: 'ID', hidden: true },
                     { header: '标题', dataIndex: 'TITLE', flex: 1, renderer: ViewAll },
                     { header: '发布日期', dataIndex: 'PUBLISHDATE', width: 120 },
-                    { header: '类别', dataIndex: 'TYPENAME', width: 120 }
+                    { header: '类别', dataIndex: 'TYPENAME', width: 120 },
+                    { header: '更新时间', dataIndex: 'UPDATETIME', width: 150 }
                 ],
                 //添加双击事件
                 listeners:

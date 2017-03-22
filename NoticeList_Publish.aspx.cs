@@ -37,9 +37,12 @@ namespace Web_Admin
                     {
                         where += " and TITLE like '%" + Request["TITLE"] + "%'";
                     }
-                    sql = @"SELECT t.id,t.type,t.title,to_char(t.publishdate,'yyyy/mm/dd') publishdate,t.ISINVALID,c.name typename FROM WEB_NOTICE t left join newscategory c on t.type=c.id WHERE 1= 1 " + where;
+                    sql = @"SELECT t.id,t.type,t.title,to_char(t.publishdate,'yyyy/mm/dd') publishdate,t.ISINVALID,t.updatetime,c.name typename 
+                            FROM WEB_NOTICE t 
+                                left join newscategory c on t.type=c.id 
+                            WHERE 1= 1 " + where;
 
-                    sql = Extension.GetPageSql(sql, "t.ISINVALID", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
+                    sql = Extension.GetPageSql(sql, "t.ISINVALID desc,t.updatetime", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
                     dt = DBMgr.GetDataTable(sql);
 
                     json = JsonConvert.SerializeObject(dt, iso);
