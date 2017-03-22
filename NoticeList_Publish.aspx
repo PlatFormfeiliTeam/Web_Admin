@@ -1,8 +1,9 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="NoticeList.aspx.cs" Inherits="Web_Admin.NoticeList" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="NoticeList_Publish.aspx.cs" Inherits="Web_Admin.NoticeList_Publish" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
+     <link href="/Extjs42/resources/css/ext-all-neptune.css" rel="stylesheet" type="text/css" />
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <script src="/js/pan.js" type="text/javascript"></script>
+    <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
     <script type="text/javascript">
         var pgbar;
@@ -26,7 +27,7 @@
             });
 
             var treepanel = Ext.create('Ext.tree.Panel', {
-                id:'treepanel',
+                id: 'treepanel',
                 useArrows: true,
                 animate: true,
                 rootVisible: false,
@@ -55,7 +56,7 @@
                 pageSize: 15,
                 proxy: {
                     type: 'ajax',
-                    url: 'NoticeList.aspx?action=load',
+                    url: 'NoticeList_Publish.aspx?action=load',
                     reader: {
                         root: 'rows',
                         type: 'json',
@@ -91,7 +92,7 @@
                                   }
                               }, '-', {
                                   text: '<i class="iconfont">&#xe622;</i>&nbsp;添 加', handler: function () {
-                                      opencenterwin_no("NoticeEdit.aspx?option=add", 950, 800);
+                                      opencenterwin_no("NoticeEdit_Publish.aspx?option=add", 950, 800);
                                   }
                               }
                               , '-', {
@@ -102,7 +103,7 @@
                                           Ext.Msg.alert("提示", "请选择修改记录!");
                                           return;
                                       }
-                                      opencenterwin_no("NoticeEdit.aspx?action=load&option=update&ID=" + recs[0].get("ID"), 950, 800);
+                                      opencenterwin_no("NoticeEdit_Publish.aspx?action=load&option=update&ID=" + recs[0].get("ID"), 950, 800);
                                   }
                               }
                               , '-', {
@@ -122,7 +123,7 @@
                                       Ext.MessageBox.confirm("提示", "确定要删除所选择的记录吗？", function (btn) {
                                           if (btn == 'yes') {
                                               Ext.Ajax.request({
-                                                  url: 'NoticeList.aspx?action=delete',
+                                                  url: 'NoticeList_Publish.aspx?action=delete',
                                                   params: { Id: formIds },
                                                   success: function (response, success, option) {
                                                       var res = Ext.decode(response.responseText);
@@ -149,8 +150,8 @@
             })
 
             var gridpanel = Ext.create('Ext.grid.Panel', {
-                title: '资讯管理',
-                store: store_Notice, 
+                title: '资讯发布',
+                store: store_Notice,
                 height: 550,
                 tbar: toolbar,
                 renderTo: 'div_east',
@@ -160,6 +161,7 @@
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', hidden: true },
                     { header: '标题', dataIndex: 'TITLE', flex: 1, renderer: ViewAll },
+                    { header: '是否发布', dataIndex: 'ISINVALID', width: 80, renderer: render },
                     { header: '发布日期', dataIndex: 'PUBLISHDATE', width: 120 },
                     { header: '类别', dataIndex: 'TYPENAME', width: 120 }
                 ],
@@ -167,7 +169,7 @@
                 listeners:
                 {
                     'itemdblclick': function (view, record, item, index, e) {
-                        opencenterwin_no("NoticeEdit.aspx?action=load&option=update&ID=" + record.data.ID, 950, 800);
+                        opencenterwin_no("NoticeEdit_Publish.aspx?action=load&option=update&ID=" + record.data.ID, 950, 800);
                     }
                 },
                 viewConfig: {

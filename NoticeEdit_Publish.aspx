@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="NoticeEdit.aspx.cs" Inherits="Web_Admin.NoticeEdit" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="NoticeEdit_Publish.aspx.cs" Inherits="Web_Admin.NoticeEdit_Publish" %>
 
 <!DOCTYPE html>
 
@@ -27,7 +27,7 @@
         var uploader, file_store;
 
         $(document).ready(function () {
-            
+
             initform(option);
 
             $("#btnCancel").click(function () {
@@ -50,8 +50,8 @@
 
         function initform(option) {
 
-            var strjoson = eval("<%=Bind_rcbType()%>"); 
-            $("#rcbType").html(creatSelectTree(strjoson));           
+            var strjoson = eval("<%=Bind_rcbType()%>");
+            $("#rcbType").html(creatSelectTree(strjoson));
 
             panel_file_ini();//随附文件初始化
             if (uploader == null) {
@@ -64,13 +64,21 @@
                     $("#rcbType").find("option[value='" + rcbType + "']").attr("selected", true);
                 }
 
-               
+                var rcbIsinvalid = "<%=rcbValid %>";
+                if (rcbIsinvalid != null && rcbIsinvalid.length > 0) {
+                    if (rcbIsinvalid == "0") {
+                        $("#rd_y").attr("checked", true);
+                    }
+                    if (rcbIsinvalid == "1") {
+                        $("#rd_n").attr("checked", true);
+                    }
+                }
                 var rchAttachment = eval('<%=rchAttachment %>');
                 file_store.loadData(rchAttachment);
             }
-           
+
         }
-        
+
         var _editor = UE.getEditor('reContent');
         _editor.ready(function () {
             _editor.setContent('<%=reContent %>');
@@ -100,7 +108,7 @@
     <form id="form1" action="?action=save" method="post" enctype="multipart/form-data">
         <input type="hidden" id="rtbID" name="rtbID" value="<%=rtbID %>" />
         <div class="panel panel-primary">
-            <div class="panel-heading">资讯管理-新增||修改</div>
+            <div class="panel-heading">资讯发布-新增||修改</div>
             <div class="panel-body">
                 <table class="table table-bordered">
                     <tr>
@@ -119,15 +127,23 @@
                             <select id="rcbType" name="rcbType" style="width:30%;"></select>
                         </td>
                     </tr>
-                    <tr>
+                    <tr>                        
                         <td style="width: 10%" align="right">
                             发布日期
                         </td>
-                        <td colspan="3">
-                            <input type="text" style="width:30%;background-color: #e5f1f4; border-top-style: none; border-right-style: none;border-left-style: none;border-bottom: green 1px solid;" 
+                        <td>
+                            <input type="text" style="width:80%;background-color: #e5f1f4; border-top-style: none; border-right-style: none;border-left-style: none;border-bottom: green 1px solid;" 
                                 id="rtbPublishDate" name="rtbPublishDate" value="<%=rtbPublishDate %>"
                                 class="Wdate" onclick="WdatePicker({ dateFmt: 'yyyy/MM/dd', isShowClear: false, readOnly: true })" readonly="readonly"/>
-                        </td>                        
+                        </td>
+                        <td style="width: 10%" align="right">
+                            是否发布
+                        </td>
+                        <td>
+                            <input id="rd_y" type="radio" name="rcbValid" value="0" />是
+                            &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+                            <input id="rd_n" type="radio" name="rcbValid" value="1" checked="checked" />否
+                        </td>
                     </tr>
                     <tr>
                         <td align="right">

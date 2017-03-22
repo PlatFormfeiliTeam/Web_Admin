@@ -10,19 +10,19 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Web_Admin.Common;
-
 namespace Web_Admin
 {
-    public partial class NoticeEdit : System.Web.UI.Page
+    public partial class NoticeEdit_Publish : System.Web.UI.Page
     {
         string sql = "";
         protected string action = "";
         public string rtbID = string.Empty;
         public string rtbTitle = string.Empty;
         public string rcbType = string.Empty;
+        public string rcbValid = string.Empty;
         public string reContent = string.Empty;
         public string rchAttachment = string.Empty;
-        public string UPDATEID= string.Empty;
+        public string UPDATEID = string.Empty;
         public string UPDATENAME = string.Empty;
         public string rtbPublishDate = string.Empty;
         public string rtbREFERENCESOURCE = string.Empty;
@@ -36,7 +36,7 @@ namespace Web_Admin
                 return;
             }
             dt = DBMgr.GetDataTable("select * from sys_user where name = '" + identity.Name + "'");
-            if (dt.Rows.Count>0)
+            if (dt.Rows.Count > 0)
             {
                 UPDATEID = dt.Rows[0]["ID"].ToString(); UPDATENAME = dt.Rows[0]["REALNAME"].ToString();
             }
@@ -64,27 +64,27 @@ namespace Web_Admin
                     if (dt.Rows.Count > 0)
                     {
                         rtbID = dt.Rows[0]["ID"] + ""; rtbTitle = dt.Rows[0]["TITLE"] + ""; rcbType = dt.Rows[0]["TYPE"] + "";
-                        reContent = dt.Rows[0]["CONTENT"] + ""; rchAttachment = dt.Rows[0]["ATTACHMENT"] + "";
+                        reContent = dt.Rows[0]["CONTENT"] + ""; rcbValid = dt.Rows[0]["ISINVALID"] + ""; rchAttachment = dt.Rows[0]["ATTACHMENT"] + "";
                         rtbPublishDate = dt.Rows[0]["PublishDate"] + ""; rtbREFERENCESOURCE = dt.Rows[0]["REFERENCESOURCE"] + "";
                     }
                     break;
                 case "save":
                     rtbID = Request.Form["rtbID"]; rtbTitle = Request.Form["rtbTitle"]; rcbType = Request.Form["rcbType"];
-                    reContent = Request.Form["reContent"]; rchAttachment = Request.Form["rchAttachment"];
+                    reContent = Request.Form["reContent"]; rcbValid = Request.Form["rcbValid"]; rchAttachment = Request.Form["rchAttachment"];
                     rtbPublishDate = Request.Form["rtbPublishDate"]; rtbREFERENCESOURCE = Request.Form["rtbREFERENCESOURCE"];
                     rtbPublishDate = "to_date('" + rtbPublishDate + "','yyyy-MM-dd')";
 
                     if (!string.IsNullOrEmpty(rtbID))
                     {
-                        sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ATTACHMENT='{3}'
-                                ,UPDATEID='{4}', UPDATENAME='{5}',UPDATETIME=sysdate,PublishDate={6},REFERENCESOURCE='{7}' where id = '{0}' ";
-                        sql = string.Format(sql, rtbID, rtbTitle, rcbType, rchAttachment, UPDATEID, UPDATENAME, rtbPublishDate, rtbREFERENCESOURCE);
+                        sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ISINVALID = '{3}',ATTACHMENT='{4}'
+                                ,UPDATEID='{5}', UPDATENAME='{6}',UPDATETIME=sysdate,PublishDate={7},REFERENCESOURCE='{8}' where id = '{0}' ";
+                        sql = string.Format(sql, rtbID, rtbTitle, rcbType, rcbValid, rchAttachment, UPDATEID, UPDATENAME, rtbPublishDate, rtbREFERENCESOURCE);
                     }
                     else
                     {
-                        sql += @" insert into WEB_NOTICE (ID,TITLE,CONTENT,TYPE,UPDATEID,UPDATENAME,UPDATETIME,ATTACHMENT,PublishDate,REFERENCESOURCE) 
-                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}',sysdate,'{4}',{5},'{6}') ";
-                        sql = string.Format(sql, rtbTitle, rcbType, UPDATEID, UPDATENAME, rchAttachment, rtbPublishDate, rtbREFERENCESOURCE);
+                        sql += @" insert into WEB_NOTICE (ID,TITLE,CONTENT,TYPE,ISINVALID,UPDATEID, UPDATENAME,UPDATETIME,ATTACHMENT,PublishDate,REFERENCESOURCE) 
+                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}','{4}',sysdate,'{5}',{6},'{7}') ";
+                        sql = string.Format(sql, rtbTitle, rcbType, rcbValid, UPDATEID, UPDATENAME, rchAttachment, rtbPublishDate, rtbREFERENCESOURCE);
                     }
 
                     OracleParameter[] parameters = new OracleParameter[]
@@ -118,6 +118,5 @@ namespace Web_Admin
             string json = nc.getCate();
             return json;
         }
-
     }
 }

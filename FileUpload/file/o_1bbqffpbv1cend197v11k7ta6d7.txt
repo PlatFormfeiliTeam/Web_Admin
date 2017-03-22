@@ -1,0 +1,79 @@
+//供应链缓存
+        public bool Redis_SupplyLog(string predeclcode)
+        {
+            bool flag = false; string sql = string.Empty;
+            try
+            {
+                DBSession db = new DBSession();
+
+                sql = "select * from list_declaration where code='" + predeclcode + "'";
+                DataTable dt_declaration = db.Query(sql);
+
+                if (dt_declaration.Rows.Count == 1)
+                {
+                    DataRow dr_declaration = dt_declaration.Rows[0];
+                    sql = "select PLATFORMCODE,DOCSERVICECODE,CUSTOMERCODE,CUSNO,REPNO from list_order where code='" + dr_declaration["ORDERCODE"].ToString() + "'";
+                    DataTable dt_order = db.Query(sql);
+                    if (dt_order.Rows.Count == 1)
+                    {
+                        DataRow dr_order = dt_order.Rows[0];
+                        string CUSNO = dr_order["CUSNO"].ToString();
+
+                        string platformcode = dr_order["PLATFORMCODE"].ToString();//对接平台（与我们对接的平台，在生成缓存文件时作为分类标志）
+                        string docservicecode = dr_order["DOCSERVICECODE"].ToString();//单证服务单位编码
+                        string customercode = dr_order["CUSTOMERCODE"].ToString(); //委托单位代码
+                        if (docservicecode == "GWYKS" && customercode == "KSJSBGYXGS")
+                        {
+                            platformcode = "xinguanwu";
+                        }
+
+                        string SUPPLYCHAINCODE = "";//供应链代码
+                        if (dr_order["REPNO"].ToString().Trim() != "")
+                        {
+                            sql = "select SUPPLYCHAINCODE from list_cusdata where cusno='" + dr_order["REPNO"].ToString() + "'";
+                            DataTable dt_cusdata = db.Query(sql);
+                            if (dt_cusdata.Rows.Count > 0) { SUPPLYCHAINCODE = dt_cusdata.Rows[0]["SUPPLYCHAINCODE"].ToString(); }
+                        }                     
+
+                        IDatabase idb = SeRedis.redis.GetDatabase();
+                        string dividekey = "supplylog_" + platformcode;//缓存key值                    
+                        string json = string.Empty; string json_T = string.Empty;
+
+                        json = "\"CUSNO\":\"" + CUSNO + "\",\"PREDECLCODE\":\"" + predeclcode + "\",\"SUPPLYCHAINCODE\":\"" + SUPPLYCHAINCODE
+                                        + "\",\"CREATETIME\":\"" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "\"";
+                        idb.ListRightPush(dividekey, "{" + json + "}");//分库
+
+                        json_T = "{" + json + ",\"DIVIDEREDISKEY\":\"" + dividekey + "\"}";
+                        idb.ListRightPush("supplyall", json_T);//总库
+
+                        flag = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                flag = false;
+            }
+            return flag;
+        }
+
+
+/// <summary>
+        /// 供应链缓存
+        /// </summary>
+        /// <param name="predeclcode">预制单编号</param>
+        /// <returns></returns>
+        public bool redis_SupplyLog(string predeclcode)
+        {
+            RedisModel rm = new RedisModel();
+            return rm.Redis_SupplyLog(predeclcode);
+        }
+
+
+/// <summary>
+        /// 供应链缓存
+        /// </summary>
+        /// <param name="predeclcode">预制单编号</param>
+        /// <returns></returns>
+        [OperationContract]
+        bool redis_SupplyLog(string predeclcode);

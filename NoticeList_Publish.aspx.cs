@@ -10,9 +10,10 @@ using Newtonsoft.Json.Converters;
 using Web_Admin.Common;
 using Newtonsoft.Json;
 
+
 namespace Web_Admin
 {
-    public partial class NoticeList : System.Web.UI.Page
+    public partial class NoticeList_Publish : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -36,12 +37,9 @@ namespace Web_Admin
                     {
                         where += " and TITLE like '%" + Request["TITLE"] + "%'";
                     }
-                    sql = @"SELECT t.id,t.type,t.title,to_char(t.publishdate,'yyyy/mm/dd') publishdate,t.ISINVALID,c.name typename 
-                            FROM WEB_NOTICE t 
-                                left join newscategory c on t.type=c.id 
-                            WHERE t.ISINVALID=1 " + where;
+                    sql = @"SELECT t.id,t.type,t.title,to_char(t.publishdate,'yyyy/mm/dd') publishdate,t.ISINVALID,c.name typename FROM WEB_NOTICE t left join newscategory c on t.type=c.id WHERE 1= 1 " + where;
 
-                    sql = Extension.GetPageSql(sql, "t.publishdate", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
+                    sql = Extension.GetPageSql(sql, "t.ISINVALID", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
                     dt = DBMgr.GetDataTable(sql);
 
                     json = JsonConvert.SerializeObject(dt, iso);
