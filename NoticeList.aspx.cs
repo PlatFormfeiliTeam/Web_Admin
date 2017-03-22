@@ -19,23 +19,28 @@ namespace Web_Admin
             int totalProperty = 0; DataTable dt;
             string json = string.Empty; string sql = "";
 
-            string action = Request["action"]; string id = Request["id"]; 
+            string action = Request["action"]; string id = Request["id"];
             switch (action)
             {
                 case "load":
                     IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
                     iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
-                    string where = " and type in(" + Request["TYPEID"] + ")";
+                    string where = "";
+                    if (!string.IsNullOrEmpty(Request["TYPEID"]))
+                    {
+                        where += " and type in(" + Request["TYPEID"] + ")";
+                    }
 
                     if (!string.IsNullOrEmpty(Request["TITLE"]))
                     {
                         where += " and TITLE like '%" + Request["TITLE"] + "%'";
                     }
-                    sql = @"SELECT t.* FROM WEB_NOTICE t WHERE 1= 1 " + where;
+                    sql = @"SELECT t.*,c.name typename FROM WEB_NOTICE t left join newscategory c on t.type=c.id WHERE 1= 1 " + where;
 
-                    sql = Extension.GetPageSql(sql, "UPDATETIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
+                    sql = Extension.GetPageSql(sql, "t.publishdate", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
                     dt = DBMgr.GetDataTable(sql);
+
                     json = JsonConvert.SerializeObject(dt, iso);
                     Response.Write("{rows:" + json + ",total:" + totalProperty + "}");
                     Response.End();

@@ -65,7 +65,7 @@
                 listeners: {
                     beforeload: function (store, options) {
                         var nodeid = "";
-                        var a = Ext.getCmp('treepanel').getSelectionModel().getSelection();
+                        var a = Ext.getCmp('treepanel').getChecked();
                         for (var i = 0; i < a.length; i++) {
                             nodeid = nodeid + a[i].data.ID;
                             if (i != a.length - 1) { nodeid = nodeid + ","; }
@@ -82,7 +82,7 @@
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: [
                             {
-                                xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE', flex: .80
+                                xtype: 'textfield', fieldLabel: '标题', labelWidth: 60, labelAlign: 'right', id: 'TITLE', flex: 1
                             },
                               {
                                   xtype: 'button', text: '<i class="iconfont">&#xe60b;</i>&nbsp;查 询', handler: function () {
@@ -137,10 +137,10 @@
                                           }
                                       });
                                   }
-                              }, '->'
+                              }
                 ]
             })
-
+            Ext.tip.QuickTipManager.init();
             var pgbar = Ext.create('Ext.toolbar.Paging', {
                 id: 'pgbar',
                 displayMsg: '显示 {0} - {1} 条,共计 {2} 条',
@@ -159,9 +159,10 @@
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
                     { header: 'ID', dataIndex: 'ID', hidden: true },
-                    { header: '标题', dataIndex: 'TITLE', flex:1},
+                    { header: '标题', dataIndex: 'TITLE', flex: 1, renderer: ViewAll },
                     { header: '是否发布', dataIndex: 'ISINVALID', width: 80, renderer: render },
-                    { header: '发布日期', dataIndex: 'PUBLISHDATE', width: 100 }
+                    { header: '发布日期', dataIndex: 'PUBLISHDATE', width: 100 },
+                    { header: '类别', dataIndex: 'TYPENAME', width: 100 }
                 ],
                 //添加双击事件
                 listeners:
@@ -176,7 +177,10 @@
             });
         }
 
-       
+        function ViewAll(value, meta, record) {
+            meta.tdAttr = 'data-qtip="' + value + '"';
+            return value;
+        }
         //选择子节点
         function setChildChecked(node, checked) {
             node.expand();
