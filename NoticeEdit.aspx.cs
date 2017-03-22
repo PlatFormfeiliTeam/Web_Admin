@@ -25,7 +25,8 @@ namespace Web_Admin
         public string rchAttachment = string.Empty;
         public string UPDATEID= string.Empty;
         public string UPDATENAME = string.Empty;
-        public string rtbOther = string.Empty;
+        public string rtbPublishDate = string.Empty;
+        public string rtbREFERENCESOURCE = string.Empty;
 
         DataTable dt;
         protected void Page_Load(object sender, EventArgs e)
@@ -59,43 +60,32 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "load":
-                    sql = "select t.* from WEB_NOTICE t where id = '" + ID + "' ";
+                    sql = "select t.id,t.type,t.title,t.CONTENT,t.ATTACHMENT,to_char(t.publishdate,'yyyy/mm/dd') publishdate,t.ISINVALID,t.REFERENCESOURCE from WEB_NOTICE t where id = '" + ID + "' ";
                     dt = DBMgr.GetDataTable(sql);
                     if (dt.Rows.Count > 0)
                     {
-                        rtbID = dt.Rows[0]["ID"] + "";
-                        rtbTitle = dt.Rows[0]["TITLE"] + "";
-                        rcbType = dt.Rows[0]["TYPE"] + "";
-                        reContent = dt.Rows[0]["CONTENT"] + "";
-                        //reContent = reContent.Replace("\r\n", "<br />");//add
-                        rcbValid = dt.Rows[0]["ISINVALID"] + "";
-                        rchAttachment = dt.Rows[0]["ATTACHMENT"] + "";
+                        rtbID = dt.Rows[0]["ID"] + ""; rtbTitle = dt.Rows[0]["TITLE"] + ""; rcbType = dt.Rows[0]["TYPE"] + "";
+                        reContent = dt.Rows[0]["CONTENT"] + ""; rcbValid = dt.Rows[0]["ISINVALID"] + ""; rchAttachment = dt.Rows[0]["ATTACHMENT"] + "";
+                        rtbPublishDate = dt.Rows[0]["PublishDate"] + ""; rtbREFERENCESOURCE = dt.Rows[0]["REFERENCESOURCE"] + "";
                     }
                     break;
                 case "save":
-                    rtbID = Request.Form["rtbID"];
-                    rtbTitle = Request.Form["rtbTitle"];
-                    rcbType = Request.Form["rcbType"];
-                    reContent = Request.Form["reContent"];
-                    rcbValid = Request.Form["rcbValid"];
-                    rchAttachment = Request.Form["rchAttachment"];
-
-                    if (rcbType == "其他")
-                    {
-                        rcbType = Request.Form["rtbOther"];
-                    }
+                    rtbID = Request.Form["rtbID"]; rtbTitle = Request.Form["rtbTitle"]; rcbType = Request.Form["rcbType"];
+                    reContent = Request.Form["reContent"]; rcbValid = Request.Form["rcbValid"]; rchAttachment = Request.Form["rchAttachment"];
+                    rtbPublishDate = Request.Form["rtbPublishDate"]; rtbREFERENCESOURCE = Request.Form["rtbREFERENCESOURCE"];
+                    rtbPublishDate = "to_date('" + rtbPublishDate + "','yyyy-MM-dd')";
 
                     if (!string.IsNullOrEmpty(rtbID))
                     {
                         sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ISINVALID = '{3}',ATTACHMENT='{4}'
-                                ,UPDATEID='{5}', UPDATENAME='{6}',UPDATETIME=sysdate where id = '{0}' ";
-                        sql = string.Format(sql, rtbID, rtbTitle, rcbType, rcbValid, rchAttachment, UPDATEID, UPDATENAME);
+                                ,UPDATEID='{5}', UPDATENAME='{6}',UPDATETIME=sysdate,PublishDate={7},REFERENCESOURCE='{8}' where id = '{0}' ";
+                        sql = string.Format(sql, rtbID, rtbTitle, rcbType, rcbValid, rchAttachment, UPDATEID, UPDATENAME, rtbPublishDate, rtbREFERENCESOURCE);
                     }
                     else
                     {
-                        sql += @" insert into WEB_NOTICE (ID,TITLE,CONTENT,TYPE,ISINVALID,UPDATEID, UPDATENAME,UPDATETIME,ATTACHMENT) 
-                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}','{4}',sysdate,'{5}') ";
-                        sql = string.Format(sql, rtbTitle, rcbType, rcbValid, UPDATEID, UPDATENAME, rchAttachment);
+                        sql += @" insert into WEB_NOTICE (ID,TITLE,CONTENT,TYPE,ISINVALID,UPDATEID, UPDATENAME,UPDATETIME,ATTACHMENT,PublishDate,REFERENCESOURCE) 
+                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}','{4}',sysdate,'{5}',{6},'{7}') ";
+                        sql = string.Format(sql, rtbTitle, rcbType, rcbValid, UPDATEID, UPDATENAME, rchAttachment, rtbPublishDate, rtbREFERENCESOURCE);
                     }
 
                     OracleParameter[] parameters = new OracleParameter[]
@@ -125,25 +115,10 @@ namespace Web_Admin
         //动态绑定类型
         public string Bind_rcbType()
         {
-            sql = "select distinct type from  web_notice t  where t.isinvalid=0 order by type";
-            dt = DBMgr.GetDataTable(sql);
-            string json = JsonConvert.SerializeObject(dt);
+            NewCategoryHandler nc = new NewCategoryHandler();
+            string json = nc.getCate();
             return json;
         }
 
-        //文件上传到web服务器
-        //public ActionResult UploadFile(int? chunk, string name)
-        //{
-        //    var fileUpload = Request.Files[0];
-        //    var uploadPath = Server.MapPath("/FileUpload/file");
-        //    chunk = chunk ?? 0;
-        //    using (var fs = new FileStream(Path.Combine(uploadPath, name), chunk == 0 ? FileMode.Create : FileMode.Append))
-        //    {
-        //        var buffer = new byte[fileUpload.InputStream.Length];
-        //        fileUpload.InputStream.Read(buffer, 0, buffer.Length);
-        //        fs.Write(buffer, 0, buffer.Length);
-        //    }
-        //    return Content("chunk uploaded", "text/plain");
-        //}
     }
 }

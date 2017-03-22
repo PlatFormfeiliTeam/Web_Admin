@@ -22,7 +22,7 @@ namespace Web_Admin
         public string getCate()
         {
             string result = ""; string sql = string.Empty;
-            sql = @"select t.* from NEWSCATEGORY t where t.PID is null";
+            sql = @"select t.* from NEWSCATEGORY t where t.PID is null order by sortindex";
 
             result = "[";
             DataTable dt = DBMgr.GetDataTable(sql);
@@ -48,7 +48,7 @@ namespace Web_Admin
             string sql = string.Empty;
 
             string children = "[";
-            sql = @"select t.* from NEWSCATEGORY t where  t.PID ='" + id + "'";
+            sql = @"select t.* from NEWSCATEGORY t where  t.PID ='" + id + "' order by sortindex";
 
             DataTable dt = DBMgr.GetDataTable(sql);
             int i = 0;

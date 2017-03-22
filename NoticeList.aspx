@@ -5,6 +5,7 @@
     <script src="/js/pan.js" type="text/javascript"></script>
 
     <script type="text/javascript">
+        var pgbar;
         Ext.onReady(function () {
             west();
             east();
@@ -31,7 +32,7 @@
                 rootVisible: false,
                 renderTo: "div_west",
                 store: treepanelstore,
-                height: 500,
+                height: 550,
                 columns: [
                 { text: 'ID', dataIndex: 'ID', width: 500, hidden: true },
                 { text: 'leaf', dataIndex: 'leaf', width: 100, hidden: true },
@@ -41,7 +42,7 @@
                 listeners: {
                     'checkchange': function (node, checked, eOpts) {
                         setChildChecked(node, checked);
-                        Ext.getCmp('pgbar').moveFirst();
+                        pgbar.moveFirst();
                     }
                 }
             });
@@ -51,7 +52,7 @@
         function east() {
             var store_Notice = Ext.create('Ext.data.JsonStore', {
                 fields: ['ID', 'TITLE', 'ISINVALID', 'TYPE', 'PUBLISHDATE', 'TYPENAME'],
-                pageSize: 20,
+                pageSize: 15,
                 proxy: {
                     type: 'ajax',
                     url: 'NoticeList.aspx?action=load',
@@ -86,7 +87,7 @@
                             },
                               {
                                   xtype: 'button', text: '<i class="iconfont">&#xe60b;</i>&nbsp;查 询', handler: function () {
-                                      Ext.getCmp('pgbar').moveFirst();
+                                      pgbar.moveFirst();
                                   }
                               }, '-', {
                                   text: '<i class="iconfont">&#xe622;</i>&nbsp;添 加', handler: function () {
@@ -127,7 +128,7 @@
                                                       var res = Ext.decode(response.responseText);
                                                       if (res.success) {
                                                           Ext.MessageBox.alert('提示', '删除成功！');
-                                                          Ext.getCmp('pgbar').moveFirst();
+                                                          pgbar.moveFirst();
                                                       }
                                                       else {
                                                           Ext.MessageBox.alert('提示', '删除失败！');
@@ -141,17 +142,16 @@
                 ]
             })
             Ext.tip.QuickTipManager.init();
-            var pgbar = Ext.create('Ext.toolbar.Paging', {
-                id: 'pgbar',
+            pgbar = Ext.create('Ext.toolbar.Paging', {
                 displayMsg: '显示 {0} - {1} 条,共计 {2} 条',
                 store: store_Notice,
                 displayInfo: true
             })
 
             var gridpanel = Ext.create('Ext.grid.Panel', {
-                //title: '资讯管理',
+                title: '资讯管理',
                 store: store_Notice, 
-                height: 500,
+                height: 550,
                 tbar: toolbar,
                 renderTo: 'div_east',
                 selModel: { selType: 'checkboxmodel' },
@@ -161,8 +161,8 @@
                     { header: 'ID', dataIndex: 'ID', hidden: true },
                     { header: '标题', dataIndex: 'TITLE', flex: 1, renderer: ViewAll },
                     { header: '是否发布', dataIndex: 'ISINVALID', width: 80, renderer: render },
-                    { header: '发布日期', dataIndex: 'PUBLISHDATE', width: 100 },
-                    { header: '类别', dataIndex: 'TYPENAME', width: 100 }
+                    { header: '发布日期', dataIndex: 'PUBLISHDATE', width: 120 },
+                    { header: '类别', dataIndex: 'TYPENAME', width: 120 }
                 ],
                 //添加双击事件
                 listeners:

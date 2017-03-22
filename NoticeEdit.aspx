@@ -20,6 +20,8 @@
     <script src="/Extjs42/bootstrap.js" type="text/javascript"></script>
     <link href="css/common.css" rel="stylesheet" />
 
+    <script src="js/My97DatePicker/WdatePicker.js"></script>
+
     <script type="text/javascript">
         var option = getQueryString("option"); var ID = getQueryString("ID");
         var uploader, file_store;
@@ -33,7 +35,7 @@
             });
 
             $("#btnSubmit").click(function () {
-                if ($("#rcbType").val() == "其他" && $("#rtbOther").val() == "") {
+                if ($("#rcbType").val() == "") {
                     Ext.MessageBox.alert("提示", "请输入类型！");
                     return;
                 }
@@ -47,23 +49,9 @@
         });
 
         function initform(option) {
-            //绑定select
-            var strjoson = eval('<%=Bind_rcbType()%>');
-            $.each(strjoson, function (i) {
-                $("#rcbType").append($("<option/>").text(this.TYPE).attr("value", this.TYPE));
-            });
-            $("#rcbType").append($("<option/>").text("其他").attr("value", "其他"));
 
-            $("#rcbType").change(function () {
-                $("#rtbOther").val("");
-
-                if ($("#rcbType").val() == "其他") {
-                    $("#rtbOther").css('display', 'inline-block');
-                } else {
-                    $("#rtbOther").css('display', 'none');
-                }
-            });
-            $("#rcbType").trigger('change');
+            var strjoson = eval("<%=Bind_rcbType()%>"); 
+            $("#rcbType").html(creatSelectTree(strjoson));           
 
             panel_file_ini();//随附文件初始化
             if (uploader == null) {
@@ -76,13 +64,13 @@
                     $("#rcbType").find("option[value='" + rcbType + "']").attr("selected", true);
                 }
 
-                var rcbIsinvalid = "<%=rcbValid %>";
+                var rcbIsinvalid = "<%=rcbValid %>"; 
                 if (rcbIsinvalid != null && rcbIsinvalid.length > 0) {
                     if (rcbIsinvalid == "0") {
-                        $("#rd_y").attr("selected", true);
+                        $("#rd_y").attr("checked", true);
                     }
                     if (rcbIsinvalid == "1") {
-                        $("#rd_n").attr("selected", true);
+                        $("#rd_n").attr("checked", true);
                     }
                 }
                 var rchAttachment = eval('<%=rchAttachment %>');
@@ -95,7 +83,25 @@
         _editor.ready(function () {
             _editor.setContent('<%=reContent %>');
         });
-        
+
+        //生成树下拉菜单
+        var j = "";//前缀符号，用于显示父子关系，这里可以使用其它符号
+        function creatSelectTree(d) {
+            var option = "";
+            for (var i = 0; i < d.length; i++) {
+                if (d[i].children.length) {//如果有子集
+                    option += "<option value='" + d[i].ID + "'>" + j + d[i].NAME + "</option>";
+                    //j += "--";//前缀符号加一个符号
+                    j += "--";//前缀符号加一个符号
+                    option += creatSelectTree(d[i].children);//递归调用子集
+                    j = j.slice(0, j.length - 2);//每次递归结束返回上级时，前缀符号需要减两个符号
+                } else {//没有子集直接显示
+                    option += "<option value='" + d[i].ID + "'>" + j + d[i].NAME + "</option>";
+                }
+            }
+            return option;//返回最终html结果
+        }
+
     </script>
 </head>
 <body>
@@ -106,42 +112,60 @@
             <div class="panel-body">
                 <table class="table table-bordered">
                     <tr>
-                        <td style="width: 15%">
-                            <label>标题</label>
+                        <td style="width: 10%;" align="right">
+                            标题<%--<label>标题</label>--%>
                         </td>
-                        <td>
+                        <td colspan="3">
                             <input type="text" style="width:100%;" id="rtbTitle" name="rtbTitle" value="<%=rtbTitle %>" class="input" />
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <label>类型</label>
+                        <td align="right">
+                            类别
                         </td>
-                        <td>
+                        <td colspan="3">
                             <select id="rcbType" name="rcbType" style="width:30%;"></select>
-                            <input type="text" style="width:69%;" id="rtbOther" name="rtbOther" class="input" hidden="hidden" />
                         </td>
                     </tr>
                     <tr>
+                        <td style="width: 10%" align="right">
+                            是否发布
+                        </td>
                         <td>
-                            <label>是否启用</label></td>
+                            <input id="rd_y" type="radio" name="rcbValid" value="0" />是
+                            &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+                            <input id="rd_n" type="radio" name="rcbValid" value="1" checked="checked" />否
+                        </td>
+                        <td style="width: 10%" align="right">
+                            发布日期
+                        </td>
                         <td>
-                            <input id="rd_y" type="radio" name="rcbValid" value="0" checked="checked" />是
-                            &nbsp; &nbsp;&nbsp; &nbsp;
-                            <input id="rd_n" type="radio" name="rcbValid" value="1" />否
+                            <input type="text" style="width:100%;background-color: #e5f1f4; border-top-style: none; border-right-style: none;border-left-style: none;border-bottom: green 1px solid;" 
+                                id="rtbPublishDate" name="rtbPublishDate" value="<%=rtbPublishDate %>"
+                                class="Wdate" onclick="WdatePicker({ dateFmt: 'yyyy/MM/dd', isShowClear: false, readOnly: true })" readonly="readonly"/>
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <label>内容</label></td>
-                        <td>
-                            <textarea id="reContent"  name="reContent" style="width:100%;height:300px;"></textarea>
+                        <td align="right">
+                           内容
                         </td>
-                    </tr>                    
+                        <td colspan="3">
+                            <textarea id="reContent"  name="reContent" style="width:100%;height:290px;"></textarea>
+                        </td>
+                    </tr>   
                     <tr>
-                        <td>
-                            <label>附件</label></td>
-                        <td> 
+                        <td style="width: 10%" align="right">
+                            本文来源
+                        </td>
+                        <td colspan="3">
+                            <input type="text" style="width:100%;" id="rtbREFERENCESOURCE" name="rtbREFERENCESOURCE" value="<%=rtbREFERENCESOURCE %>" class="input" />
+                        </td>
+                    </tr>                 
+                    <tr>
+                        <td align="right">
+                            附件
+                        </td>
+                        <td colspan="3"> 
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary btn-sm" id="pickfiles"><i class="fa fa-upload"></i>&nbsp;上传文件</button>
                                 <button type="button" onclick="removeFile()" class="btn btn-primary btn-sm" id="deletefile"><i class="fa fa-trash-o"></i>&nbsp;删除文件</button>
