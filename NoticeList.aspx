@@ -29,7 +29,6 @@
                 useArrows: true,
                 animate: true,
                 rootVisible: false,
-                selModel: { selType: 'checkboxmodel' },
                 renderTo: "div_west",
                 store: treepanelstore,
                 height: 500,
@@ -40,17 +39,13 @@
                 { text: 'PID', dataIndex: 'PID', width: 100, hidden: true }
                 ],
                 listeners: {
-                    //'itemclick': function (tree, record, item, index, e, eOpts) {
-                    //    Ext.getCmp('pgbar').moveFirst();
-                    //},
                     'checkchange': function (node, checked, eOpts) {
-                        alert(1);
+                        setChildChecked(node, checked);
+                        Ext.getCmp('pgbar').moveFirst();
                     }
-                    //'select': function (tree, record, index, eOpts) {
-                    //    alert(1);
-                    //}
                 }
             });
+
         }
 
         function east() {
@@ -182,7 +177,16 @@
         }
 
        
-
+        //选择子节点
+        function setChildChecked(node, checked) {
+            node.expand();
+            node.set('checked', checked);
+            if (node.hasChildNodes()) {
+                node.eachChild(function (child) {
+                    setChildChecked(child, checked);
+                });
+            }
+        }
     </script>
     <div>
         <div id="div_west" style="float: left; width: 15%">

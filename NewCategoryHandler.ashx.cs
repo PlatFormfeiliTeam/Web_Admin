@@ -31,7 +31,7 @@ namespace Web_Admin
             foreach (DataRow dr in dt.Rows)
             {
                 children = getchildren(dr["id"].ToString());
-                result += "{ID:'" + dr["id"] + "',NAME:'" + dr["NAME"] + "',PID:'" + dr["PID"] + "',leaf:'" + dr["ISLEAF"] + "',children:" + children + "}";
+                result += "{ID:'" + dr["id"] + "',NAME:'" + dr["NAME"] + "',PID:'" + dr["PID"] + "',leaf:'" + dr["ISLEAF"] + "',checked:false,children:" + children + "}";
 
                 if (i != dt.Rows.Count - 1)
                 {
@@ -56,7 +56,7 @@ namespace Web_Admin
             {
                 string tmp_children = getchildren(dr["id"].ToString());
 
-                children += "{ID:'" + dr["id"] + "',NAME:'" + dr["NAME"] + "',PID:'" + dr["PID"] + "',leaf:'" + dr["ISLEAF"] + "',children:" + tmp_children + "}";
+                children += "{ID:'" + dr["id"] + "',NAME:'" + dr["NAME"] + "',PID:'" + dr["PID"] + "',leaf:'" + dr["ISLEAF"] + "',checked:false,children:" + tmp_children + "}";
 
                 if (i != dt.Rows.Count - 1)
                 {
