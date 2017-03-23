@@ -72,6 +72,7 @@
                 { dataIndex: 'leaf', width: 100, hidden: true },
                 { header: '类别名称', xtype: 'treecolumn', dataIndex: 'NAME', text: 'NAME', width: 300 },
                 { header: '备注', dataIndex: 'REMARK', width: 300 },
+                { header: '显示顺序', dataIndex: 'SORTINDEX', width: 300 },
                 { dataIndex: 'PID', text: 'PID', hidden: true }]
                 ,
                 listeners: {
@@ -233,9 +234,9 @@
 
     </script>
     <div class="btn-group" role="group">
-        <button type="button" onclick="add_cat()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe60b;</i>&nbsp;添加</button>
-        <button type="button" onclick="modify_cat()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe607;</i>&nbsp;修改</button>
-        <button type="button" onclick="delete_cat()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe606;</i>&nbsp;删除</button>
+        <button type="button" onclick="add_cat()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe622;</i>&nbsp;添加</button>
+        <button type="button" onclick="modify_cat()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe632;</i>&nbsp;修改</button>
+        <button type="button" onclick="delete_cat()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe6d3;</i>&nbsp;删除</button>
     </div>
     <div id="renderto"></div>
 
