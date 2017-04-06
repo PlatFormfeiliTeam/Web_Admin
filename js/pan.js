@@ -33,7 +33,7 @@ function render(value, cellmeta, record, rowIndex, columnIndex, store) {
             rtn = value == "1" ? "是" : "否";
             break;
         case "ISINVALID": 
-            rtn = value == "0" ? '<i class="fa fa-check" style="color:blue" aria-hidden="true"></i>' : '<i class="fa fa-times" style="color:red" aria-hidden="true"></i>';
+            rtn = value == "0" ? '<span class="icon iconfont" style="font-size:12px;color:blue;">&#xe628;</span>' : '<span class="icon iconfont" style="font-size:12px;color:red;">&#xe634;</span>';
             break;
     }
     return rtn;
