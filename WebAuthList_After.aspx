@@ -29,6 +29,7 @@
             })
 
             gridUser = Ext.create('Ext.grid.Panel', {
+                columnWidth: .35,
                 height: 500,
                 store: store_user,
                 columns: [
@@ -84,6 +85,7 @@
                 rootVisible: false,
                 store: treeModelstore,
                 height: 500,
+                columnWidth: .65,
                 columns: [
                 { text: 'id', dataIndex: 'id', width: 500, hidden: true },
                 { text: 'leaf', dataIndex: 'leaf', width: 100, hidden: true },
@@ -169,12 +171,6 @@
         }
 
     </script>
-        <button type="button" onclick="SaveAuthorization()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe60c;</i>&nbsp;保存</button>
-    </div>
-    <div>
-        <div id="div_west" style="float: left; width: 35%">
-        </div>
-        <div id="div_east" style="float: left; width: 65%">
-        </div>
-    </div>
+    
+    <div id="renderto"></div>
 </asp:Content>
