@@ -10,7 +10,7 @@
         Ext.onReady(function () {
             //保存按钮
             var bbar_r = '<div class="btn-group" role="group">'
-                        + '<button type="button" onclick="SaveAuthorByRole()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe60c;</i>&nbsp;保 存</button></div>'
+                        + '<button type="button" onclick="SaveAuthorByRole()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe7d2;</i>&nbsp;分 配</button></div>'
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: [ '->', bbar_r]
             })
@@ -40,15 +40,7 @@
                     { header: '所属客户', dataIndex: 'CUSTOMERNAME', width: 250 },
                     { header: '客户', dataIndex: 'ISCUSTOMER', width: 60, renderer: render },
                     { header: '供应商', dataIndex: 'ISSHIPPER', width: 65, renderer: render },
-                    { header: '生产型企业', dataIndex: 'ISCOMPANY', width: 85, renderer: render }//,
-                    //{
-                    //    header: '操作权限', dataIndex: 'ID', flex:1, renderer: function render(value, cellmeta, record, rowIndex, columnIndex, store) {
-                    //        var str = "<span style='cursor: pointer;' onclick='SaveAuthorByRole(\"" + record.get("ID") + "\",\"" + record.get("ISCUSTOMER") + "\",\"" + record.get("ISSHIPPER") + "\",\"" + record.get("ISCOMPANY") + "\")'><i class='iconfont'>&#xe7d2;</i>&nbsp;分配</span>";
-                    //        str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                    //        str += "<span style='cursor: pointer;' onclick='SearchByRole(\"" + record.get("ID") + "\")'><i class='iconfont'>&#xe62f;</i>&nbsp;查看</span>";
-                    //        return str;
-                    //    }
-                    //}
+                    { header: '生产型企业', dataIndex: 'ISCOMPANY', width: 85, renderer: render }
                 ],
                 listeners: {
                     itemclick: function (value, record, item, index, e, eOpts) {
@@ -59,7 +51,8 @@
                         });
                         userid = record.get("ID");
                         var proxys = treeModelstore.proxy;
-                        proxys.extraParams.userid = userid;
+                        proxys.extraParams.userid = userid; 
+                        proxys.extraParams.ISCUSTOMER = record.get("ISCUSTOMER"); proxys.extraParams.ISSHIPPER = record.get("ISSHIPPER"); proxys.extraParams.ISCOMPANY = record.get("ISCOMPANY");
                         treeModelstore.load();
                     }
                 }
@@ -102,7 +95,13 @@
                 { text: 'leaf', dataIndex: 'leaf', width: 100, hidden: true },
                 { header: '模块名称', xtype: 'treecolumn', text: 'name', dataIndex: 'name', flex: 1 },
                 { text: 'ParentID', dataIndex: 'ParentID', width: 100, hidden: true }
-                ]
+                ],
+                listeners: {
+                    'checkchange': function (node, checked) {
+                        setChildChecked(node, checked);
+                        setParentChecked(node, checked);
+                    }
+                }
             });
 
             var panel = Ext.create('Ext.panel.Panel', {
@@ -114,22 +113,65 @@
             });
         });
 
-        function SaveAuthorByRole(userid, ISCUSTOMER, ISSHIPPER, ISCOMPANY) {
-            var mask = new Ext.LoadMask(Ext.getBody(), { msg: "保存当前账户权限数据并同步更新子账号数据中，请稍等..." });
-            mask.show();
-            Ext.Ajax.request({
-                timeout: 1000000000,
-                url: 'WebAuthListByRole.aspx?action=SaveAuthorByRole',
-                params: { userid: userid, ISCUSTOMER: ISCUSTOMER, ISSHIPPER: ISSHIPPER, ISCOMPANY: ISCOMPANY },
-                success: function (option, success, response) {
-                    if (option.responseText == '{success:true}') {
-                        Ext.MessageBox.alert('提示', '保存成功！');
-                    } else {
-                        Ext.MessageBox.alert('提示', '保存失败！');
-                    }
-                    mask.hide();
+        function SaveAuthorByRole() {
+            if (userid) {
+                var moduleids = "";
+                var recs = treeModel.getChecked();
+                for (var i = 0; i < recs.length; i++) {
+                    moduleids += recs[i].data.id + ',';
                 }
-            })
+                var mask = new Ext.LoadMask(Ext.getBody(), { msg: "保存当前账户权限数据并同步更新子账号数据中，请稍等..." });
+                mask.show();
+                Ext.Ajax.request({
+                    timeout: 1000000000,
+                    url: 'WebAuthListByRole.aspx?action=SaveAuthorByRole',
+                    params: { moduleids: moduleids, userid: userid },
+                    success: function (option, success, response) {
+                        if (option.responseText == '{success:true}') {
+                            Ext.MessageBox.alert('提示', '保存成功！');
+                        } else {
+                            Ext.MessageBox.alert('提示', '保存失败！');
+                        }
+                        mask.hide();
+                    }
+                })
+            } else {
+                Ext.MessageBox.alert('提示', '请先选择需要授权的账号！');
+            }
+        }
+
+        //选择子节点
+        function setChildChecked(node, checked) {
+            node.expand();
+            node.set('checked', checked);
+            if (node.hasChildNodes()) {
+                node.eachChild(function (child) {
+                    setChildChecked(child, checked);
+                });
+            }
+        }
+
+        //选择父节点
+        function setParentChecked(node, checked) {
+            node.set({ checked: checked });
+            var parentNode = node.parentNode;
+            if (parentNode != null) {
+                var flag = false;
+                parentNode.eachChild(function (childnode) {
+                    if (childnode.get('checked')) {
+                        flag = true;
+                    }
+                });
+                if (checked == false) {
+                    if (!flag) {
+                        setParentChecked(parentNode, checked);
+                    }
+                } else {
+                    if (flag) {
+                        setParentChecked(parentNode, checked);
+                    }
+                }
+            }
         }
 
     </script>

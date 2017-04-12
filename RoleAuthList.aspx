@@ -87,7 +87,7 @@
                 }
             });
             var bbar_r = '<div class="btn-group" role="group">'
-                      + '<button type="button" onclick="SaveRoleAuthor()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe60c;</i>&nbsp;保 存</button></div>'
+                      + '<button type="button" onclick="SaveRoleAuthor()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe7d2;</i>&nbsp;分 配</button></div>'
 
             //保存按钮
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {

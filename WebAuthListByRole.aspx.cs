@@ -13,80 +13,85 @@ namespace Web_Admin
     public partial class WebAuthListByRole : System.Web.UI.Page
     {
         string action = string.Empty; string userid = string.Empty; string ISCUSTOMER = string.Empty; string ISSHIPPER = string.Empty; string ISCOMPANY = string.Empty;
-        string sql = string.Empty; DataTable ents;
+        string sql = string.Empty; string sql_table = string.Empty; DataTable ents;
         protected void Page_Load(object sender, EventArgs e)
         {
-            action = Request["action"]; userid = Request["userid"]; ISCUSTOMER = Request["ISCUSTOMER"]; ISSHIPPER = Request["ISSHIPPER"]; ISCOMPANY = Request["ISCOMPANY"]; 
-             string result = "";
+            action = Request["action"]; userid = Request["userid"]; ISCUSTOMER = Request["ISCUSTOMER"]; ISSHIPPER = Request["ISSHIPPER"]; ISCOMPANY = Request["ISCOMPANY"];
+            string result = "";
 
-             switch (action)
-             {
-                 case "loaduser":
-                     sql = @"SELECT su.*, sc.name AS CUSTOMERNAME,sc.iscustomer,sc.isshipper,sc.iscompany 
+            sql_table = "";
+            if (ISCUSTOMER == "1") { sql_table = " ISCUSTOMER=1"; }
+            if (ISSHIPPER == "1") { sql_table = (sql_table == "" ? "" : sql_table + " or") + " ISSHIPPER=1"; }
+            if (ISCOMPANY == "1") { sql_table = (sql_table == "" ? "" : sql_table + " or") + " ISCOMPANY=1"; }
+
+            switch (action)
+            {
+                case "loaduser":
+                    sql = @"SELECT su.*, sc.name AS CUSTOMERNAME,sc.iscustomer,sc.isshipper,sc.iscompany 
                             FROM sys_user su 
                                 LEFT JOIN cusdoc.sys_customer sc ON su.customerid = sc.id 
                             WHERE su.customerid > 0 AND PARENTID IS NULL";
-                     ents = DBMgr.GetDataTable(sql);
-                     result = "{rows:" + JsonConvert.SerializeObject(ents) + "}";
-                     Response.Write(result);
-                     Response.End();
-                     break;
-                 case "SaveAuthorByRole":                    
+                    ents = DBMgr.GetDataTable(sql);
+                    result = "{rows:" + JsonConvert.SerializeObject(ents) + "}";
+                    Response.Write(result);
+                    Response.End();
+                    break;
+                case "SaveAuthorByRole":
+                    string moduleids = Request["moduleids"];
                     sql = @"DELETE FROM SYS_MODULEUSER WHERE USERID = '{0}'";
                     sql = string.Format(sql, userid);
                     DBMgr.ExecuteNonQuery(sql);
-
-                    sql = "";
-                    if (ISCUSTOMER == "1") {
-                        sql = (sql == "" ? "" : sql + " union ") + " select '" + userid + "' userid,moduleid from sysmodule where ISCUSTOMER=1";
+                    string[] ids = moduleids.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string moduleid in ids)
+                    {
+                        sql = @"insert into SYS_MODULEUSER (USERID,MODULEID) values ('{0}','{1}')";
+                        sql = string.Format(sql, userid, moduleid);
+                        DBMgr.ExecuteNonQuery(sql);
                     }
-                    if (ISSHIPPER == "1") {
-                        sql = (sql == "" ? "" : sql + " union ") + " select '" + userid + "' userid,moduleid from sysmodule where ISSHIPPER=1";
-                    }
-                    if (ISCOMPANY == "1") {
-                        sql = (sql == "" ? "" : sql + " union ") + " select '" + userid + "' userid,moduleid from sysmodule where ISCOMPANY=1";
-                    }
-
-                    sql = @"insert into SYS_MODULEUSER (USERID,MODULEID) " + sql;
-                    DBMgr.ExecuteNonQuery(sql);
 
                     updateChildrenAuthority();
 
                     Response.Write("{success:true}");
                     Response.End();
-                     break;
-                 case "loadauthority":
-                     if (!string.IsNullOrEmpty(userid))
-                     {
-                         sql = @"select t.*,u.MODULEID AUTHORITY from sysmodule t  left join (select * from sys_moduleuser where userid='{0}') u on t.MODULEID=u.MODULEID
+                    break;
+                case "loadauthority":
+                    if (!string.IsNullOrEmpty(userid))
+                    {
+                        if (sql_table != "")
+                        {
+                            sql_table = "select * from sysmodule where " + sql_table;
+
+                            sql = @"select t.*,u.MODULEID AUTHORITY from ({2}) t  left join (select * from sys_moduleuser where userid='{0}') u on t.MODULEID=u.MODULEID
                               where  t.ParentId='{1}' order by t.SortIndex";
-                         sql = string.Format(sql, userid, Request["id"]);
-                     }
-                     result = "[";
-                     if (!string.IsNullOrEmpty(sql))
-                     {
-                         DataTable dt = DBMgr.GetDataTable(sql);
-                         int i = 0;
-                         string children = string.Empty;
-                         foreach (DataRow dr in dt.Rows)
-                         {
-                             children = getchildren(dr["MODULEID"].ToString(), userid);
-                             if (i != dt.Rows.Count - 1)
-                             {
-                                 result += "{id:'" + dr["MODULEID"] + "',name:'" + dr["NAME"] + "',ParentID:'" + dr["PARENTID"] + "',leaf:'" + dr["ISLEAF"] + "',checked:" + (string.IsNullOrEmpty(dr["AUTHORITY"] + "") ? "false" : "true") + ",children:" + children + "},";
-                             }
-                             else
-                             {
-                                 result += "{id:'" + dr["MODULEID"] + "',name:'" + dr["NAME"] + "',ParentID:'" + dr["PARENTID"] + "',leaf:'" + dr["ISLEAF"] + "',checked:" + (string.IsNullOrEmpty(dr["AUTHORITY"] + "") ? "false" : "true") + ",children:" + children + "}";
-                             }
-                             i++;
-                         }
-                     }
-                     result += "]";
-                     Response.Write(result);
-                     Response.End();
-                     break;
-             }
+                            sql = string.Format(sql, userid, Request["id"], sql_table);
+                        }
+
+                    }
+                    result = "[";
+                    if (!string.IsNullOrEmpty(sql))
+                    {
+                        DataTable dt = DBMgr.GetDataTable(sql);
+                        int i = 0;
+                        string children = string.Empty;
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            children = getchildren(dr["MODULEID"].ToString(), userid, sql_table);
+                            if (i != dt.Rows.Count - 1)
+                            {
+                                result += "{id:'" + dr["MODULEID"] + "',name:'" + dr["NAME"] + "',ParentID:'" + dr["PARENTID"] + "',leaf:'" + dr["ISLEAF"] + "',checked:" + (string.IsNullOrEmpty(dr["AUTHORITY"] + "") ? "false" : "true") + ",children:" + children + "},";
+                            }
+                            else
+                            {
+                                result += "{id:'" + dr["MODULEID"] + "',name:'" + dr["NAME"] + "',ParentID:'" + dr["PARENTID"] + "',leaf:'" + dr["ISLEAF"] + "',checked:" + (string.IsNullOrEmpty(dr["AUTHORITY"] + "") ? "false" : "true") + ",children:" + children + "}";
+                            }
+                            i++;
+                        }
+                    }
+                    result += "]";
+                    Response.Write(result);
+                    Response.End();
+                    break;
+            }
         }
 
         private void updateChildrenAuthority()
@@ -130,65 +135,17 @@ namespace Web_Admin
 
         }
 
-        private SysModule GetTree(DataTable moduleIdDt, SysModule obj, string userid)
-        {
-            try
-            {
-                string strSQL = @"select a.MODULEID as id,a.NAME,a.ISLEAF,a.URL,a.PARENTID,a.SORTINDEX,
-                                              (select  b.ModuleId  from SYS_MODULEUSER b where a.MODULEID=b.MODULEID AND B.USERID='" + userid + "' and rownum=1) as CHECKED from sysmodule a  " +
-                                      "where PARENTID ='" + obj.id + "' order by SORTINDEX";
-                DataTable dtNext = DBMgr.GetDataTable(strSQL);
-                obj.children = new List<SysModule>();
-
-                foreach (DataRow dr in dtNext.Rows)
-                {
-
-                    if (moduleIdDt != null)
-                    {
-                        //过滤掉主账号没有的ModuleId
-                        int count = 0;
-                        foreach (DataRow mdr in moduleIdDt.Rows)
-                        {
-                            if (mdr["MODULEID"].ToString() == dr["id"].ToString())
-                            {
-                                count += 1;
-                            }
-                        }
-                        if (count == 0)
-                        {
-                            continue;
-                        }
-                    }
-
-                    SysModule st = new SysModule();
-                    st.id = dr["id"].ToString();
-                    st.name = dr["name"].ToString();
-                    st.ParentID = dr["PARENTID"].ToString();
-                    st.check = string.IsNullOrEmpty(dr["CHECKED"].ToString()) ? false : true;
-                    // 递归调用
-                    st = this.GetTree(moduleIdDt, st, userid);
-                    st.leaf = dr["ISLEAF"] + "";
-                    obj.children.Add(st);
-                }
-                return obj;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        private string getchildren(string moduleid, string userid)
+        private string getchildren(string moduleid, string userid,string sql_table)
         {
             string children = "[";
-            sql = @"select t.*,u.MODULEID AUTHORITY from sysmodule t left join (select * from sys_moduleuser where userid='{0}') u on t.MODULEID=u.MODULEID
+            sql = @"select t.*,u.MODULEID AUTHORITY from ({2}) t left join (select * from sys_moduleuser where userid='{0}') u on t.MODULEID=u.MODULEID
                 where  t.ParentId ='{1}' order by t.SortIndex";
-            sql = string.Format(sql, userid, moduleid);
+            sql = string.Format(sql, userid, moduleid, sql_table);
             DataTable dt = DBMgr.GetDataTable(sql);
             int i = 0;
             foreach (DataRow dr in dt.Rows)
             {
-                string tmp_children = getchildren(dr["MODULEID"].ToString(), userid);
+                string tmp_children = getchildren(dr["MODULEID"].ToString(), userid, sql_table);
                 if (i != dt.Rows.Count - 1)
                 {
                     children += "{id:'" + dr["MODULEID"] + "',name:'" + dr["NAME"] + "',ParentID:'" + dr["PARENTID"] + "',leaf:'" + dr["ISLEAF"] + "',checked:" + (string.IsNullOrEmpty(dr["AUTHORITY"] + "") ? "false" : "true") + ",children:" + tmp_children + "},";

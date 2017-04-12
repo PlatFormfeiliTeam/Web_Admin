@@ -9,7 +9,7 @@
         Ext.onReady(function () {
             //保存按钮
             var bbar_r = '<div class="btn-group" role="group">'
-                        + '<button type="button" onclick="SaveAuthorization()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe60c;</i>&nbsp;保 存</button></div>'
+                        + '<button type="button" onclick="SaveAuthorization()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe7d2;</i>&nbsp;分 配</button></div>'
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
                 items: ['->', bbar_r]
             })

@@ -118,13 +118,6 @@ namespace Web_Admin
                             DBMgr.ExecuteNonQuery("insert into SYS_MODULEUSER (USERID,MODULEID) values ('" + drId["ID"].ToString() + "','" + mId["MODULEID"].ToString() + "')");
                         }
                     }
-
-                    ////创建子账号权限配置数据集缓存
-                    //SysModule obj2 = new SysModule();
-                    //obj2.id = "91a0657f-1939-4528-80aa-91b202a593ac";
-                    //obj2 = GetTree(moduleIdDt, obj2, drId["ID"].ToString());
-                    //string json = JsonConvert.SerializeObject(obj2.children, Formatting.None);
-                    //json = json.Replace("check", "checked");
                 }
             }
             catch (Exception e)
@@ -137,53 +130,6 @@ namespace Web_Admin
 
         }
 
-        private SysModule GetTree(DataTable moduleIdDt, SysModule obj, string userid)
-        {
-            try
-            {
-                string strSQL = @"select a.MODULEID as id,a.NAME,a.ISLEAF,a.URL,a.PARENTID,a.SORTINDEX,
-                                      (select  b.ModuleId  from SYS_MODULEUSER b where a.MODULEID=b.MODULEID AND B.USERID='" + userid + "' and rownum=1) as CHECKED from sysmodule a  " +
-                                      "where PARENTID ='" + obj.id + "' order by SORTINDEX";
-                DataTable dtNext = DBMgr.GetDataTable(strSQL);
-                obj.children = new List<SysModule>();
-
-                foreach (DataRow dr in dtNext.Rows)
-                {
-
-                    if (moduleIdDt != null)
-                    {
-                        //过滤掉主账号没有的ModuleId
-                        int count = 0;
-                        foreach (DataRow mdr in moduleIdDt.Rows)
-                        {
-                            if (mdr["MODULEID"].ToString() == dr["id"].ToString())
-                            {
-                                count += 1;
-                            }
-                        }
-                        if (count == 0)
-                        {
-                            continue;
-                        }
-                    }
-
-                    SysModule st = new SysModule();
-                    st.id = dr["id"].ToString();
-                    st.name = dr["name"].ToString();
-                    st.ParentID = dr["PARENTID"].ToString();
-                    st.check = string.IsNullOrEmpty(dr["CHECKED"].ToString()) ? false : true;
-                    // 递归调用
-                    st = this.GetTree(moduleIdDt, st, userid);
-                    st.leaf = dr["ISLEAF"] + "";
-                    obj.children.Add(st);
-                }
-                return obj;
-            }
-            catch
-            {
-                throw;
-            }
-        }
         private string getchildren(string moduleid, string userid)
         {
             string children = "[";
