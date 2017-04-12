@@ -81,11 +81,11 @@ namespace Web_Admin
                         DBMgr.ExecuteNonQuery(sql);
                     }
 
-                    SysModule obj2 = new SysModule();
-                    obj2.id = "91a0657f-1939-4528-80aa-91b202a593ab";
-                    obj2 = GetTree(null, obj2, userid);
-                    string json = JsonConvert.SerializeObject(obj2.children, Formatting.None);
-                    json = json.Replace("check", "checked");
+                    //SysModule obj2 = new SysModule();
+                    //obj2.id = "91a0657f-1939-4528-80aa-91b202a593ab";
+                    //obj2 = GetTree(null, obj2, userid);
+                    //string json = JsonConvert.SerializeObject(obj2.children, Formatting.None);
+                    //json = json.Replace("check", "checked");
 
                     updateChildrenAuthority();
 
@@ -125,12 +125,12 @@ namespace Web_Admin
                         }
                     }
 
-                    //创建子账号权限配置数据集缓存
-                    SysModule obj2 = new SysModule();
-                    obj2.id = "91a0657f-1939-4528-80aa-91b202a593ab";
-                    obj2 = GetTree(moduleIdDt, obj2, drId["ID"].ToString());
-                    string json = JsonConvert.SerializeObject(obj2.children, Formatting.None);
-                    json = json.Replace("check", "checked");
+                    ////创建子账号权限配置数据集缓存
+                    //SysModule obj2 = new SysModule();
+                    //obj2.id = "91a0657f-1939-4528-80aa-91b202a593ab";
+                    //obj2 = GetTree(moduleIdDt, obj2, drId["ID"].ToString());
+                    //string json = JsonConvert.SerializeObject(obj2.children, Formatting.None);
+                    //json = json.Replace("check", "checked");
                 }
             }
             catch (Exception e)
