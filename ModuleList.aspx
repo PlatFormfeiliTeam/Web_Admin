@@ -7,6 +7,16 @@
     <script type="text/javascript">
         var nodeid = getQueryString("nodeid");
         Ext.onReady(function () {
+
+            var bbar_r = '<div class="btn-group" role="group">'
+                            +'<button type="button" onclick="add_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe622;</i>&nbsp;添加</button>'
+                            +'<button type="button" onclick="modify_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe632;</i>&nbsp;修改</button>'
+                            +'<button type="button" onclick="delete_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe6d3;</i>&nbsp;删除</button>'
+                         + '</div>'
+            var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+                items: [bbar_r]
+            })
+
             Ext.regModel("SysModule", { fields: ["MODULEID", "NAME", "leaf", "URL", "PARENTID", "SORTINDEX","ICON"] }); 
             var treepanelstore = new Ext.data.TreeStore({
                 model: 'SysModule',
@@ -24,12 +34,10 @@
                 }
             });
             var treepanel = Ext.create('Ext.tree.Panel', {
-                id: 'treepanel',
-                title: '模块管理',
+                id: 'treepanel', columnWidth: 1,
                 useArrows: true,
                 animate: true,
                 selModel: { selType: 'checkboxmodel' },
-                renderTo: 'renderto',
                 rootVisible: false,
                 store: treepanelstore,
                 columns: [
@@ -48,6 +56,15 @@
                     }
                 }
             });
+
+            var panel = Ext.create('Ext.panel.Panel', {
+                title: '<font size=2>模块管理</font>', tbar: toolbar,
+                layout: 'column',
+                renderTo: 'renderto',
+                minHeight: 100,
+                items: [treepanel]
+            });
+
         });
         function add_module() {
             var recs = Ext.getCmp('treepanel').getSelectionModel().getSelection();
@@ -101,10 +118,5 @@
             })
         }
     </script>
-    <div class="btn-group" role="group">
-        <button type="button" onclick="add_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe622;</i>&nbsp;添加</button>
-        <button type="button" onclick="modify_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe632;</i>&nbsp;修改</button>
-        <button type="button" onclick="delete_module()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe6d3;</i>&nbsp;删除</button>
-    </div>
     <div id="renderto"></div>
 </asp:Content>

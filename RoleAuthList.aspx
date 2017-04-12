@@ -86,16 +86,16 @@
                     }
                 }
             });
-            var label_baseinfo = {
-                xtype: 'label',
-                html: '<h4 style="margin-top:0px;margin-bottom:0px"><span class="label label-default">角色权限管理</span></h4>'
-            }
+            var bbar_r = '<div class="btn-group" role="group">'
+                      + '<button type="button" onclick="SaveRoleAuthor()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe60c;</i>&nbsp;保 存</button></div>'
+
             //保存按钮
             var toolbar = Ext.create('Ext.toolbar.Toolbar', {
-                items: [label_baseinfo, "->", { text: '<button type="button"><i class="icon iconfont">&#xe60c;</i>&nbsp;保存</button>', border: 1, handler: function () { SaveRoleAuthor(); } }]
+                items: ["->", bbar_r]//{ text: '<button type="button"><i class="icon iconfont">&#xe60c;</i>&nbsp;保存</button>', border: 1, handler: function () { SaveRoleAuthor(); } }
             });
 
             var panel = Ext.create('Ext.panel.Panel', {
+                title: "<font size=2>角色权限管理</font>",
                 renderTo: "renderto",
                 tbar: toolbar,
                 layout: 'column',

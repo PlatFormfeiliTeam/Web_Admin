@@ -7,6 +7,13 @@
         var gridUser, store_user, treeModel, treeModelstore, gridStation, store_Station;
         var userid = '';
         Ext.onReady(function () {
+            //保存按钮
+            var bbar_r = '<div class="btn-group" role="group">'
+                        + '<button type="button" onclick="SaveAuthorization()" class="btn btn-primary btn-sm"><i class="icon iconfont" style="font-size:12px;">&#xe60c;</i>&nbsp;保 存</button></div>'
+            var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+                items: ['->', bbar_r]
+            })
+
             Ext.regModel('User', { fields: ['ID', 'NAME', 'REALNAME'] })
             store_user = Ext.create('Ext.data.JsonStore', {
                 model: 'User',
@@ -22,9 +29,7 @@
             })
 
             gridUser = Ext.create('Ext.grid.Panel', {
-                width: 500,
                 height: 500,
-                renderTo: "div_west",
                 store: store_user,
                 columns: [
                     { xtype: 'rownumberer', width: 35 },
@@ -36,7 +41,7 @@
                     itemclick: function (value, record, item, index, e, eOpts) {
                         treeModelstore.setProxy({
                             type: 'ajax',
-                            url: 'WebAuthList.aspx?action=loadauthority',
+                            url: 'WebAuthList_After.aspx?action=loadauthority',
                             reader: 'json'
                         });
                         userid = record.get("ID");
@@ -77,10 +82,8 @@
                 useArrows: true,
                 animate: true,
                 rootVisible: false,
-                renderTo: "div_east",
                 store: treeModelstore,
                 height: 500,
-                // width: 600,
                 columns: [
                 { text: 'id', dataIndex: 'id', width: 500, hidden: true },
                 { text: 'leaf', dataIndex: 'leaf', width: 100, hidden: true },
@@ -94,42 +97,13 @@
                     }
                 }
             });
-            //var tbar = Ext.create('Ext.toolbar.Toolbar', {
-            //    renderTo: 'toolbar',
-            //    items: ['->', '<button onclick="SaveAuthorization()" type="button"><span class="icon iconfont" onclick="SaveAuthorization()">&#xe60c;</span>&nbsp;保 存</button>']
-            //})
-
-            //======================联动选择==========================
-            /*向上遍历父结点*/
-            var nodep = function (node) {
-                var bnode = true;
-                Ext.Array.each(node.childNodes, function (v) {
-                    if (!v.data.checked) {
-                        bnode = true;
-                        return;
-                    }
-                });
-                return bnode;
-            };
-            var parentnode = function (node) {
-                if (node.parentNode != null) {
-                    if (nodep(node.parentNode)) {
-                        node.parentNode.set('checked', true);
-                    } else {
-                        node.parentNode.set('checked', false);
-                    }
-                    parentnode(node.parentNode);
-                }
-            };
-            /*遍历子结点 选中 与取消选中操作*/
-            var chd = function (node, check) {
-                node.set('checked', check);
-                if (node.isNode) {
-                    node.eachChild(function (child) {
-                        chd(child, check);
-                    });
-                }
-            };
+            var panel = Ext.create('Ext.panel.Panel', {
+                title: '<font size=2>后台权限管理</font>', tbar: toolbar,
+                layout: 'column',
+                renderTo: 'renderto',
+                minHeight: 100,
+                items: [gridUser, treeModel]
+            });
         });
 
         //选择子节点
@@ -195,7 +169,6 @@
         }
 
     </script>
-    <div class="btn-group" role="group">
         <button type="button" onclick="SaveAuthorization()" class="btn btn-primary btn-sm"><i class="icon iconfont">&#xe60c;</i>&nbsp;保存</button>
     </div>
     <div>
