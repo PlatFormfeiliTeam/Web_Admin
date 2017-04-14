@@ -79,7 +79,7 @@
                             SPLITSTATUS: Ext.getCmp("combo_splitstatus").getValue(),
                             FILETYPE: Ext.getCmp("combo_filetype").getValue(),
                             START_DATE: Ext.Date.format(Ext.getCmp("start_date").getValue(), 'Y-m-d H:i:s'),
-                            END_DATE: Ext.Date.format(Ext.getCmp("end_date").getValue(), 'Y-m-d H:i:s'),
+                            END_DATE: Ext.Date.format(Ext.getCmp("end_date").getValue(), 'Y-m-d H:i:s')
                         }
                         Ext.apply(store.proxy.extraParams, new_params);
                     }
