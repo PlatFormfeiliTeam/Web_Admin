@@ -64,7 +64,9 @@ namespace Web_Admin
                     if (dt.Rows.Count > 0)
                     {
                         rtbID = dt.Rows[0]["ID"] + ""; rtbTitle = dt.Rows[0]["TITLE"] + ""; rcbType = dt.Rows[0]["TYPE"] + "";
-                        reContent = dt.Rows[0]["CONTENT"] + ""; rchAttachment = dt.Rows[0]["ATTACHMENT"] + "";
+                        //reContent = dt.Rows[0]["CONTENT"] + "";
+                        reContent = dt.Rows[0]["CONTENT"].ToString().Replace("\r", "&nbsp;").Replace("\n", "&nbsp;");//add
+                        rchAttachment = dt.Rows[0]["ATTACHMENT"] + "";
                         rtbPublishDate = dt.Rows[0]["PublishDate"] + ""; rtbREFERENCESOURCE = dt.Rows[0]["REFERENCESOURCE"] + "";
                     }
                     break;
