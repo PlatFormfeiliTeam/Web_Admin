@@ -37,7 +37,7 @@ namespace Web_Admin
                     {
                         where += " and TITLE like '%" + Request["TITLE"] + "%'";
                     }
-                    sql = @"SELECT t.id,t.type,t.title,to_char(t.publishdate,'yyyy/mm/dd') publishdate,t.ISINVALID,t.updatetime,c.name typename 
+                    sql = @"SELECT t.id,t.type,t.title,to_char(t.publishdate,'yyyy/mm/dd hh24:mi') publishdate,t.ISINVALID,t.updatetime,c.name typename 
                             FROM WEB_NOTICE t 
                                 left join newscategory c on t.type=c.id 
                             WHERE 1= 1 " + where;

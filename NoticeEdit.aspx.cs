@@ -59,7 +59,7 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "load":
-                    sql = "select t.id,t.type,t.title,t.CONTENT,t.ATTACHMENT,to_char(t.publishdate,'yyyy/mm/dd') publishdate,t.ISINVALID,t.REFERENCESOURCE from WEB_NOTICE t where id = '" + ID + "' ";
+                    sql = "select t.id,t.type,t.title,t.CONTENT,t.ATTACHMENT,to_char(t.publishdate,'yyyy/mm/dd hh24:mi') publishdate,t.ISINVALID,t.REFERENCESOURCE from WEB_NOTICE t where id = '" + ID + "' ";
                     dt = DBMgr.GetDataTable(sql);
                     if (dt.Rows.Count > 0)
                     {
@@ -74,26 +74,28 @@ namespace Web_Admin
                     rtbID = Request.Form["rtbID"]; rtbTitle = Request.Form["rtbTitle"]; rcbType = Request.Form["rcbType"];
                     reContent = Request.Form["reContent"]; rchAttachment = Request.Form["rchAttachment"];
                     rtbPublishDate = Request.Form["rtbPublishDate"]; rtbREFERENCESOURCE = Request.Form["rtbREFERENCESOURCE"];
-                    rtbPublishDate = "to_date('" + rtbPublishDate + "','yyyy-MM-dd')";
+                    rtbPublishDate = "to_date('" + rtbPublishDate + "','yyyy-MM-dd hh24:mi')";
 
                     if (!string.IsNullOrEmpty(rtbID))
                     {
-                        sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ATTACHMENT='{3}'
-                                ,UPDATEID='{4}', UPDATENAME='{5}',UPDATETIME=sysdate,PublishDate={6},REFERENCESOURCE='{7}' where id = '{0}' ";
-                        sql = string.Format(sql, rtbID, rtbTitle, rcbType, rchAttachment, UPDATEID, UPDATENAME, rtbPublishDate, rtbREFERENCESOURCE);
+                        sql += @" update WEB_NOTICE set TITLE = '{1}', TYPE = '{2}', CONTENT = :recon, ATTACHMENT=:reatt
+                                ,UPDATEID='{3}', UPDATENAME='{4}',UPDATETIME=sysdate,PublishDate={5},REFERENCESOURCE='{6}' where id = '{0}' ";
+                        sql = string.Format(sql, rtbID, rtbTitle, rcbType, UPDATEID, UPDATENAME, rtbPublishDate, rtbREFERENCESOURCE);
                     }
                     else
                     {
                         sql += @" insert into WEB_NOTICE (ID,TITLE,CONTENT,TYPE,UPDATEID,UPDATENAME,UPDATETIME,ATTACHMENT,PublishDate,REFERENCESOURCE) 
-                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}',sysdate,'{4}',{5},'{6}') ";
-                        sql = string.Format(sql, rtbTitle, rcbType, UPDATEID, UPDATENAME, rchAttachment, rtbPublishDate, rtbREFERENCESOURCE);
+                                    values (WEB_NOTICE_ID.Nextval,'{0}',:recon,'{1}','{2}','{3}',sysdate,:reatt,{4},'{5}') ";
+                        sql = string.Format(sql, rtbTitle, rcbType, UPDATEID, UPDATENAME, rtbPublishDate, rtbREFERENCESOURCE);
                     }
 
-                    OracleParameter[] parameters = new OracleParameter[]
+                     OracleParameter[] parameters = new OracleParameter[]
                        {                  
-                           new OracleParameter(":recon",OracleDbType.Clob)
+                            new OracleParameter(":recon",OracleDbType.Clob),
+                            new OracleParameter(":reatt",OracleDbType.Clob)
                        };
                     parameters[0].Value = reContent;
+                    parameters[1].Value = rchAttachment;
 
                     int i = DBMgr.ExecuteNonQuery(sql, parameters);
 

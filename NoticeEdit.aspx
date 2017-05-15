@@ -126,7 +126,7 @@
                         <td colspan="3">
                             <input type="text" style="width:30%;background-color: #e5f1f4; border-top-style: none; border-right-style: none;border-left-style: none;border-bottom: green 1px solid;" 
                                 id="rtbPublishDate" name="rtbPublishDate" value="<%=rtbPublishDate %>"
-                                class="Wdate" onclick="WdatePicker({ dateFmt: 'yyyy/MM/dd', isShowClear: false, readOnly: true })" readonly="readonly"/>
+                                class="Wdate" onclick="WdatePicker({ dateFmt: 'yyyy/MM/dd HH:mm', isShowClear: false, readOnly: true })" readonly="readonly"/>
                         </td>                        
                     </tr>
                     <tr>
