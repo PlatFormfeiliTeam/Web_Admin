@@ -20,7 +20,8 @@ public class ConfigHandler : Handler
             obj.Add("imageUrlPrefix", UrlPrefix);
             obj.Remove("fileUrlPrefix");
             obj.Add("fileUrlPrefix",UrlPrefix);
-            
+            obj.Remove("catcherUrlPrefix");
+            obj.Add("catcherUrlPrefix", UrlPrefix);
 
         }
         WriteJson(obj);
