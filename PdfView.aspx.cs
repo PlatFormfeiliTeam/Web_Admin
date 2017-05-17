@@ -224,7 +224,7 @@ namespace Web_Admin
                     }
                     if (File.Exists(compressname))//如果压缩文件存在
                     {
-                        if ((new FileInfo(@"D:\ftpserver\" + dt.Rows[0]["FILENAME"])).Length == (new FileInfo(compressname)).Length)//压缩文件根源文件大小一样
+                        if ((new FileInfo(@"D:\ftpserver\" + dt.Rows[0]["FILENAME"])).Length / 1024 == (new FileInfo(compressname)).Length / 1024)//压缩文件根源文件大小一样
                         {
                             Response.Write("{success:false}");//没压缩成功
                         }
