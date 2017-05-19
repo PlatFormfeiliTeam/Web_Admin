@@ -224,13 +224,21 @@ namespace Web_Admin
                     }
                     if (File.Exists(compressname))//如果压缩文件存在
                     {
-                        if ((new FileInfo(@"D:\ftpserver\" + dt.Rows[0]["FILENAME"])).Length / 1024 == (new FileInfo(compressname)).Length / 1024)//压缩文件根源文件大小一样
+                        try
                         {
-                            Response.Write("{success:false}");//没压缩成功
-                        }
-                        else
-                        {
-                            try
+                            if ((new FileInfo(@"D:\ftpserver\" + dt.Rows[0]["FILENAME"])).Length / 1024 == (new FileInfo(compressname)).Length / 1024)//压缩文件根源文件大小一样
+                            {
+                                //没压缩成功  新增压缩任务
+                                DataTable dt_shrink = new DataTable();
+                                dt_shrink = DBMgr.GetDataTable("select * from pdfshrinklog where attachmentid='" + fileid + "' and ISCOMPRESS=0");
+                                if (dt_shrink.Rows.Count <= 0)
+                                {
+                                    sql = "insert into pdfshrinklog (id,attachmentid) values (pdfshrinklog_id.nextval,'" + fileid + "')";
+                                    DBMgr.ExecuteNonQuery(sql);
+                                }
+                                Response.Write("{success:false}");//没压缩成功
+                            }
+                            else
                             {
                                 pdfReader = new PdfReader(compressname); filepages = pdfReader.NumberOfPages;
                                 sql = "select * from sys_filetype where parentfiletypeid=" + filetype;//取该文件类型下面所有的子类型
@@ -306,15 +314,15 @@ namespace Web_Admin
                                 dt = DBMgr.GetDataTable(sql);
                                 json = JsonConvert.SerializeObject(dt);
                                 Response.Write("{success:true,result:" + json + "}");
-
-                            }
-                            catch (Exception ex)
-                            {
-                                string error = "{\"ordercode\":\"" + ordercode + "\",\"fileid\":\"" + fileid + "\",\"error\":\"" + ex.Message + "\"}";
-                                db.ListRightPush("spliterror", error);
-                                Response.Write("{success:false,result:[" + error + "]}");//拆分异常
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            string error = "{\"ordercode\":\"" + ordercode + "\",\"fileid\":\"" + fileid + "\",\"error\":\"" + ex.Message + "\"}";
+                            db.ListRightPush("spliterror", error);
+                            Response.Write("{success:false,result:[" + error + "]}");//拆分异常
+                        }
+
                     }
                     else
                     {
