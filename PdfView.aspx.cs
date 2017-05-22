@@ -414,7 +414,8 @@ namespace Web_Admin
                     {
                         sql = "SELECT * FROM list_order WHERE CODE != '" + ordercode + "' and ASSOCIATENO='" + dt.Rows[0]["ASSOCIATENO"] + "'";
                         DataTable dt_gl = DBMgr.GetDataTable(sql);
-                        dt.Rows[0]["ASSOCIATENO"] = dt_gl.Rows[0]["CODE"];
+                        if (dt_gl.Rows.Count > 0) { dt.Rows[0]["ASSOCIATENO"] = dt_gl.Rows[0]["CODE"]; }
+                        else { dt.Rows[0]["ASSOCIATENO"] = ""; }                        
                     }
                     string result = JsonConvert.SerializeObject(dt).Replace("[", "").Replace("]", "");
                     sql = "select * from list_attachment where ordercode='" + ordercode + "' and filetype=44 order by uploadtime asc";
