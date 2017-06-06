@@ -33,11 +33,7 @@ namespace Web_Admin
                     int  hig = image.Height; 
                     int  wid = image.Width;
 
-                    if ((hig < 458 && hig > 462) || (wid < 1918 && wid < 1922))
-                    {
-                        result = "{success:false}";
-                    }
-                    else
+                    if ((hig > 458 && hig < 462) && (wid > 1918 && wid < 1922))
                     {
                         string savepath = Server.MapPath(@"\FileUpload\Banner\");
                         string strGuid = Guid.NewGuid().ToString();
@@ -45,6 +41,11 @@ namespace Web_Admin
                         sql = @"insert into WEB_BANNER (ID,IMGURL,LINKURL,DESCRIPTION,STATUS,FILENAME,SORTINDEX) values ('" + strGuid + "','" + IMGURL + "','" + LINKURL + "','" + DESCRIPTION + "','" + STATUS + "','" + fileName + "','" + SORTINDEX + "')";
                         DBMgr.ExecuteNonQuery(sql);
                         postedFile.SaveAs(savepath + strGuid + "_" + fileName);//保存
+                        
+                    }
+                    else
+                    {
+                      result = "{success:false}";
                     }                    
                     Response.Write(result);
                     Response.End();
