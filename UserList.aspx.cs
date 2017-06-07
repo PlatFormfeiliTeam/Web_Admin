@@ -15,53 +15,100 @@ namespace Web_Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string sql = ""; int totalProperty = 0; string json = string.Empty;
-            string action = Request["action"]; string id = Request["id"]; string name = Request["name"];            
-            
-            DataTable dt;
+            string action = Request["action"];             
             switch (action)
             {
                 case "loadchildaccount":
-                    sql = @"SELECT * FROM SYS_USER WHERE PARENTID = " + id + " order by CREATETIME ASC";
-                    dt = DBMgr.GetDataTable(sql);
-                    json = JsonConvert.SerializeObject(dt);
-                    Response.Write("{innerrows:" + json + "}");
-                    Response.End();
+                    loadChildAccount();
                     break;
                 case "loaduser":
-                    IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
-                    iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-                    string groupid = Request["groupid"];
-                    string where = "";
-                    if (!string.IsNullOrEmpty(Request["NAME"]))
-                    {
-                        where += " and NAME like '%" + Request["NAME"] + "%'";
-                    }
-                    if (!string.IsNullOrEmpty(Request["REALNAME"]))
-                    {
-                        where += " and REALNAME like '%" + Request["REALNAME"] + "%'";
-                    }
-                    //客户2016-4-25提出只显示外部账号
-                    if (string.IsNullOrEmpty(groupid) || groupid == "-1")
-                    {
-                        sql = @"SELECT * FROM SYS_USER WHERE TYPE = 1 AND  PARENTID IS NULL " + where;
-                    }
-                    else
-                    {
-                        sql = @"SELECT * FROM SYS_USER WHERE TYPE = 1 AND  PARENTID IS NULL AND POSITIONID = '" + groupid + "'" + where;
-                    }
-                    sql = Extension.GetPageSql(sql, "CREATETIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
-                    json = JsonConvert.SerializeObject(DBMgr.GetDataTable(sql), iso);
-                    Response.Write("{rows:" + json + ",total:" + totalProperty + "}");
-                    Response.End();
+                    loadUser();
                     break;
-                case "inipsd":                    
-                    sql = "update sys_user set PASSWORD='{0}' where id='{1}'";
-                    sql = string.Format(sql, Extension.ToSHA1(name), id);
-                    Response.Write(DBMgr.ExecuteNonQuery(sql));
-                    Response.End();
+                case "inipsd":
+                    inipsd();
+                    break;
+                case "enabled":
+                    enabled();
+                    break;
+                case "delete":
+                    deleteData();
                     break;
             }
+        }
+        /// <summary>
+        /// 获取子节点
+        /// </summary>
+        private void loadChildAccount()
+        {
+            string id = Request["id"]; 
+            string sql = @"SELECT * FROM SYS_USER WHERE PARENTID = " + id + " order by CREATETIME ASC";
+            DataTable dt = DBMgr.GetDataTable(sql);
+            string json = JsonConvert.SerializeObject(dt);
+            Response.Write("{innerrows:" + json + "}");
+            Response.End();
+        }
+        /// <summary>
+        /// 查询
+        /// </summary>
+        private void loadUser()
+        {
+            IsoDateTimeConverter iso = new IsoDateTimeConverter();//序列化JSON对象时,日期的处理格式
+            iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+            string groupid = Request["groupid"];
+            string where = "";
+            if (!string.IsNullOrEmpty(Request["NAME"]))
+            {
+                where += " and NAME like '%" + Request["NAME"] + "%'";
+            }
+            if (!string.IsNullOrEmpty(Request["REALNAME"]))
+            {
+                where += " and REALNAME like '%" + Request["REALNAME"] + "%'";
+            }
+            if (!string.IsNullOrEmpty(Request["POSITIONID"]))
+            {
+                where += " and POSITIONID =" + Request["POSITIONID"];
+            }
+            //主账号
+            string sql = @"SELECT * FROM SYS_USER WHERE TYPE = 1 " + where;
+            int totalProperty = 0;
+            sql = Extension.GetPageSql(sql, "CREATETIME", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
+            string json = JsonConvert.SerializeObject(DBMgr.GetDataTable(sql), iso);
+            Response.Write("{rows:" + json + ",total:" + totalProperty + "}");
+            Response.End();
+        }
+        private void inipsd()
+        {
+            string id = Request["id"];
+            string name = Request["name"];
+            string sql = "update sys_user set PASSWORD='{0}' where id='{1}'";
+            sql = string.Format(sql, Extension.ToSHA1(name), id);
+            Response.Write(DBMgr.ExecuteNonQuery(sql));
+            Response.End();
+        }
+        /// <summary>
+        /// 启禁用
+        /// </summary>
+        private void enabled()
+        {
+            string id = Request["id"];
+            string flag = Request["flag"];
+            string sql = "update sys_user set enabled='{0}' where id='{1}'";
+            string str = DBMgr.ExecuteNonQuery(string.Format(sql, flag, id)) > 0 ? "true" : "false";
+            Response.Write("{\"success\":" + str + "}");
+            Response.End();
+        }
+
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <param name="id"></param>
+        private void deleteData()
+        {
+            string id = Request["ID"];
+            string sql = "delete from sys_user where id='{0}'";
+            string str = DBMgr.ExecuteNonQuery(string.Format(sql, id)) > 0 ? "true" : "false";
+            Response.Write("{\"success\":" + str + "}");
+            Response.End();
         }
     }
 }
