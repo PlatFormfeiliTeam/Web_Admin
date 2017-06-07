@@ -5,3 +5,4 @@ Web.Release.config
 Web.Debug.config
 Web_Admin.csproj
 Web_Admin.csproj.user
+bin/Newtonsoft.Json.xml
