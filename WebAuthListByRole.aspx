@@ -67,7 +67,7 @@
                 nodeParam: 'id',
                 proxy: {
                     type: 'ajax',
-                    url: 'RoleAuthList.aspx?action=loadroleauthority',
+                    url: 'WebAuthListByRole.aspx?action=loadauthority',
                     reader: 'json'
                 },
                 root: {

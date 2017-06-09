@@ -40,7 +40,7 @@ namespace Web_Admin
                 JObject json_user = Extension.Get_UserInfo(userName);
 
                 string sql = @"select MODULEID,NAME,PARENTID,URL,SORTINDEX,IsLeaf,ICON from sysmodule t 
-                where t.parentid='91a0657f-1939-4528-80aa-91b202a593ac' and t.MODULEID IN (select MODULEID FROM sys_moduleuser where userid='{0}')
+                where t.parentid='91a0657f-1939-4528-80aa-91b202a593ac' and t.MODULEID IN (select MODULEID FROM sys_moduleuser_back where userid='{0}')
                 order by sortindex";
                 sql = string.Format(sql, json_user.GetValue("ID"));
 
@@ -55,7 +55,7 @@ namespace Web_Admin
                     result += "<li><a>" + icon + dt1.Rows[i]["NAME"] + "</a>";
 
                     sql = @"select MODULEID,NAME,PARENTID,URL,SORTINDEX,IsLeaf,ICON from sysmodule t where t.parentid='{0}'
-                    and t.MODULEID IN (select MODULEID FROM sys_moduleuser where userid='{1}') order by sortindex";
+                    and t.MODULEID IN (select MODULEID FROM sys_moduleuser_back where userid='{1}') order by sortindex";
                     sql = string.Format(sql, dt1.Rows[i]["MODULEID"], json_user.GetValue("ID"));
 
                     DataTable dt2 = DBMgr.GetDataTable(sql);
@@ -78,7 +78,7 @@ namespace Web_Admin
                                 result += "<li><a href=\"" + icon + dt2.Rows[j]["URL"] + "\">" + dt2.Rows[j]["NAME"] + "</a>";
                             }
                             sql = @"select MODULEID,NAME,PARENTID,URL,SORTINDEX,IsLeaf,ICON from sysmodule t where t.parentid='{0}' 
-                            and t.MODULEID IN (select MODULEID FROM sys_moduleuser where userid='{1}') order by sortindex";
+                            and t.MODULEID IN (select MODULEID FROM sys_moduleuser_back where userid='{1}') order by sortindex";
                             sql = string.Format(sql, dt2.Rows[j]["MODULEID"], json_user.GetValue("ID"));
                             
                             DataTable dt3 = DBMgr.GetDataTable(sql);
