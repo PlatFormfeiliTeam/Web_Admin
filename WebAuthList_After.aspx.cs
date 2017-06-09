@@ -33,7 +33,7 @@ namespace Web_Admin
                     string sql = string.Empty;
                     if (!string.IsNullOrEmpty(userid))
                     {
-                        sql = @"select t.*,u.MODULEID AUTHORITY from sysmodule t  left join (select * from sys_moduleuser where userid='{0}') u on t.MODULEID=u.MODULEID
+                        sql = @"select t.*,u.MODULEID AUTHORITY from sysmodule t  left join (select * from sys_moduleuser_back where userid='{0}') u on t.MODULEID=u.MODULEID
                               where  t.ParentId='{1}' order by t.SortIndex";
                         sql = string.Format(sql, userid, Request["id"]);
                     }
@@ -70,13 +70,13 @@ namespace Web_Admin
                     break;
                 case "AuthorizationSave":
                     string moduleids = Request["moduleids"];
-                    sql = @"DELETE FROM SYS_MODULEUSER WHERE USERID = '{0}'";
+                    sql = @"DELETE FROM SYS_MODULEUSER_back WHERE USERID = '{0}'";
                     sql = string.Format(sql, userid);
                     DBMgr.ExecuteNonQuery(sql);
                     string[] ids = moduleids.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string moduleid in ids)
                     {
-                        sql = @"insert into SYS_MODULEUSER (USERID,MODULEID) values ('{0}','{1}')";
+                        sql = @"insert into SYS_MODULEUSER_back (USERID,MODULEID) values ('{0}','{1}')";
                         sql = string.Format(sql, userid, moduleid);
                         DBMgr.ExecuteNonQuery(sql);
                     }
@@ -94,7 +94,7 @@ namespace Web_Admin
             try
             {
                 //主账号的ModuleId集合
-                DataTable moduleIdDt = DBMgr.GetDataTable("select MODULEID from SYS_MODULEUSER where userid = " + userid);
+                DataTable moduleIdDt = DBMgr.GetDataTable("select MODULEID from SYS_MODULEUSER_back where userid = " + userid);
                 List<string> mIdList = Extension.getColumnFromDatatable(moduleIdDt, "MODULEID");
 
                 //子账号ID集合
@@ -104,10 +104,10 @@ namespace Web_Admin
                 foreach (DataRow drId in cdIds.Rows)
                 {
                     //查询该子账号的moduleIds
-                    DataTable mIdsDt = DBMgr.GetDataTable("select MODULEID from SYS_MODULEUSER where userid = " + drId["ID"].ToString());
+                    DataTable mIdsDt = DBMgr.GetDataTable("select MODULEID from SYS_MODULEUSER_back where userid = " + drId["ID"].ToString());
 
                     //删除该子账号原有的moduleIds
-                    DBMgr.ExecuteNonQuery("DELETE FROM SYS_MODULEUSER WHERE USERID = " + drId["ID"].ToString());
+                    DBMgr.ExecuteNonQuery("DELETE FROM SYS_MODULEUSER_back WHERE USERID = " + drId["ID"].ToString());
 
                     //插入子账号moduleIds
                     foreach (DataRow mId in mIdsDt.Rows)
@@ -115,7 +115,7 @@ namespace Web_Admin
                         //过滤掉子账号中主账号没有的moduleIds
                         if (mIdList.Contains(mId["MODULEID"].ToString()))
                         {
-                            DBMgr.ExecuteNonQuery("insert into SYS_MODULEUSER (USERID,MODULEID) values ('" + drId["ID"].ToString() + "','" + mId["MODULEID"].ToString() + "')");
+                            DBMgr.ExecuteNonQuery("insert into SYS_MODULEUSER_back (USERID,MODULEID) values ('" + drId["ID"].ToString() + "','" + mId["MODULEID"].ToString() + "')");
                         }
                     }
                 }
@@ -133,7 +133,7 @@ namespace Web_Admin
         private string getchildren(string moduleid, string userid)
         {
             string children = "[";
-            sql = @"select t.*,u.MODULEID AUTHORITY from sysmodule t left join (select * from sys_moduleuser where userid='{0}') u on t.MODULEID=u.MODULEID
+            sql = @"select t.*,u.MODULEID AUTHORITY from sysmodule t left join (select * from sys_moduleuser_back where userid='{0}') u on t.MODULEID=u.MODULEID
                 where  t.ParentId ='{1}' order by t.SortIndex";
             sql = string.Format(sql, userid, moduleid);
             DataTable dt = DBMgr.GetDataTable(sql);
