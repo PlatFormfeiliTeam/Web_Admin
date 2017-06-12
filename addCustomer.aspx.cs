@@ -15,28 +15,30 @@ namespace Web_Admin
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string id = Request["ID"];
-            string action = Request["action"];
-            
-            switch(action)
-            {
-                case "initData":
-                    initData(id);
-                    break;
-                case "save":
-                    JObject json = (JObject)JsonConvert.DeserializeObject(Request["formdata"]);
-                    save(json, id);
-                    break;
-            }
-           
-            
+            //if(!IsPostBack)
+            //{
+                string id = Request["ID"];
+                string action = Request["action"];
+
+                switch (action)
+                {
+                    case "initData":
+                        initData(id);
+                        break;
+                    case "save":
+                        JObject json = (JObject)JsonConvert.DeserializeObject(Request["formdata"]);
+                        save(json, id);
+                        break;
+                }
+            //}
         }
         private void initData(string id)
         {
             string sql = "select * from cusdoc.sys_customer where id='" + id + "'";
             DataTable dt = DBMgr.GetDataTable(sql);
-            string json = JsonConvert.SerializeObject(dt);
-            Response.Write(json.Replace("[", "").Replace("]", ""));
+            string json = JsonConvert.SerializeObject(dt).Replace("[", "").Replace("]", "");
+            if (json == "") { json = "{}"; }
+            Response.Write(json);
             Response.End();
         }
 

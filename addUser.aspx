@@ -14,6 +14,20 @@
     <script type="text/javascript">
         var id = getQueryString("id");
         Ext.onReady(function () {
+            var cusstore = Ext.create('Ext.data.Store', {
+                fields: ["ID", "NAME"],
+                proxy: {
+                    url: 'addUser.aspx?action=customer',
+                    type: 'ajax',
+                    reader: {
+                        root: 'rows',
+                        type: 'json',
+                        totalProperty: 'total'
+                    }
+                },
+                autoLoad: true
+            });
+
             var txtName = Ext.create('Ext.form.field.Text', {
                 id: 'name',
                 name: 'NAME',
@@ -25,7 +39,7 @@
                 id: 'realname',
                 name: 'REALNAME',
                 fieldLabel: '名称',
-                width: 180,
+                width: 280,
                 labelWidth: 40
             });
             var txtMPhone = Ext.create('Ext.form.field.Text', {
@@ -50,44 +64,47 @@
                 width: 180,
                 labelWidth: 40
             });
-            var txtCustomer = Ext.create('Ext.form.field.Text', {
-                id: 'customername',
-                name: 'CUSTOMERNAME',
-                fieldLabel: '公司',
-                width: 180,
-                labelWidth: 40
-
-            });
             
+            
+            var combCustomer = Ext.create('Ext.form.field.ComboBox', {
+                id: 'customername',
+                name: 'CUSTOMERID',
+                fieldLabel: '客商',
+                store: cusstore,
+                displayField: 'NAME',
+                valueField: 'ID',
+                width: 280,
+                labelWidth: 40
+            });
            
             var enstore = Ext.create('Ext.data.Store', {
                 fields: ['code', 'name'],
                 data: [
-                    { "code": "0", "name": "否" },
-                    { "code": "1", "name": "是" }
+                    { "code": 0, "name": "否" },
+                    { "code": 1, "name": "是" }
                 ]
             });
             var combEnabled = Ext.create('Ext.form.field.ComboBox', {
                 id: 'enabled',
                 name: 'ENABLED',
-                fieldLabel: '是否启用',
+                fieldLabel: '启用',
                 store: enstore,
                 displayField: 'name',
                 valueField: 'code',
                 width: 180,
-                labelWidth: 60
+                labelWidth: 40
             });
             var posstore = Ext.create('Ext.data.Store', {
                 fields: ['code', 'name'],
                 data: [
-                    { "code": "0", "name": "无" },
-                    { "code": "1", "name": "前台管理" },
-                    { "code": "2", "name": "后台管理" }
+                    { "code": 0, "name": "无" },
+                    { "code": 1, "name": "前台管理" },
+                    { "code": 2, "name": "后台管理" }
                 ]
             });
             var combPosition = Ext.create('Ext.form.field.ComboBox', {
-                id: 'position',
-                name:'POSITION',
+                id: 'positionid',
+                name:'POSITIONID',
                 fieldLabel: '权限',
                 store: posstore,
                 displayField: 'name',
@@ -99,7 +116,7 @@
                 id: 'remark',
                 name: 'REMARK',
                 fieldLabel: '备注',
-                width: 765,
+                width: 865,
                 labelWidth: 40
             });
 
@@ -133,10 +150,8 @@
                 width: '80',
                 handler: function () {
                     //window.opener.location.href = window.opener.location.href;//刷新父页面
-                    alert(1);
                     window.opener.refreshData();
                     window.close();
-                    alert(2);
 
                 }
             });
@@ -146,18 +161,19 @@
 
             var colItem = [
                     { layout: 'column', height: 62, border: 0, margin: '10 0 0 0', items: [txtName, txtRealName, txtMPhone, txtTPhone] },
-                    { layout: 'column', height: 62, border: 0, items: [txtEMail, txtCustomer, combPosition, combEnabled] },
+                    { layout: 'column', height: 62, border: 0, items: [txtEMail, combCustomer, combPosition, combEnabled] },
                     { layout: 'column', height: 62, border: 0, items: [txtRemark] }
             ];
             var mianPnl = Ext.create("Ext.form.Panel", {
                 id: 'formpanel',
                 renderTo: 'fpanel',
                 border: 1,
-                width: 820,
+                width: 920,
                 tbar: tbar1,
                 fieldDefaults: {
                     margin: '0 5 10 10',
                     labelWidth: 80,
+                    labelAlign: 'center'
                 },
                 items: colItem
             });
@@ -175,15 +191,16 @@
         })
         function initData(info) {
             if (info != null) {
-                Ext.getCmp("name").setValue(info.NAME);
-                Ext.getCmp("realname").setValue(info.REALNAME);
-                Ext.getCmp("mobilephone").setValue(info.MOBILEPHONE);
-                Ext.getCmp("telephone").setValue(info.TELEPHONE);
-                Ext.getCmp("email").setValue(info.EMAIL);
-                Ext.getCmp("customername").setValue(info.COMPANYIDS);
-                Ext.getCmp("position").setValue(info.POSITIONID);
-                Ext.getCmp("remark").setValue(info.REMARK);
-                Ext.getCmp("enabled").setValue(info.ENABLED == 1 ? "是" : "否");
+                //Ext.getCmp("name").setValue(info.NAME);
+                //Ext.getCmp("realname").setValue(info.REALNAME);
+                //Ext.getCmp("mobilephone").setValue(info.MOBILEPHONE);
+                //Ext.getCmp("telephone").setValue(info.TELEPHONE);
+                //Ext.getCmp("email").setValue(info.EMAIL);
+                //Ext.getCmp("customername").setValue(info.COMPANYIDS);
+                //Ext.getCmp("position").setValue(info.POSITIONID);
+                //Ext.getCmp("remark").setValue(info.REMARK);
+                //Ext.getCmp("enabled").setValue(info.ENABLED == 1 ? "是" : "否");
+                Ext.getCmp('formpanel').getForm().setValues(info);
             }
         }
     </script>

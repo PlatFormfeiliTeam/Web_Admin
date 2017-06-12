@@ -84,8 +84,8 @@
             var enstore = Ext.create('Ext.data.Store', {
                 fields: ['code', 'name'],
                 data: [
-                    { "code": "0", "name": "否" },
-                    { "code": "1", "name": "是" }
+                    { "code": 0, "name": "否" },
+                    { "code": 1, "name": "是" }
                 ]
             });
             var combEnabled = Ext.create('Ext.form.field.ComboBox', {
@@ -103,32 +103,32 @@
                 id: 'customerid',
                 name:'ISCUSTOMER',
                 boxLabel: '客户',
-                width: 85,
+                width: 85
             });
             var chkshipper = Ext.create("Ext.form.field.Checkbox", {
                 id: 'shipperid',
                 name:'ISSHIPPER',
                 boxLabel: '供应商',
-                width: 85,
+                width: 85
             });
            
             var chkcompany = Ext.create("Ext.form.field.Checkbox", {
                 id: 'companyid',
                 name:'ISCOMPANY',
                 boxLabel: '生产型企业',
-                width: 100,
+                width: 100
             });
             var chkdocservice = Ext.create("Ext.form.field.Checkbox", {
                 id: 'docserviceid',
                 name:'DOCSERVICECOMPANY',
                 boxLabel: '单证服务单位',
-                width: 110,
+                width: 110
             });
             var chklogicaudit = Ext.create("Ext.form.field.Checkbox", {
                 id: 'logicauditid',
                 name:'LOGICAUDITFLAG',
                 boxLabel: '逻辑审核强制通过',
-                width: 120,
+                width: 120
             });
             var btnSave = Ext.create("Ext.Button", {
                 id: 'saveid',
@@ -185,7 +185,7 @@
                 tbar: tbar1,
                 fieldDefaults: {
                     margin: '20 0 0 20',
-                    labelWidth: 80,
+                    labelWidth: 80
                 },
                 items: colItem
             });
@@ -205,6 +205,7 @@
         {
             if (info != null)
             {
+                alert(12);
                 Ext.getCmp("code").setValue(info.CODE);
                 Ext.getCmp("cnabbrev").setValue(info.CHINESEABBREVIATION);
                 Ext.getCmp("cnname").setValue(info.NAME);
@@ -220,6 +221,7 @@
                 Ext.getCmp("companyid").setValue(info.ISCOMPANY);
                 Ext.getCmp("docserviceid").setValue(info.DOCSERVICECOMPANY); 
                 Ext.getCmp("logicauditid").setValue(info.LOGICAUDITFLAG);
+
             }
         }
     </script>

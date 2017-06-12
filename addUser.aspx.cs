@@ -23,6 +23,9 @@ namespace Web_Admin
                 case "initData":
                     initData(id);
                     break;
+                case "customer":
+                    getCustomer();
+                    break;
                 case "save":
                     JObject json = (JObject)JsonConvert.DeserializeObject(Request["formdata"]);
                     save(json, id);
@@ -34,8 +37,18 @@ namespace Web_Admin
         {
             string sql = "select * from sys_user where id='" + id + "'";
             DataTable dt = DBMgr.GetDataTable(sql);
+            string json = JsonConvert.SerializeObject(dt).Replace("[", "").Replace("]", "");
+            if (json == "") { json = "{}"; }
+            Response.Write(json);
+            Response.End();
+        }
+        private void getCustomer()
+        {
+            string sql = "select id,name from cusdoc.sys_customer where enabled=1";
+            DataTable dt = DBMgr.GetDataTable(sql);
             string json = JsonConvert.SerializeObject(dt);
-            Response.Write(json.Replace("[", "").Replace("]", ""));
+            if (json == "") { json = "{}"; }
+            Response.Write(json);
             Response.End();
         }
 
