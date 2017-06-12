@@ -48,7 +48,7 @@
                 text: '新 增',
                 width: 80,
                 handler: function () {
-                    opencenterwin("/addUser.aspx", 940, 340);
+                    opencenterwin("/addUser.aspx", 1040, 340);
                 }
             });
             var btnAlt = Ext.create('Ext.Button', {
@@ -60,7 +60,7 @@
                         Ext.MessageBox.alert('提示', '请选择需要查看详细的记录！');
                         return;
                     }
-                    opencenterwin("/addUser.aspx?id=" + recs[0].get("ID"), 940, 340);
+                    opencenterwin("/addUser.aspx?id=" + recs[0].get("ID"), 1040, 340);
                 }
             });
             var btnDel = Ext.create('Ext.Button', {
