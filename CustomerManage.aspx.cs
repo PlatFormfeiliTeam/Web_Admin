@@ -18,21 +18,25 @@ namespace Web_Admin
         int totalProperty = 0;
         protected void Page_Load(object sender, EventArgs e)
         {
-            string action = Request["action"];
-            iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-            
-            switch (action)
+            if(!IsPostBack)
             {
-                case "loadData":
-                    loadData();
-                    break;
-                case "delete":
-                    deleteData();
-                    break;
-                case "export":
-                    exportData();
-                    break;
+                string action = Request["action"];
+                iso.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+
+                switch (action)
+                {
+                    case "loadData":
+                        loadData();
+                        break;
+                    case "delete":
+                        deleteData();
+                        break;
+                    case "export":
+                        exportData();
+                        break;
+                }
             }
+            
         }
         /// <summary>
         /// 加载数据
