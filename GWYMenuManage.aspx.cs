@@ -123,47 +123,5 @@ namespace Web_Admin
             Response.Write("{\"success\":" + flag + "}");
             Response.End();
         }
-        //private void loadMenu()
-        //{
-        //    string strSql = "select * from t_formbutton where enabled='1' order by formname";
-        //    DataTable dt = DBMgr.GetDataTable(strSql);
-        //    string result = "[";
-        //     //["id", "name", "leaf", "url", "ParentID"] });
-        //    string formName = "";
-        //    foreach(DataRow dr in dt.Rows)
-        //    {
-        //        if (formName == dr["formname"])
-        //            continue;
-        //        string children = getChildren(dt, formName);
-        //        if (children.Length > 1)
-        //        {
-        //            result += "{id:'" + dr["id"] + "',name:'" + dr["formcaption"] + "',leaf:'false',ParentID:'root',children:" + children + "},";
-        //        }
-        //        else
-        //        {
-        //            result += "{id:'" + dr["id"] + "',name:'" + dr["formcaption"] + "',leaf:'true',ParentID:'root'},";
-        //        }
-        //    }
-        //    result = result.Substring(0, result.Length - 1) + "]";
-        //    Response.Write(result);
-        //    Response.End();
-        //}
-        ///// <summary>
-        ///// 获取子节点
-        ///// </summary>
-        ///// <param name="dt"></param>
-        ///// <param name="name"></param>
-        ///// <returns></returns>
-        //private string getChildren(DataTable dt, string name)
-        //{
-        //    string str = "[";
-        //    DataRow[] rows = dt.Select("formname='" + name + "'");
-        //    foreach(DataRow dr in rows)
-        //    {
-        //        str += "{id:'" + dr["id"] + "',name:'" + dr["buttoncaption"] + "',leaf:'true',ParentID:'" + dr["formname"] + "'},";
-        //    }
-        //    str = str.Substring(0, str.Length - 1) + "]";
-        //    return str;
-        //}
     }
 }
