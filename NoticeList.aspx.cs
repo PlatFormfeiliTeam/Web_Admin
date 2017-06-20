@@ -49,17 +49,13 @@ namespace Web_Admin
                     Response.End();
                     break;
                 case "delete":
-                    sql = @"delete from WEB_NOTICE where id in (" + id + ")";
-                    int i = DBMgr.ExecuteNonQuery(sql);
-                    if (i > 0)
-                    {
-                        Response.Write("{success:true}");
-                    }
-                    else
-                    {
-                        Response.Write("{success:false}");
-                    }
+                   sql = @"delete from WEB_NOTICE where id in (" + id + ")";
+                    DBMgr.ExecuteNonQuery(sql);
 
+                    sql = @"delete from list_collect_infor_byuser where type='news' and rid in (" + id + ")";
+                    DBMgr.ExecuteNonQuery(sql);
+
+                    Response.Write("{success:true}");
                     Response.End();
                     break;
             }
