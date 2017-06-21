@@ -58,8 +58,13 @@ namespace Web_Admin
                     JObject jo = (JObject)JsonConvert.DeserializeObject(formdata);
                     id = jo.Value<string>("ID"); string NAME = jo.Value<string>("NAME");
                     string DESCRIPTION = jo.Value<string>("DESCRIPTION");string SORTINDEX = jo.Value<string>("SORTINDEX");
+
                     sql = @"update list_collect_infor_cate set NAME='" + NAME + "',DESCRIPTION='" + DESCRIPTION + "',SORTINDEX='" + SORTINDEX + "' where id=" + id;
                     DBMgr.ExecuteNonQuery(sql);
+
+                    sql = @"update list_collect_infor set TYPE='" + NAME + "' where rid_type=" + id;
+                    DBMgr.ExecuteNonQuery(sql);
+
                     Response.Write("{success:true}");
                     Response.End();
                     break;
