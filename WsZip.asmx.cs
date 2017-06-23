@@ -73,7 +73,8 @@ namespace Web_Admin
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                return @"http://" + HttpContext.Current.Request.Url.Authority + "/file/declare_tmp_zip/" + filename;
+
+                return  "/file/declare_tmp_zip/" + filename;
             }
             catch (Exception)
             {

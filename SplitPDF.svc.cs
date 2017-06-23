@@ -388,6 +388,15 @@ namespace Web_Admin
             dt = DBMgr.GetDataTable(sql);
             splitfilename = dt.Rows[0]["FILENAME"] + "";
             //fileid = Request["fileid"];
+            if (!File.Exists((@"d:\ftpserver\" + splitfilename)))
+            {
+                return "error";
+                
+            }
+            if ((new FileInfo(@"d:\ftpserver\" + splitfilename)).Length == 0)
+            {
+                return "error";
+            }
             filestatus = dt.Rows[0]["SPLITSTATUS"] + "";//0 未拆分  1 已拆分 
             if (filestatus == "" || filestatus == "0")  //如果未拆分,初始化拆分明细界面内容并写入缓存
             {
