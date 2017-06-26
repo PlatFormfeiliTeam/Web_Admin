@@ -8,7 +8,11 @@ using System.Web.Services;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Core;
 using Web_Admin.Common;
-
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace Web_Admin
 {
@@ -24,7 +28,7 @@ namespace Web_Admin
     {
 
         [WebMethod]
-        public string getZipFile(string codelist)
+        public string getZipFile(string filedata, string customer)
         {
             string dir = @"d:/ftpserver/";
             string tmp_dir = @"d:/ftpserver/declare_tmp_zip/";
@@ -34,33 +38,55 @@ namespace Web_Admin
             }
             try
             {
-                string sql = @"select A.*,B.DECLARATIONCODE from (select t.* from list_attachment t where t.filetype='61' and t.declcode in " + codelist + " order by pgindex asc,uploadtime asc) A"
-                       + " left join list_declaration B on A.DECLCODE=B.CODE";
+                JArray j_array = JArray.Parse(filedata);
+                
+                string codelist="(";
+                int i = 0;
+                foreach (JObject jo in j_array)
+                {
+                    codelist += "'" + jo["CODE"] + "'";
+                    if (i != j_array.Count - 1)
+                    {
+                       codelist +=",";
+                    }
+                    i++;
+                    
+                }
+                codelist += ")";
+
+                string sql = @"select t.* from list_attachment t where t.filetype='61' and t.declcode in " + codelist + " order by pgindex asc,uploadtime asc";
                 DataTable dt = DBMgr.GetDataTable(sql);
 
 
                 string filepath = string.Empty;
-                MemoryStream ms = new MemoryStream();
+                //MemoryStream ms = new MemoryStream();
                 ZipEntryFactory zipEntryFactory = new ZipEntryFactory();
-                ZipFile zipFile = new ZipFile(ms);
+                //ZipFile zipFile = new ZipFile(ms);
                 string filename = DateTime.Now.ToString("yyyyMMddhhmmssff") + ".zip";
                 string newfilename = string.Empty;
                 string sourcefile = string.Empty;
+                string filepath_mask = string.Empty;
+                string busitype = string.Empty;
                 using (ZipOutputStream outPutStream = new ZipOutputStream(System.IO.File.Create(tmp_dir + filename)))
                 {
-
+                  
                     outPutStream.SetLevel(5);
                     ZipEntry entry = null;
                     byte[] buffer = null;
-                    foreach (DataRow dr in dt.Rows)
+                    //foreach (DataRow dr in dt.Rows)
+                    foreach (JObject jo in j_array)
                     {
-                        sourcefile = dr["FILENAME"].ToString();
+
+                        DataRow[] drs=dt.Select("DECLCODE='"+jo["CODE"]+"'");
+                        busitype = jo["BUSITYPE"].ToString();
+                        sourcefile = drs[0]["FILENAME"].ToString();
                         filepath = dir + sourcefile;
-                        newfilename =dr["DECLARATIONCODE"].ToString() + sourcefile.Substring(sourcefile.LastIndexOf("."));
+                        filepath_mask = AddBackground(filepath, "企业留存联", busitype, "", customer);
+                        newfilename = jo["DECLARATIONCODE"].ToString() + sourcefile.Substring(sourcefile.LastIndexOf("."));
                         buffer = new byte[4096];
                         entry = zipEntryFactory.MakeFileEntry(newfilename);
                         outPutStream.PutNextEntry(entry);
-                        using (FileStream fileStream = File.OpenRead(filepath))
+                        using (FileStream fileStream = File.OpenRead(filepath_mask))
                         {
                             StreamUtils.Copy(fileStream, outPutStream, buffer);
 
@@ -78,12 +104,80 @@ namespace Web_Admin
             }
             catch (Exception)
             {
-                
-                throw;
+
+                return "error";
             }
            
 
 
+        }
+
+
+        public string AddBackground(string filename, string printtmp, string busitype, string decltype,string customer)
+        {
+            string sql="select POSITIONWEBTOP,POSITIONWEBRIGHT,POSITIONWEBBUTTOM,POSITIONWEBLEFT from config_watermark where CUSTOMER='"+customer+"'";
+            DataTable dt_mask=DBMgr.GetDataTable(sql);
+            string tmp_dir = @"d:/ftpserver/declare_tmp_zip/";
+            string outname = Guid.NewGuid() + "";
+            string top=dt_mask.Rows[0]["POSITIONWEBTOP"].ToString();
+            string right = dt_mask.Rows[0]["POSITIONWEBRIGHT"].ToString();
+            string buttom = dt_mask.Rows[0]["POSITIONWEBBUTTOM"].ToString();
+            string left = dt_mask.Rows[0]["POSITIONWEBLEFT"].ToString();
+            int top_int = Convert.ToInt32(top == "" ? "0" : top); int right_int = Convert.ToInt32(right == "" ? "0" : right);
+            int buttom_int = Convert.ToInt32(buttom == "" ? "0" : buttom); int left_int = Convert.ToInt32(left == "" ? "0" : left);
+
+            Image img = null;
+            if (busitype == "11" || busitype == "21" || busitype == "31" || busitype == "41" || busitype == "51")
+            {
+                if (printtmp == "海关作业联")
+                {
+                    img = Image.GetInstance(Server.MapPath("/FileUpload/进口-海关作业联.png"));
+                }
+                if (printtmp == "企业留存联")
+                {
+                    img = Image.GetInstance(Server.MapPath("/FileUpload/进口-企业留存联.png"));
+                }
+                if (printtmp == "海关核销联")
+                {
+                    img = Image.GetInstance(Server.MapPath("/FileUpload/进口-海关核销联.png"));
+                }
+            }
+            else
+            {
+                if (printtmp == "海关作业联")
+                {
+                    img = Image.GetInstance(Server.MapPath("/FileUpload/出口-海关作业联.png"));
+                }
+                if (printtmp == "企业留存联")
+                {
+                    img = Image.GetInstance(Server.MapPath("/FileUpload/出口-企业留存联.png"));
+                }
+                if (printtmp == "海关核销联")
+                {
+                    img = Image.GetInstance(Server.MapPath("/FileUpload/出口-海关核销联.png"));
+                }
+            }
+            string destFile = tmp_dir+outname + ".pdf";
+            FileStream stream = new FileStream(destFile, FileMode.Create, FileAccess.ReadWrite);
+            PdfReader reader = new PdfReader(filename);
+
+            iTextSharp.text.Rectangle psize = reader.GetPageSize(1);
+            var imgWidth = psize.Width + right_int;
+            var imgHeight = psize.Height - top_int + buttom_int;
+            img.ScaleAbsolute(imgWidth, imgHeight);
+            img.SetAbsolutePosition(0 + left_int, 0 - buttom_int);//坐标是从左下角开始算的，注意 
+
+            PdfStamper stamper = new PdfStamper(reader, stream);    //read pdf stream 
+            int totalPage = reader.NumberOfPages;
+            for (int current = 1; current <= totalPage; current++)
+            {
+                var canvas = stamper.GetUnderContent(current);
+                var page = stamper.GetImportedPage(reader, current);
+                canvas.AddImage(img);
+            }
+            stamper.Close();
+            reader.Close();
+            return destFile;
         }
     }
 }
