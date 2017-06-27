@@ -115,16 +115,19 @@ namespace Web_Admin
 
         public string AddBackground(string filename, string printtmp, string busitype, string decltype,string customer)
         {
-            string sql="select POSITIONWEBTOP,POSITIONWEBRIGHT,POSITIONWEBBUTTOM,POSITIONWEBLEFT from config_watermark where CUSTOMER='"+customer+"'";
-            DataTable dt_mask=DBMgr.GetDataTable(sql);
             string tmp_dir = @"d:/ftpserver/declare_tmp_zip/";
             string outname = Guid.NewGuid() + "";
-            string top=dt_mask.Rows[0]["POSITIONWEBTOP"].ToString();
-            string right = dt_mask.Rows[0]["POSITIONWEBRIGHT"].ToString();
-            string buttom = dt_mask.Rows[0]["POSITIONWEBBUTTOM"].ToString();
-            string left = dt_mask.Rows[0]["POSITIONWEBLEFT"].ToString();
-            int top_int = Convert.ToInt32(top == "" ? "0" : top); int right_int = Convert.ToInt32(right == "" ? "0" : right);
-            int buttom_int = Convert.ToInt32(buttom == "" ? "0" : buttom); int left_int = Convert.ToInt32(left == "" ? "0" : left);
+            DataTable dt_mask = new DataTable(); int top_int = 0, right_int = 0, buttom_int = 0, left_int = 0;
+
+            string sql = "select POSITIONWEBTOP,POSITIONWEBRIGHT,POSITIONWEBBUTTOM,POSITIONWEBLEFT from config_watermark where CUSTOMER='" + customer + "'";         
+            dt_mask = DBMgr.GetDataTable(sql);
+            if (dt_mask.Rows.Count > 0)
+            {
+                top_int = Convert.ToInt32(dt_mask.Rows[0]["POSITIONWEBTOP"].ToString() == "" ? "0" : dt_mask.Rows[0]["POSITIONWEBTOP"].ToString());
+                right_int = Convert.ToInt32(dt_mask.Rows[0]["POSITIONWEBRIGHT"].ToString() == "" ? "0" : dt_mask.Rows[0]["POSITIONWEBRIGHT"].ToString());
+                buttom_int = Convert.ToInt32(dt_mask.Rows[0]["POSITIONWEBBUTTOM"].ToString() == "" ? "0" : dt_mask.Rows[0]["POSITIONWEBBUTTOM"].ToString());
+                left_int = Convert.ToInt32(dt_mask.Rows[0]["POSITIONWEBLEFT"].ToString() == "" ? "0" : dt_mask.Rows[0]["POSITIONWEBLEFT"].ToString());
+            }  
 
             Image img = null;
             if (busitype == "11" || busitype == "21" || busitype == "31" || busitype == "41" || busitype == "51")
