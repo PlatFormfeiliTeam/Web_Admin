@@ -598,26 +598,37 @@ namespace Web_Admin
                         }
                         pdfReader.Close(); pdfReader.Dispose();
 
-                        //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
-                        sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1,FILEPAGES=" + filepages + " where id=" + fileid;
-                        DBMgr.ExecuteNonQuery(sql);
-
-                        DataTable dt_list_order = DBMgr.GetDataTable("select * from LIST_ORDER where  code='" + ordercode + "'");
-                        sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate,FILEPAGES=" + filepages
-                            + ",FILESPLITEUSERID='" + userid + "',FILESPLITEUSERNAME='" + username + "' where code='" + ordercode + "'";
-                        int resultcode = DBMgr.ExecuteNonQuery(sql);
-                        if (resultcode > 0)
+                        //20170710 判断拆分明细是否存在
+                        DataTable dt_detail_e = new DataTable();
+                        dt_detail_e = DBMgr.GetDataTable("select * from LIST_ATTACHMENTDETAIL where ordercode='" + ordercode + "'");
+                        if (dt_detail_e.Rows.Count > 0)
                         {
-                            //若正常拆分在字段修改历史记录表中记录
-                            sql = "insert into list_updatehistory(id,ordercode,type,userid, updatetime, oldfield,newfield,name,fieldname,code,field)"
-                                + " values(LIST_UPDATEHISTORY_ID.nextval,'" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order.Rows[0]["FILESTATUS"] + "','1','" + username + "','业务—文件状态-WEB','"
-                                + ordercode + "','FILESTATUS')";
+                            //拆分完成后更新主文件的状态,同时将拆分好的类型送到页面形成按钮便于查看
+                            sql = "update LIST_ATTACHMENT set SPLITSTATUS=1,CONFIRMSTATUS=1,FILEPAGES=" + filepages + " where id=" + fileid;
                             DBMgr.ExecuteNonQuery(sql);
+
+                            DataTable dt_list_order = DBMgr.GetDataTable("select * from LIST_ORDER where  code='" + ordercode + "'");
+                            sql = "update LIST_ORDER set FILESTATUS=1,FILESPLITTIME=sysdate,FILEPAGES=" + filepages
+                                + ",FILESPLITEUSERID='" + userid + "',FILESPLITEUSERNAME='" + username + "' where code='" + ordercode + "'";
+                            int resultcode = DBMgr.ExecuteNonQuery(sql);
+                            if (resultcode > 0)
+                            {
+                                //若正常拆分在字段修改历史记录表中记录
+                                sql = "insert into list_updatehistory(id,ordercode,type,userid, updatetime, oldfield,newfield,name,fieldname,code,field)"
+                                    + " values(LIST_UPDATEHISTORY_ID.nextval,'" + ordercode + "','1','" + userid + "',sysdate,'" + dt_list_order.Rows[0]["FILESTATUS"] + "','1','" + username + "','业务—文件状态-WEB','"
+                                    + ordercode + "','FILESTATUS')";
+                                DBMgr.ExecuteNonQuery(sql);
+                            }
+                            sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
+                            dt = DBMgr.GetDataTable(sql);
+                            json = JsonConvert.SerializeObject(dt);
+                            return "{success:true,result:" + json + "}";
                         }
-                        sql = "select a.id,a.filetypeid,b.filetypename from LIST_ATTACHMENTDETAIL a left join sys_filetype b on a.filetypeid=b.filetypeid where a.ordercode='" + ordercode + "' order by b.sortindex asc";
-                        dt = DBMgr.GetDataTable(sql);
-                        json = JsonConvert.SerializeObject(dt);
-                        return "{success:true,result:" + json + "}";
+                        else
+                        {
+                            return "{success:false}";//拆分明细不存在 
+                        }
+
                     }
                 }
                 catch (Exception ex)
