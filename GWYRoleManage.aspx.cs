@@ -26,8 +26,8 @@ namespace Web_Admin
                 case "loadmenu":
                     loadMenu();
                     break;
-                case "saveButtonConfig":
-                    saveButtonConfig();
+                case "saveMenuConfig":
+                    saveMenuConfig();
                     break;
             }
         }
@@ -94,28 +94,27 @@ namespace Web_Admin
             else
                 return "false";
         }
-        private void saveButtonConfig()
+        private void saveMenuConfig()
         {
             string companyid=Request["roleid"];
             string moduleids=Request["moduleids"];
-            string sql = "delete from t_roleformbutton where companyid='" + companyid + "'";
+            string sql = "delete from t_rolemenu where companyid='" + companyid + "'";
             DBMgr.ExecuteNonQuery(sql);
-            string[] ids = moduleids.Split(',');
-            List<string> sqls = new List<string>();
-            foreach(string id in ids)
+            string flag = "true";
+            if(!string.IsNullOrEmpty(moduleids))
             {
-                string formname=string.Empty,buttonname=string.Empty;
-                string[] names=id.Split('|');
-                if(names.Length>0)
-                    formname=names[0];
-                if(names.Length>1)
-                    buttonname=names[1];
-                if (string.IsNullOrEmpty(formname) || formname.ToLower() == "root")
-                    continue;
-                sql = "insert into t_roleformbutton(formname,buttonname,companyid) values('{0}','{1}','{2}')";
-                sqls.Add(string.Format(sql, formname, buttonname, companyid));
+                string[] ids = moduleids.Split(',');
+                List<string> sqls = new List<string>();
+                foreach (string id in ids)
+                {
+                    if (!string.IsNullOrEmpty(id) && id != "-1")
+                    {
+                        sql = "insert into t_rolemenu(menuid,companyid) values('{0}','{1}')";
+                        sqls.Add(string.Format(sql, id, companyid));
+                    }
+                }
+                flag = DBMgr.ExecuteNonQuery(sqls) > 0 ? "true" : "false";
             }
-            string flag = DBMgr.ExecuteNonQuery(sqls) > 0 ? "true" : "false";
             Response.Write("{\"success\":" + flag + "}");
             Response.End();
         }

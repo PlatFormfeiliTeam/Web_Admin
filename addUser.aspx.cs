@@ -55,8 +55,8 @@ namespace Web_Admin
         private void save(JObject json, string id)
         {
             string str = "false";
-            string enabled = "0", position = "0";
-            if (json.Value<string>("ENABLED") == "是" || json.Value<string>("ENABLED") == "1")
+            string enabled = "1", position = "0";
+            if (json.Value<string>("ENABLED") == "否" || json.Value<string>("ENABLED") == "0")
                 enabled = "1";
             if (json.Value<string>("POSITION") == "前端管理" || json.Value<string>("POSITION") == "1")
             {
@@ -69,15 +69,15 @@ namespace Web_Admin
             if (string.IsNullOrEmpty(id))
             {
                 string sql = @"insert into sys_user(id,name,realname,telephone,mobilephone,email,customerid,companyids,positionid,enabled,remark,createtime,type,password) 
-                values(sys_user_id.nextval,'{0}','{1}','{2}', '{3}','{4}',{5},'{6}','{7}','{8}','{9}',sysdate,1,'{10}')";
+                values(sys_user_id.nextval,'{0}','{1}','{2}', '{3}','{4}',{5},{6},'{7}','{8}','{9}',sysdate,1,'{10}')";
                 sql = string.Format(sql,
                     json.Value<string>("NAME"),
                     json.Value<string>("REALNAME"),
                     json.Value<string>("TELEPHONE"),
                     json.Value<string>("MOBILEPHONE"),
                     json.Value<string>("EMAIL"),
-                    "(select id from cusdoc.sys_customer where code='" + json.Value<string>("CUSTOMERNAME") + "')",
-                    json.Value<string>("CUSTOMERNAME"),
+                    json.Value<string>("CUSTOMERID"),
+                    "(select NAME from cusdoc.sys_customer where code='" + json.Value<string>("CUSTOMERID") + "')",
                     position,
                     enabled,
                     json.Value<string>("REMARK"),

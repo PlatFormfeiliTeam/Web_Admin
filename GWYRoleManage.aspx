@@ -65,7 +65,7 @@
                 root: {
                     expanded: true,
                     name: '前端模块',
-                    id: '91a0657f-1939-4528-80aa-91b202a593ab'
+                    id: '-1'
                 },
                 listeners: {
                     beforeload: function () {
@@ -155,7 +155,7 @@
                 var moduleids = "";
                 var recs = treeModel.getChecked();
                 for (var i = 0; i < recs.length; i++) {
-                    moduleids += recs[i].data.ParentID + "|" + recs[i].data.code + ",";
+                    moduleids += recs[i].data.id + ",";
                 }
                 moduleids = moduleids = "" ? moduleids : moduleids.substr(0, moduleids.length - 1);
 
@@ -163,7 +163,7 @@
                 mask.show();
                 Ext.Ajax.request({
                     timeout: 1000000000,
-                    url: 'GWYRoleManage.aspx?action=saveButtonConfig',
+                    url: 'GWYRoleManage.aspx?action=saveMenuConfig',
                     params: { moduleids: moduleids, roleid: roleid },
                     success: function (option, success, response) {
                         var data = Ext.decode(option.responseText);

@@ -105,22 +105,26 @@ namespace Web_Admin
             string moduleids=Request["moduleids"];
             string sql = "delete from t_roleformbutton where companyid='" + companyid + "'";
             DBMgr.ExecuteNonQuery(sql);
-            string[] ids = moduleids.Split(',');
-            List<string> sqls = new List<string>();
-            foreach(string id in ids)
+            string flag = "true";
+            if(!string.IsNullOrEmpty(moduleids))
             {
-                string formname=string.Empty,buttonname=string.Empty;
-                string[] names=id.Split('|');
-                if(names.Length>0)
-                    formname=names[0];
-                if(names.Length>1)
-                    buttonname=names[1];
-                if (string.IsNullOrEmpty(formname) || formname.ToLower() == "root")
-                    continue;
-                sql = "insert into t_roleformbutton(formname,buttonname,companyid) values('{0}','{1}','{2}')";
-                sqls.Add(string.Format(sql, formname, buttonname, companyid));
+                string[] ids = moduleids.Split(',');
+                List<string> sqls = new List<string>();
+                foreach (string id in ids)
+                {
+                    string formname = string.Empty, buttonname = string.Empty;
+                    string[] names = id.Split('|');
+                    if (names.Length > 0)
+                        formname = names[0];
+                    if (names.Length > 1)
+                        buttonname = names[1];
+                    if (string.IsNullOrEmpty(formname) || formname.ToLower() == "root")
+                        continue;
+                    sql = "insert into t_roleformbutton(formname,buttonname,companyid) values('{0}','{1}','{2}')";
+                    sqls.Add(string.Format(sql, formname, buttonname, companyid));
+                }
+                flag = DBMgr.ExecuteNonQuery(sqls) > 0 ? "true" : "false";
             }
-            string flag = DBMgr.ExecuteNonQuery(sqls) > 0 ? "true" : "false";
             Response.Write("{\"success\":" + flag + "}");
             Response.End();
         }
