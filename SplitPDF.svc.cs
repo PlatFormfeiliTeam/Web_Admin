@@ -377,11 +377,8 @@ namespace Web_Admin
 
         public string loadpdf(string fileid, string ordercode)
         {
-            PdfReader pdfReader;
             string sql = string.Empty;
-            string splitfilename = string.Empty;
-            string filestatus;
-            string json = string.Empty;
+            string splitfilename = string.Empty; string filestatus; string json = string.Empty;
             IDatabase db = SeRedis.redis.GetDatabase();
             DataTable dt = null;
             sql = "select * from list_attachment where id='" + fileid + "'";
@@ -390,13 +387,24 @@ namespace Web_Admin
             //fileid = Request["fileid"];
             if (!File.Exists((@"d:\ftpserver\" + splitfilename)))
             {
-                return "error";
+                return "error:文件不存在";
                 
             }
             if ((new FileInfo(@"d:\ftpserver\" + splitfilename)).Length == 0)
             {
-                return "error";
+                return "error:文件大小为0";
             }
+
+            if (splitfilename.Substring(splitfilename.LastIndexOf(".") + 1).ToUpper() != "PDF")
+            {
+                return "error:不是pdf格式文件";
+            }
+
+            PdfReader pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
+            int totalPages = pdfReader.NumberOfPages;
+            pdfReader.Close(); pdfReader.Dispose();
+
+
             filestatus = dt.Rows[0]["SPLITSTATUS"] + "";//0 未拆分  1 已拆分 
             if (filestatus == "" || filestatus == "0")  //如果未拆分,初始化拆分明细界面内容并写入缓存
             {
@@ -408,9 +416,9 @@ namespace Web_Admin
                     sql = "insert into pdfshrinklog (id,attachmentid) values (pdfshrinklog_id.nextval,'" + fileid + "')";
                     DBMgr.ExecuteNonQuery(sql);
                 }
-                pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
-                int totalPages = pdfReader.NumberOfPages;
-                pdfReader.Close(); pdfReader.Dispose();
+                //pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
+                //int totalPages = pdfReader.NumberOfPages;
+                //pdfReader.Close(); pdfReader.Dispose();
                 sql = "select * from sys_filetype where parentfiletypeid=44  order by sortindex asc";//取该文件类型下面所有的子类型
                 dt = DBMgr.GetDataTable(sql);
                 //构建页码表格数据
@@ -440,9 +448,9 @@ namespace Web_Admin
                 }
                 else
                 {
-                    pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
-                    int totalPages = pdfReader.NumberOfPages;
-                    pdfReader.Close(); pdfReader.Dispose();
+                    //pdfReader = new PdfReader(@"d:\ftpserver\" + splitfilename);
+                    //int totalPages = pdfReader.NumberOfPages;
+                    //pdfReader.Close(); pdfReader.Dispose();
                     sql = "select * from sys_filetype where parentfiletypeid=44 order by sortindex asc";//取该文件类型下面所有的子类型
                     dt = DBMgr.GetDataTable(sql);
                     //构建页码表格数据
