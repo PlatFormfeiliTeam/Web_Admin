@@ -58,11 +58,11 @@ namespace Web_Admin
             string enabled = "1", position = "0";
             if (json.Value<string>("ENABLED") == "否" || json.Value<string>("ENABLED") == "0")
                 enabled = "1";
-            if (json.Value<string>("POSITION") == "前端管理" || json.Value<string>("POSITION") == "1")
+            if (json.Value<string>("POSITIONID") == "前端管理" || json.Value<string>("POSITIONID") == "1")
             {
                 position = "1";
             }
-            else if (json.Value<string>("POSITION") == "后台管理" || json.Value<string>("POSITION") == "2")
+            else if (json.Value<string>("POSITIONID") == "后台管理" || json.Value<string>("POSITIONID") == "2")
             {
                 position = "2";
             }
