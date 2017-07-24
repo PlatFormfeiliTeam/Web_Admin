@@ -80,7 +80,7 @@ namespace Web_Admin
         {
             string id = Request["id"];
             string name = Request["name"];
-            string sql = "update sys_user set PASSWORD='{0}' where id='{1}'";
+            string sql = "update sys_user set points=0,PASSWORD='{0}' where id='{1}'";
             sql = string.Format(sql, Extension.ToSHA1(name), id);
             Response.Write(DBMgr.ExecuteNonQuery(sql));
             Response.End();
