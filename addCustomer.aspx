@@ -205,7 +205,6 @@
         {
             if (info != null)
             {
-                alert(12);
                 Ext.getCmp("code").setValue(info.CODE);
                 Ext.getCmp("cnabbrev").setValue(info.CHINESEABBREVIATION);
                 Ext.getCmp("cnname").setValue(info.NAME);
