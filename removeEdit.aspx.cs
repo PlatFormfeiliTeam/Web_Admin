@@ -24,7 +24,7 @@ namespace Web_Admin
             string where;
            switch (item)
             { 
-                case "ks":
+                case "kf":
                     if (combo_bhxz == "ddbh")
                     {
                         where = "where code='" + itembh + "'";
