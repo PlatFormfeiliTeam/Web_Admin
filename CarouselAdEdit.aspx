@@ -54,7 +54,11 @@
                 //frame: true,
                 bodyPadding: 10,
                 buttonAlign: 'center',
-                items: [imgUrl, linkUrl, SORTINDEX, status, description],
+                items: [imgUrl, linkUrl, SORTINDEX, status, description, {
+                    xtype: 'label',
+                    text: '提示:上传图片尺寸必须为1920*460!',
+                    margin: '0 0 0 80'
+                }],
                 buttons: [{
                     text: '保 存',
                     handler: function () {
