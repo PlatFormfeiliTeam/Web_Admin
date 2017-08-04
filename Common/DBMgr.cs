@@ -61,17 +61,19 @@ namespace Web_Admin.Common
                     DbDataAdapter adapter = new OracleDataAdapter();
                     adapter.SelectCommand = oc;
                     adapter.Fill(ds);
+                    return ds.Tables[0];
                 }
             }
             catch (Exception e)
             {
+                throw;
                 //log.Error(e.Message + e.StackTrace);
             }
             finally
             {
                 orclCon.Close();
             }
-            return ds.Tables[0];
+           
         }
 
         public static int ExecuteNonQuery(string sql)
