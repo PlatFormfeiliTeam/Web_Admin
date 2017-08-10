@@ -1,7 +1,7 @@
 ﻿var excelName;
 function onItemUpload(name) {
     excelName = name;
-    alert(excelName);
+    //alert(excelName);
     var FileRname = new Ext.form.TextField({
         name: 'FileRname',
         fieldLabel: '文件名',

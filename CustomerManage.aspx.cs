@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -34,6 +35,9 @@ namespace Web_Admin
                     case "export":
                         exportData();
                         break;
+                    case "save":
+                        save(Request["formdata"]);
+                        break;
                 }
             }
             
@@ -45,29 +49,29 @@ namespace Web_Admin
         {
             string strWhere = string.Empty;
 
-            if (!string.IsNullOrEmpty(Request["code"]))
+            if (!string.IsNullOrEmpty(Request["CODE_S"]))
             {
-                strWhere = " and code='" + Request["code"] + "'";
+                strWhere = " and instr(code,'" + Request["CODE_S"] + "')>0";
             }
-            if (!string.IsNullOrEmpty(Request["cnname"]))
+            if (!string.IsNullOrEmpty(Request["CNNAME_S"]))
             {
-                strWhere = " and (name like '%" + Request["cnname"] + "%' or chineseabbreviation like '%" + Request["cnname"] + "%')";
+                strWhere = " and (instr(name,'" + Request["CNNAME_S"] + "')>0 or instr(chineseabbreviation, '" + Request["CNNAME_S"] + "')>0)";
             }
-            if (!string.IsNullOrEmpty(Request["enname"]))
+            if (!string.IsNullOrEmpty(Request["ENGLISHNAME_S"]))
             {
-                strWhere = " and englishname like '%" + Request["enname"] + "%'";
+                strWhere = " and instr(englishname,'" + Request["ENGLISHNAME_S"] + "')>0";
             }
-            if (!string.IsNullOrEmpty(Request["hscode"]))
+            if (!string.IsNullOrEmpty(Request["HSCODE_S"]))
             {
-                strWhere = " and hscode='" + Request["hscode"] + "'";
+                strWhere = " and hscode='" + Request["HSCODE_S"] + "'";
             }
-            if (!string.IsNullOrEmpty(Request["ciqcode"]))
+            if (!string.IsNullOrEmpty(Request["CIQCODE_S"]))
             {
-                strWhere = " and ciqcode='" + Request["ciqcode"] + "'";
+                strWhere = " and ciqcode='" + Request["CIQCODE_S"] + "'";
             }
-            if (!string.IsNullOrEmpty(Request["enabled"]))
+            if (!string.IsNullOrEmpty(Request["ENABLED_S"]))
             {
-                strWhere = " and enabled='" + Request["enabled"] + "'";
+                strWhere = " and enabled='" + Request["ENABLED_S"] + "'";
             }
             string sql = "select * from cusdoc.sys_customer where 1=1 " + strWhere;
             sql = Extension.GetPageSql(sql, "ID", "desc", ref totalProperty, Convert.ToInt32(Request["start"]), Convert.ToInt32(Request["limit"]));
@@ -140,6 +144,56 @@ namespace Web_Admin
                 Console.WriteLine(e.Message);
             }
             
+        }
+
+        private void save(string formdata)
+        {
+            JObject json = (JObject)JsonConvert.DeserializeObject(formdata);
+
+            string sql = "";
+            if (string.IsNullOrEmpty(json.Value<string>("ID")))
+            {
+                sql = @"insert into cusdoc.sys_customer(id
+                                    ,code,name,chineseabbreviation,chineseaddress,hscode,ciqcode
+                                    ,englishname,englishaddress,iscustomer,isshipper,iscompany
+                                    ,logicauditflag,docservicecompany,enabled,remark,SOCIALCREDITNO
+                                    ,TOOLVERSION
+                                ) values(cusdoc.sys_customer_id.nextval
+                                    ,'{0}','{1}','{2}', '{3}','{4}','{5}'
+                                    ,'{6}','{7}','{8}','{9}','{10}'
+                                    ,'{11}','{12}','{13}','{14}','{15}'
+                                    ,'{16}')";
+                sql = string.Format(sql
+                        , json.Value<string>("CODE"), json.Value<string>("NAME"), json.Value<string>("CHINESEABBREVIATION"), json.Value<string>("CHINESEADDRESS"), json.Value<string>("HSCODE"), json.Value<string>("CIQCODE")
+                        , json.Value<string>("ENGLISHNAME"), json.Value<string>("ENGLISHADDRESS"), GetChk(json.Value<string>("ISCUSTOMER")), GetChk(json.Value<string>("ISSHIPPER")), GetChk(json.Value<string>("ISCOMPANY"))
+                        , GetChk(json.Value<string>("LOGICAUDITFLAG")), GetChk(json.Value<string>("DOCSERVICECOMPANY")), json.Value<string>("ENABLED"), json.Value<string>("REMARK"), json.Value<string>("SOCIALCREDITNO")
+                        , json.Value<string>("TOOLVERSION")
+                    );
+            }
+            else
+            {
+                sql = @"update cusdoc.sys_customer set code='{0}',name='{1}',chineseabbreviation='{2}',chineseaddress='{3}',hscode='{4}',ciqcode='{5}'
+                                    ,englishname='{6}',englishaddress='{7}',iscustomer='{8}',isshipper='{9}',iscompany='{10}'
+                                    ,logicauditflag='{11}',docservicecompany='{12}',enabled='{13}',remark='{14}',SOCIALCREDITNO='{15}' 
+                                    ,TOOLVERSION='{16}' 
+                                where id={17}";
+                sql = string.Format(sql
+                        , json.Value<string>("CODE"), json.Value<string>("NAME"), json.Value<string>("CHINESEABBREVIATION"), json.Value<string>("CHINESEADDRESS"), json.Value<string>("HSCODE"), json.Value<string>("CIQCODE")
+                        , json.Value<string>("ENGLISHNAME"), json.Value<string>("ENGLISHADDRESS"), GetChk(json.Value<string>("ISCUSTOMER")), GetChk(json.Value<string>("ISSHIPPER")), GetChk(json.Value<string>("ISCOMPANY"))
+                        , GetChk(json.Value<string>("LOGICAUDITFLAG")), GetChk(json.Value<string>("DOCSERVICECOMPANY")), json.Value<int>("ENABLED"), json.Value<string>("REMARK"), json.Value<string>("SOCIALCREDITNO")
+                        , json.Value<string>("TOOLVERSION"), json.Value<string>("ID")
+                   );
+            }
+
+            int i = DBMgr.ExecuteNonQuery(sql);
+
+            string response = "{\"success\":" + (i > 0 ? "true" : "false") + "}";
+            Response.Write(response);
+            Response.End();
+        }
+        public string GetChk(string check_val)
+        {
+            return check_val == "on" ? "1" : "0";
         }
     }
 }
