@@ -499,8 +499,49 @@ namespace Web_Admin
             string json_type = JsonConvert.SerializeObject(dt);
             return @"{success:true,src:'\/file\/" + splitfilename + "',rows:" + json + ",fileid:" + fileid + ",filestatus:'" + filestatus + "',result:" + json_type + "}";
         }
+
+
         public string split(string ordercode, string pages, string fileid, string userid, string filetype, string username)
         {
+
+            string data = pages;
+            JArray jsonarray = JsonConvert.DeserializeObject<JArray>(data);
+
+            DataTable dt_order = DBMgr.GetDataTable("select * from list_order where code='" + ordercode + "'");
+            string busiunitcode = dt_order.Rows[0]["busiunitcode"].ToString();
+            string customercode = dt_order.Rows[0]["customercode"].ToString();
+            string repunitcode = dt_order.Rows[0]["repunitcode"].ToString();
+            string busitype = dt_order.Rows[0]["busitype"].ToString();
+
+
+            string where = "";
+            if (busiunitcode != "") { where += " and nvl(busiunitcode,'{0}')='{0}'"; }
+            if (customercode != "") { where += " and nvl(customercode,'{1}')='{1}'"; }
+            if (repunitcode != "") { where += " and nvl(repunitcode,'{2}')='{2}'"; }
+            if (busitype != "") { where += " and nvl(busitype,'{3}')='{3}'"; }
+
+            string sql_result = @"select filetypeid,filetypename from sys_filetype where filetypeid in 
+                                 (select filetype from config_filesplit where 1=1 " + where + "  group by filetype)";
+            sql_result = string.Format(sql_result, busiunitcode, customercode, repunitcode, busitype);
+            DataTable dt_result = DBMgr.GetDataTable(sql_result);
+            if (dt_result.Rows.Count != 0)
+            {
+                for (int i = 0; i < dt_result.Rows.Count; i++)
+                {
+                    foreach (JObject jo in jsonarray)
+                    {
+                        string err_msg = "不可以拆分";
+                        if (jo.Value<string>("c-" + dt_result.Rows[i]["FILETYPEID"] + "@" + dt_result.Rows[i]["FILETYPENAME"]) == "√")
+                        {
+                            err_msg += dt_result.Rows[i]["FILETYPENAME"];
+                            return "error:" + err_msg;
+                        }
+                    }
+                }
+            }
+
+
+
             IDatabase db = SeRedis.redis.GetDatabase();
             string json = string.Empty;
             string sql = string.Empty;
@@ -508,9 +549,8 @@ namespace Web_Admin
             FileInfo fi;
             DataTable dt;
             int filepages = 0;
-           // string data = Request["pages"];
-            string data = pages;
-            JArray jsonarray = JsonConvert.DeserializeObject<JArray>(data);
+            // string data = Request["pages"];
+
             db.StringSet(ordercode + ":" + fileid + ":splitdetail", data);
             sql = "select * from list_attachment where ID='" + fileid + "'";
             dt = DBMgr.GetDataTable(sql);
@@ -651,7 +691,7 @@ namespace Web_Admin
             {
                 return "{success:false}";//压缩文件不存在 
             }
-        
+
         }
 
         public string cancelsplit(string ordercode, string fileid, string userid, string username)
