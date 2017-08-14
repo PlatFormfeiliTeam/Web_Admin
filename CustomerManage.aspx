@@ -15,8 +15,8 @@
             renderTo: 'appConId',
             items: [Ext.getCmp('formpanel_search'), Ext.getCmp('gridpanel')]
         });
-        
-    })
+
+    });
 
     function init_search() {
         var txtCODE = Ext.create('Ext.form.field.Text', { id: 'CODE_S', name: 'CODE_S', fieldLabel: '客户代码' });
@@ -346,6 +346,11 @@
             buttons: [{
 
                 text: '<span class="icon iconfont" style="font-size:12px;">&#xe60c;</span>&nbsp;保存', handler: function () {
+
+                    if (!Ext.getCmp('formpanel_Win').getForm().isValid()) {
+                        return;
+                    }
+
                     var formdata = Ext.encode(Ext.getCmp('formpanel_Win').getForm().getValues());
                     Ext.Ajax.request({
                         url: 'CustomerManage.aspx',
@@ -353,7 +358,7 @@
                         params: { action: 'save', formdata: formdata },
                         success: function (response, option) {
                             var data = Ext.decode(response.responseText);
-                            if (data.success) {                                
+                            if (data.success) {
                                 Ext.Msg.alert('提示', "保存成功", function () {
                                     Ext.getCmp("pgbar").moveFirst(); Ext.getCmp("win_d").close();
                                 });
@@ -363,9 +368,9 @@
                                     Ext.getCmp("pgbar").moveFirst(); Ext.getCmp("win_d").close();
                                 });
                             }
-                           
+
                         }
-                    })
+                    });
                 }
             }]
         });
