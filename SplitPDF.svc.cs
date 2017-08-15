@@ -514,14 +514,14 @@ namespace Web_Admin
             string busitype = dt_order.Rows[0]["busitype"].ToString();
 
 
-            string where = "";
-            if (busiunitcode != "") { where += " and nvl(busiunitcode,'{0}')='{0}'"; }
-            if (customercode != "") { where += " and nvl(customercode,'{1}')='{1}'"; }
-            if (repunitcode != "") { where += " and nvl(repunitcode,'{2}')='{2}'"; }
-            if (busitype != "") { where += " and nvl(busitype,'{3}')='{3}'"; }
+            string where = @" where (busiunitcode is null or busiunitcode='{0}')
+                               and (customercode is null or customercode='{1}')
+                               and (repunitcode is null or repunitcode='{2}')
+                               and (busitype is null or busitype='{3}')";
+
 
             string sql_result = @"select filetypeid,filetypename from sys_filetype where filetypeid in 
-                                 (select filetype from config_filesplit where 1=1 " + where + "  group by filetype)";
+                                 (select filetype from config_filesplit " + where + "  group by filetype)";
             sql_result = string.Format(sql_result, busiunitcode, customercode, repunitcode, busitype);
             DataTable dt_result = DBMgr.GetDataTable(sql_result);
             if (dt_result.Rows.Count != 0)
