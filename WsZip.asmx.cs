@@ -13,6 +13,7 @@ using iTextSharp.text.pdf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using System.Configuration;
 
 namespace Web_Admin
 {
@@ -162,7 +163,8 @@ namespace Web_Admin
             }
             string destFile = tmp_dir+outname + ".pdf";
             FileStream stream = new FileStream(destFile, FileMode.Create, FileAccess.ReadWrite);
-            PdfReader reader = new PdfReader(filename);
+            byte[] pwd = System.Text.Encoding.Default.GetBytes(ConfigurationManager.AppSettings["PdfPwd"]);//密码 
+            PdfReader reader = new PdfReader(filename, pwd);
 
             iTextSharp.text.Rectangle psize = reader.GetPageSize(1);
             var imgWidth = psize.Width + right_int;
